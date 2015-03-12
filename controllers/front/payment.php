@@ -61,13 +61,11 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 		// fire & forget at this point
 		$cw_res = $cashway->evaluateTransaction();
 
-		// TODO vérifier que l'acheteur est dans la bonne zone et bloquer le cas échéant.
-		// - villes activées
-		// - France
-		// - Euros
-		//$address->city /Nantes
-		//$address->postcode /44100
-		//$address->country /France
+		// Limited to France for now
+		$available = array(true, '');
+		if ($address->country != 'France')
+			$available = array(false,
+				'This service is only available in France for the time being.');
 
 		$address  = new Address($cart->id_address_delivery);
 		$location = array(
@@ -78,6 +76,7 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 		);
 		$location['search'] = implode(' ', $location);
 		$this->context->smarty->assign(array(
+			'available' => $available,
 			'env' => \CashWay\ENV,
 			'cart_fee' => number_format(\CashWay\Fee::getCartFee($cart->getOrderTotal()),
 										0, ',', '&nbsp;'),

@@ -44,6 +44,8 @@
 		height="40"
 		style="margin: 0px 10px 5px 0px;" /></h3>
 
+{if $available.0}
+
 <form action="{$link->getModuleLink('cashway', 'validation', [], true)|escape:'html'}"
 	method="post">
 
@@ -76,4 +78,9 @@
 <input type="button" value="Trouver les points de paiement CashWay autour de cette adresse" onclick="codeLocation();" />
 <script>window.ENV = '{$env|escape}';</script>
 <script src="{$this_path_cashway|escape:'urlpathinfo'}/views/js/cashway_map.js"></script>
+
+{else}
+<p>Sorry. {$available.reason|escape}
+Please select an other payment solution.</p>
+{/if}
 {/if}
