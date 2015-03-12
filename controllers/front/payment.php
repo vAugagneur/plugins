@@ -55,8 +55,7 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 			$this->context->cart,
 			$this->context->customer,
 			$this->context->language->iso_code,
-			$currency[0]['iso_code']
-		);
+			$currency[0]['iso_code']);
 
 		// fire & forget at this point
 		$cw_res = $cashway->evaluateTransaction();
