@@ -269,7 +269,7 @@ class CashWay extends PaymentModule
 		$cashway   = new \Cashway\API(array(
 			'API_KEY' => Configuration::get('CASHWAY_API_KEY'),
 			'API_SECRET' => Configuration::get('CASHWAY_API_SECRET'),
-			'USER_AGENT' => 'CashWayModule/' . $this->version . ' PrestaShop/' . _PS_VERSION_
+			'USER_AGENT' => 'CashWayModule/'.$this->version.' PrestaShop/'._PS_VERSION_
 		));
 		$currency = $this->getCurrency((int)$this->context->cart->id_currency);
 		$cw_res   = $cashway->confirmTransaction(Tools::getValue('cw_barcode'), $params['objOrder']->reference, null, null);

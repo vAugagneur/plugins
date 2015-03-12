@@ -47,7 +47,7 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 		$cashway   = new \Cashway\API(array(
 			'API_KEY' => Configuration::get('CASHWAY_API_KEY'),
 			'API_SECRET' => Configuration::get('CASHWAY_API_SECRET'),
-			'USER_AGENT' => 'CashWayModule/' . $this->module->version . ' PrestaShop/' . _PS_VERSION_
+			'USER_AGENT' => 'CashWayModule/'.$this->module->version.' PrestaShop/'._PS_VERSION_
 		));
 		$currency = $this->module->getCurrency((int)$this->context->cart->id_currency);
 		$cashway->setOrder('prestashop',
