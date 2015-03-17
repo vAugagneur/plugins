@@ -79,27 +79,26 @@ class CashWay extends PaymentModule
 			return false;
 		}
 
-		if (!parent::install())
-			return false;
+		return (parent::install() &&
+				$this->installDb() &&
+				$this->installOrderState() &&
+				$this->registerHook('payment') &&
+				$this->registerHook('paymentReturn'));
+	}
 
-		if (! ($this->registerHook('payment') && $this->registerHook('paymentReturn')))
-		{
-			$this->_errors[] = $this->l('Sorry, could not register to hooks.');
-			return false;
-		}
+	private function installDb()
+	{
 
-		if (!Configuration::get('PS_OS_CASHWAY'))
-			if (!$this->installCashWayOrderState())
-				return false;
-
-		return true;
 	}
 
 	/**
 	 * Register a specific order status for CashWay
 	*/
-	private function installCashWayOrderState()
+	private function installOrderState()
 	{
+		if (Configuration::get('PS_OS_CASHWAY'))
+			return true;
+
 		$values_to_insert = array(
 			'invoice' => 1,
 			'send_email' => 0,
@@ -138,13 +137,12 @@ class CashWay extends PaymentModule
 
 	public function uninstall()
 	{
-		if (!parent::uninstall())
-			return false;
-
 		Configuration::deleteByName('CASHWAY_API_KEY');
 		Configuration::deleteByName('CASHWAY_API_SECRET');
 
-		return true;
+		// DO NOT uninstall database. Keep history of events.
+
+		return parent::uninstall();
 	}
 
 	public function getContent()
