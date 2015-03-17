@@ -267,11 +267,8 @@ class CashWay extends PaymentModule
 
 		$cw_errors = null;
 		$cw_res    = null;
-		$cashway   = new \Cashway\API(array(
-			'API_KEY' => Configuration::get('CASHWAY_API_KEY'),
-			'API_SECRET' => Configuration::get('CASHWAY_API_SECRET'),
-			'USER_AGENT' => 'CashWayModule/'.$this->version.' PrestaShop/'._PS_VERSION_
-		));
+		$cashway   = self::getCashWayAPI();
+
 		$currency = $this->getCurrency((int)$this->context->cart->id_currency);
 		$cw_res   = $cashway->confirmTransaction(Tools::getValue('cw_barcode'),
 												$params['objOrder']->reference, null, null);
@@ -315,6 +312,20 @@ class CashWay extends PaymentModule
 			$this->smarty->assign('status', 'failed');
 
 		return $this->display(__FILE__, 'payment_return.tpl');
+	}
+
+	/**
+	*/
+	public static function getCashWayAPI()
+	{
+		if (Configuration::get('CASHWAY_API_KEY') && Configuration::get('CASHWAY_API_SECRET'))
+			return new \Cashway\API(array(
+				'API_KEY' => Configuration::get('CASHWAY_API_KEY'),
+				'API_SECRET' => Configuration::get('CASHWAY_API_SECRET'),
+				'USER_AGENT' => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_
+			));
+
+		return null;
 	}
 
 	public function checkCurrency($cart)
