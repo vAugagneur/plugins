@@ -171,10 +171,10 @@ class CashWay extends PaymentModule
 			}
 		}
 
-		return $output.$this->displayForm();
+		return $output.$this->renderForm();
 	}
 
-	public function displayForm()
+	public function renderForm()
 	{
 		$default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
 
