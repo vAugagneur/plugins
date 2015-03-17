@@ -344,4 +344,130 @@ class CashWay extends PaymentModule
 
 		return false;
 	}
+
+	/**
+	 * If we have local orders pending for payment from CashWay,
+	 * ask CW API for recent transactions statuses, compare and act upon it.
+	 *
+	 * This method is expected to be called by a cron task at least every hour.
+	 * See cron_cashway_check_for_transactions.php
+	 *
+	 * @return boolean
+	*/
+	public static function checkForPayments()
+	{
+		\CashWay\Log::info('== Starting CashWay background check for orders updates ==');
+		$openOrders = self::getLocalPendingOrders();
+        if (count($openOrders) == 0) {
+			\CashWay\Log::info('No order payment pending by CashWay.');
+			return true;
+        }
+
+		$cwOrders = self::getRemoteOrderStatus();
+		if (false === $cwOrders)
+			return false;
+
+		$cwRefs = array_keys($cwOrders);
+		$openRefs = array_keys($openOrders);
+
+		$commonRefs = array_intersect($openRefs, $cwRefs);
+		$missingRefs = array_diff($openRefs, $cwRefs);
+
+		if (count($missingRefs) > 0)
+			\CashWay\Log::warn(sprintf('Some orders should be in CashWay DB but are not: %s.',
+				implode(', ', $missingRefs)));
+
+		foreach ($commonRefs as $ref)
+		{
+			switch ($cwOrders[$ref]['status'])
+			{
+				case 'paid':
+					\CashWay\Log::info(sprintf('I, found order %s was paid. Updating local record.', $ref));
+					if ($cwOrders[$ref]['order_total'] != $openOrders[$ref]['total_paid'])
+						\CashWay\Log::warn(sprintf('W, Found order %s but paid amount does not match: is %.2f but should be %.2f.',
+							$ref,
+							$cwOrders[$ref]['order_total'],
+							$openOrders[$ref]['total_paid']));
+
+					if ($openOrders[$ref]['total_paid_real'] >= $cwOrders[$ref]['order_total'])
+						\CashWay\Log::warn('Well, it looks like it has already been updated: skipping this step.');
+					else
+					{
+						$order = new Order($openOrders[$ref]['id_order']);
+						$order->addOrderPayment($cwOrders[$ref]['order_total'],
+							'CashWay',
+							$cwOrders[$ref]['barcode']);
+						self::changeOrderStatus($openOrders[$ref]['id_order'], 12);
+					}
+					break;
+
+				case 'expired':
+					\CashWay\Log::info(sprintf('I, found order %s expired. Updating local record.', $ref));
+					self::changeOrderStatus($openOrders[$ref]['id_order'], 6);
+					break;
+
+				default:
+				case 'confirmed':
+				case 'open':
+					\CashWay\Log::info(sprintf('I, found order %s, still pending.', $ref));
+					break;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Fetch local orders that are still pending a payment by CashWay.
+	 * Index those orders by the 'reference' field, which was sent to CashWay.
+	 *
+	 * @return array
+	*/
+	public static function getLocalPendingOrders()
+	{
+		$sql = sprintf('SELECT * FROM %sorders WHERE current_state=%d',
+						_DB_PREFIX_,
+						Configuration::get('PS_OS_CASHWAY'));
+
+		$orders = Db::getInstance()->executeS($sql);
+
+		if (count($orders) > 0)
+		{
+			$refs = array_map(function ($el) { return $el['reference']; }, $orders);
+			$orders = array_combine($refs, array_values($orders));
+		}
+
+		return $orders;
+	}
+
+	/**
+	 * Fetch remote (CashWay-side) status for this account.
+	 * FIXME. This returns ALL transactions. We should limit this to those we want.
+	 *
+	 * @return array|false
+	*/
+	public static function getRemoteOrderStatus()
+	{
+		$cashway = self::getCashWayAPI();
+		if (is_null($cashway))
+		{
+			\CashWay\Log::error('Could not access CashWay API.');
+			return false;
+		}
+
+		$orders = $cashway->checkTransactionsForOrders(array());
+		// TODO: check for error returned, return false
+
+		$refs = array_map(function ($el) { return $el['shop_order_id']; }, $orders['orders']);
+		$orders = array_combine($refs, array_values($orders['orders']));
+
+		return $orders;
+	}
+
+	// Maybe duplicated?
+	public static function changeOrderStatus($order_id, $status_id)
+	{
+		$history = new OrderHistory();
+		$history->id_order = $order_id;
+		$history->changeIdOrderState($status_id, $order_id);
+	}
 }

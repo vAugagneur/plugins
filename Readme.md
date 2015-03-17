@@ -2,6 +2,16 @@
 
 Still in development. DO NOT INSTALL OR USE unless you know what you're doing.
 
+## Installation
+
+### Cron job
+
+Please call `modules/cashway/cron_cashway_check_for_transactions.php`
+at most every 30 minutes, ideally, every hour.
+
+You may use PrestaShop Cron Task Manager module for this
+or your own scheduling system.
+
 ## Licenses
 
  * the PrestaShop-specific code of this module is licensed under the

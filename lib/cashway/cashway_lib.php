@@ -9,7 +9,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.0.1';
+const VERSION = '0.1.0';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -190,6 +190,12 @@ class API
 
         return $this->httpPost(sprintf('/transactions/%s/confirm', $transaction_id), $payload);
     }
+
+
+	public function checkTransactionsForOrders($order_ids)
+	{
+		return $this->httpGet(sprintf('/shops/me/transactions'));
+	}
 
     public function httpPost($path, $payload)
     {
