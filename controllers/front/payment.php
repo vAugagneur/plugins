@@ -62,11 +62,12 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 
 		// Limited to France for now
 		$available = array(true, '');
+
+		$address  = new Address($cart->id_address_delivery);
 		if ($address->country != 'France')
 			$available = array(false,
 				'This service is only available in France for the time being.');
 
-		$address  = new Address($cart->id_address_delivery);
 		$location = array(
 			'address' => $address->address1,
 			'postcode' => $address->postcode,
