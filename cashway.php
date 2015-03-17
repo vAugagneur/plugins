@@ -30,13 +30,15 @@ require dirname(__FILE__).'/lib/cashway/cashway_lib.php';
 
 class CashWay extends PaymentModule
 {
+	const VERSION = '0.1.0';
+
 	/**
 	*/
 	public function __construct()
 	{
 		$this->name             = 'cashway';
 		$this->tab              = 'payments_gateways';
-		$this->version          = '0.0.1';
+		$this->version          = self::VERSION;
 		$this->author           = 'CashWay';
 		$this->need_instance    = 0;
 		$this->bootstrap        = true;
