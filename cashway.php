@@ -273,10 +273,13 @@ class CashWay extends PaymentModule
 			'USER_AGENT' => 'CashWayModule/'.$this->version.' PrestaShop/'._PS_VERSION_
 		));
 		$currency = $this->getCurrency((int)$this->context->cart->id_currency);
-		$cw_res   = $cashway->confirmTransaction(Tools::getValue('cw_barcode'), $params['objOrder']->reference, null, null);
+		$cw_res   = $cashway->confirmTransaction(Tools::getValue('cw_barcode'),
+												$params['objOrder']->reference, null, null);
 
 		$state = $params['objOrder']->getCurrentState();
-		if (in_array($state, array(Configuration::get('PS_OS_CASHWAY'), Configuration::get('PS_OS_OUTOFSTOCK'), Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'))))
+		if (in_array($state, array(Configuration::get('PS_OS_CASHWAY'),
+									Configuration::get('PS_OS_OUTOFSTOCK'),
+									Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'))))
 		{
 			$address  = new Address($this->context->cart->id_address_delivery);
 			$location = array(
@@ -289,7 +292,9 @@ class CashWay extends PaymentModule
 
 			$this->smarty->assign(array(
 				// FIXME. Add cart fee here.
-				'total_to_pay' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
+				'total_to_pay' => Tools::displayPrice($params['total_to_pay'],
+														$params['currencyObj'],
+														false),
 				'expires' => $cw_res['expires_at'],
 				'location' => $location,
 				'cashway_api_url' => \CashWay\API_URL,
