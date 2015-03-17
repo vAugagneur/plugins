@@ -53,7 +53,7 @@ class CashWay extends PaymentModule
 		parent::__construct();
 
 		$this->displayName = $this->l('CashWay');
-		$this->description = $this->l('Pay With Cash On The Internet.');
+		$this->description = $this->l('Now your customers can pay their orders with cash.');
 		$this->confirmUninstall = $this->l('Are you sure you want to delete these details?');
 
 		if (!Configuration::get('CASHWAY_API_KEY'))
