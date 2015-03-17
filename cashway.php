@@ -357,53 +357,54 @@ class CashWay extends PaymentModule
 	public static function checkForPayments()
 	{
 		\CashWay\Log::info('== Starting CashWay background check for orders updates ==');
-		$openOrders = self::getLocalPendingOrders();
-        if (count($openOrders) == 0) {
+		$open_orders = self::getLocalPendingOrders();
+		if (count($open_orders) == 0)
+		{
 			\CashWay\Log::info('No order payment pending by CashWay.');
 			return true;
-        }
+		}
 
-		$cwOrders = self::getRemoteOrderStatus();
-		if (false === $cwOrders)
+		$cw_orders = self::getRemoteOrderStatus();
+		if (false === $cw_orders)
 			return false;
 
-		$cwRefs = array_keys($cwOrders);
-		$openRefs = array_keys($openOrders);
+		$cw_refs = array_keys($cw_orders);
+		$open_refs = array_keys($open_orders);
 
-		$commonRefs = array_intersect($openRefs, $cwRefs);
-		$missingRefs = array_diff($openRefs, $cwRefs);
+		$common_refs = array_intersect($open_refs, $cw_refs);
+		$missing_refs = array_diff($open_refs, $cw_refs);
 
-		if (count($missingRefs) > 0)
+		if (count($missing_refs) > 0)
 			\CashWay\Log::warn(sprintf('Some orders should be in CashWay DB but are not: %s.',
-				implode(', ', $missingRefs)));
+				implode(', ', $missing_refs)));
 
-		foreach ($commonRefs as $ref)
+		foreach ($common_refs as $ref)
 		{
-			switch ($cwOrders[$ref]['status'])
+			switch ($cw_orders[$ref]['status'])
 			{
 				case 'paid':
 					\CashWay\Log::info(sprintf('I, found order %s was paid. Updating local record.', $ref));
-					if ($cwOrders[$ref]['order_total'] != $openOrders[$ref]['total_paid'])
+					if ($cw_orders[$ref]['order_total'] != $open_orders[$ref]['total_paid'])
 						\CashWay\Log::warn(sprintf('W, Found order %s but paid amount does not match: is %.2f but should be %.2f.',
 							$ref,
-							$cwOrders[$ref]['order_total'],
-							$openOrders[$ref]['total_paid']));
+							$cw_orders[$ref]['order_total'],
+							$open_orders[$ref]['total_paid']));
 
-					if ($openOrders[$ref]['total_paid_real'] >= $cwOrders[$ref]['order_total'])
+					if ($open_orders[$ref]['total_paid_real'] >= $cw_orders[$ref]['order_total'])
 						\CashWay\Log::warn('Well, it looks like it has already been updated: skipping this step.');
 					else
 					{
-						$order = new Order($openOrders[$ref]['id_order']);
-						$order->addOrderPayment($cwOrders[$ref]['order_total'],
+						$order = new Order($open_orders[$ref]['id_order']);
+						$order->addOrderPayment($cw_orders[$ref]['order_total'],
 							'CashWay',
-							$cwOrders[$ref]['barcode']);
-						self::changeOrderStatus($openOrders[$ref]['id_order'], 12);
+							$cw_orders[$ref]['barcode']);
+						self::changeOrderStatus($open_orders[$ref]['id_order'], 12);
 					}
 					break;
 
 				case 'expired':
 					\CashWay\Log::info(sprintf('I, found order %s expired. Updating local record.', $ref));
-					self::changeOrderStatus($openOrders[$ref]['id_order'], 6);
+					self::changeOrderStatus($open_orders[$ref]['id_order'], 6);
 					break;
 
 				default:
@@ -432,7 +433,8 @@ class CashWay extends PaymentModule
 
 		if (count($orders) > 0)
 		{
-			$refs = array_map(function ($el) { return $el['reference']; }, $orders);
+			$refs = array_map(function ($el) { return $el['reference'];
+			}, $orders);
 			$orders = array_combine($refs, array_values($orders));
 		}
 
@@ -457,13 +459,16 @@ class CashWay extends PaymentModule
 		$orders = $cashway->checkTransactionsForOrders(array());
 		// TODO: check for error returned, return false
 
-		$refs = array_map(function ($el) { return $el['shop_order_id']; }, $orders['orders']);
+		$refs = array_map(function ($el) { return $el['shop_order_id'];
+		}, $orders['orders']);
 		$orders = array_combine($refs, array_values($orders['orders']));
 
 		return $orders;
 	}
 
-	// Maybe duplicated?
+	/**
+	 * Shorthand function. Maybe a duplicate?
+	*/
 	public static function changeOrderStatus($order_id, $status_id)
 	{
 		$history = new OrderHistory();

@@ -31,7 +31,7 @@ include(_PS_MODULE_DIR_.'/cashway/cashway.php');
 
 if (Tools::getIsset('secure_key'))
 {
-	$secureKey = md5(_COOKIE_KEY_.Configuration::get('PS_SHOP_NAME'));
-	if (!empty($secureKey) && $secureKey === Tools::getValue('secure_key'))
+	$secure_key = md5(_COOKIE_KEY_.Configuration::get('PS_SHOP_NAME'));
+	if (!empty($secure_key) && $secure_key === Tools::getValue('secure_key'))
 		CashWay::checkForPayments();
 }
