@@ -384,10 +384,10 @@ class CashWay extends PaymentModule
 			{
 				case 'paid':
 					\CashWay\Log::info(sprintf('I, found order %s was paid. Updating local record.', $ref));
-					if ($cw_orders[$ref]['order_total'] != $open_orders[$ref]['total_paid'])
+					if ($cw_orders[$ref]['paid_amount'] != $open_orders[$ref]['total_paid'])
 						\CashWay\Log::warn(sprintf('W, Found order %s but paid amount does not match: is %.2f but should be %.2f.',
 							$ref,
-							$cw_orders[$ref]['order_total'],
+							$cw_orders[$ref]['paid_amount'],
 							$open_orders[$ref]['total_paid']));
 
 					if ($open_orders[$ref]['total_paid_real'] >= $cw_orders[$ref]['order_total'])
@@ -395,7 +395,7 @@ class CashWay extends PaymentModule
 					else
 					{
 						$order = new Order($open_orders[$ref]['id_order']);
-						$order->addOrderPayment($cw_orders[$ref]['order_total'],
+						$order->addOrderPayment($cw_orders[$ref]['paid_amount'],
 							'CashWay',
 							$cw_orders[$ref]['barcode']);
 						self::changeOrderStatus($open_orders[$ref]['id_order'], 12);
