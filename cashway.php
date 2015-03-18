@@ -398,13 +398,20 @@ class CashWay extends PaymentModule
 						$order->addOrderPayment($cw_orders[$ref]['paid_amount'],
 							'CashWay',
 							$cw_orders[$ref]['barcode']);
-						self::changeOrderStatus($open_orders[$ref]['id_order'], 12);
+						$order->setInvoice(true);
+
+						$history = new OrderHistory();
+						$history->id_order = $order->id;
+						$history->changeIdOrderState(12, $order, !$order->hasInvoice());
 					}
 					break;
 
 				case 'expired':
 					\CashWay\Log::info(sprintf('I, found order %s expired. Updating local record.', $ref));
-					self::changeOrderStatus($open_orders[$ref]['id_order'], 6);
+					$order = new Order($open_orders[$ref]['id_order']);
+					$history = new OrderHistory();
+					$history->id_order = $order->id;
+					$history->changeIdOrderState(6, $order, !$order->hasInvoice());
 					break;
 
 				default:
@@ -464,15 +471,5 @@ class CashWay extends PaymentModule
 		$orders = array_combine($refs, array_values($orders['orders']));
 
 		return $orders;
-	}
-
-	/**
-	 * Shorthand function. Maybe a duplicate?
-	*/
-	public static function changeOrderStatus($order_id, $status_id)
-	{
-		$history = new OrderHistory();
-		$history->id_order = $order_id;
-		$history->changeIdOrderState($status_id, $order_id);
 	}
 }
