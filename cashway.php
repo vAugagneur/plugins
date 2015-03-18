@@ -65,14 +65,17 @@ class CashWay extends PaymentModule
 			$this->warning .= $this->l('Missing API Secret.');
 		else
 			$this->cashway_api_secret = Configuration::get('CASHWAY_API_SECRET');
+
+		if (false === function_exists('curl_init'))
+			$this->warning = $this->l('To be able to use this module, please activate cURL (PHP extension).');
 	}
 
 	public function install()
 	{
-		if (!function_exists('curl_version'))
+		if (false === function_exists('curl_init'))
 		{
 			$this->_errors[] =
-				$this->l('Sorry, this module requires the cURL PHP extension but it is not enabled on your server.')
+				$this->l('This module requires the cURL PHP extension to work, it is not enabled on your server.')
 				.' '
 				.$this->l('Please ask your web hosting provider for assistance.');
 
