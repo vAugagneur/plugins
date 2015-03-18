@@ -181,10 +181,29 @@ class CashWay extends PaymentModule
 	{
 		$default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
 
-		$fields_form = array(array(
+		$cashway_register_url = 'https://www.cashway.fr';
+
+		$cron_url = Tools::getShopDomain(true, true)
+			.__PS_BASE_URI__
+			.basename(_PS_ADMIN_DIR_)
+			.'/cron_cashway_check_for_transactions.php?'
+			.'secure_key='.md5(_COOKIE_KEY_.Configuration::get('PS_SHOP_NAME'));
+
+		$cron_manager_url = Tools::getShopDomain(true, true)
+			.__PS_BASE_URI__
+			.basename(_PS_ADMIN_DIR_)
+			.'/index.php?'
+			.'controller=AdminModules'
+			.'&token='.Tools::getAdminTokenLite('AdminModules')
+			.'&configure=cronjobs'
+			.'&tab_module=administration'
+			.'&module_name=cronjobs';
+
+		$fields_form = array(
+		array(
 			'form' => array(
 				'legend' => array(
-					'title' => $this->l('Settings'),
+					'title' => $this->l('Settings')
 				),
 				'input' => array(
 					array(
@@ -205,9 +224,22 @@ class CashWay extends PaymentModule
 					)
 				),
 				'submit' => array(
-					'title' => $this->l('Save'),
-					'class' => 'button'
+					'title' => $this->l('Save')
 				)
+			)
+		),
+		array(
+			'form' => array(
+				'description' =>
+					'<p>'.sprintf($this->l('Get your CashWay API credentials by registering on %s.'),
+						sprintf('<a href="%s" target="blank">%s</a>', $cashway_register_url, $cashway_register_url))
+					.'</p>'
+					.'<p>'
+						.sprintf($this->l('Please make sure a Cron task calls this address about every 2 hours to update order payment status:')
+						.sprintf('<br><textarea onclick="this.focus();this.select();" readonly>%s</textarea>', $cron_url))
+						.'</p>'
+						.'<p>'.sprintf($this->l('You may do so using PrestaShop %sCron Task Manager%s.'),
+								'<a href="'.$cron_manager_url.'">', '</a>').'</p>'
 			)
 		));
 
