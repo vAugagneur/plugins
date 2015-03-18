@@ -23,7 +23,10 @@
 *}
 
 {capture name=path}
-	<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}" title="{l s='Go back to the Checkout' mod='cashway'}">{l s='Checkout' mod='cashway'}</a><span class="navigation-pipe">{$navigationPipe}</span>{l s='Check payment' mod='cashway'}
+	<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}"
+		title="{l s='Go back to the Checkout' mod='cashway'}">{l s='Checkout' mod='cashway'}</a>
+	<span class="navigation-pipe">{$navigationPipe}</span>
+	{l s='Check payment' mod='cashway'}
 {/capture}
 
 {include file="$tpl_dir./breadcrumb.tpl"}

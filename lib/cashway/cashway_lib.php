@@ -57,12 +57,6 @@ class Fee
 
 /**
  * Helpers to integrate and use api.cashway.fr with online shop platforms.
- *
- * [x] creating/confirming transaction
- * [ ] TODO: checking transactions status (paid, expired)
- * [ ] TODO: fetching API status
- * [ ] TODO: fetching account status
- * [ ] TODO: cron tasks
 */
 class API
 {
@@ -122,8 +116,6 @@ class API
      * Generic wrapper to set orders.
      * Call setOrder('platform', ...);
      *
-     * TODO: when 5.4 is the minimum version, use Traits to dispatch platform-specific code?
-     *
      * @api
     */
     public function setOrder()
@@ -149,7 +141,7 @@ class API
     }
 
 	/**
-	 * TODO. Notify API about transaction, get diagnostics data.
+	 * TODO: notify API about transaction, get diagnostics data.
 	*/
 	public function evaluateTransaction()
 	{

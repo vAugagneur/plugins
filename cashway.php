@@ -30,7 +30,7 @@ require dirname(__FILE__).'/lib/cashway/cashway_lib.php';
 
 class CashWay extends PaymentModule
 {
-	const VERSION = '0.1.0';
+	const VERSION = '0.1.1';
 
 	/**
 	*/
@@ -38,7 +38,8 @@ class CashWay extends PaymentModule
 	{
 		$this->name             = 'cashway';
 		$this->tab              = 'payments_gateways';
-		$this->version          = self::VERSION;
+		// FIXME: should use self::VERSION here but https://validator.prestashop.com doesn't see to like it...
+		$this->version          = '0.1.1';
 		$this->author           = 'CashWay';
 		$this->need_instance    = 0;
 		$this->bootstrap        = true;
