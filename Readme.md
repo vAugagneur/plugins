@@ -1,8 +1,8 @@
 # CashWay PrestaShop module
 
-Still in development. DO NOT INSTALL OR USE unless you know what you're doing.
-
 ## Installation
+
+Still in development. DO NOT INSTALL OR USE unless you know what you're doing.
 
 ### Cron job
 
@@ -11,6 +11,21 @@ at most every 30 minutes, ideally, every hour.
 
 You may use PrestaShop Cron Task Manager module for this
 or your own scheduling system.
+
+### Dependencies
+
+This module depends on APIs provided by [CashWay](https://www.cashway.fr/):
+
+ * api.cashway.fr
+ * maps.cashway.fr
+
+
+## Contributing
+
+Issues, PR and ideas are welcome.
+
+You may get in touch here through issues or on #cashway_fr Freenode IRC.
+
 
 ## Licenses
 
