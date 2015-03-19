@@ -17,6 +17,19 @@ const API_URL = 'https://api.cashway.fr';
 
 const ENV = 'production';
 
+const PHP_MIN_VERSION = '5.4';
+
+/**
+ * Is your system PHP supported (that is, has not been EOL'd yet)?
+ * See http://php.net/releases/
+ *
+ * @return boolean
+*/
+function isPHPVersionSupported()
+{
+    return (version_compare(phpversion(), PHP_MIN_VERSION) >= 0);
+}
+
 /**
 */
 class Log
