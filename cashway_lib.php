@@ -190,7 +190,7 @@ class API
     {
         $payload = json_encode(array(
             'agent'      => $this->user_agent,
-			'order_id'   => $order_id,
+            'order_id'   => $order_id,
             'email'      => $email,
             'phone'      => $phone
         ));
@@ -199,10 +199,10 @@ class API
     }
 
 
-	public function checkTransactionsForOrders($order_ids)
-	{
-		return $this->httpGet(sprintf('/shops/me/transactions'));
-	}
+    public function checkTransactionsForOrders($order_ids)
+    {
+        return $this->httpGet(sprintf('/shops/me/transactions'));
+    }
 
     public function httpPost($path, $payload)
     {
@@ -227,16 +227,16 @@ class API
 
         switch($verb) {
             case 'GET':
-				$headers = array(
-					'Accept: application/json'
-				);
+                $headers = array(
+                    'Accept: application/json'
+                );
                 $query    = http_build_query($query);
                 $transfer = cURL::GET($url . '?' . $query, $auth, $headers, $this->user_agent);
                 break;
             case 'POST':
                 $headers = array(
                     'Content-Type: application/json',
-					'Accept: application/json',
+                    'Accept: application/json',
                     'Content-Length: ' . strlen($query)
                 );
                 $transfer = cURL::POST($url, $query, $auth, $headers, $this->user_agent);
@@ -285,7 +285,7 @@ class API
 
         $this->order =  array(
             // required
-			// FIXME. This is the cart id, not the order id.
+            // FIXME. This is the cart id, not the order id.
             'id'          => $id,
             'at'          => $cart->date_add,
             'currency'    => $currency,
