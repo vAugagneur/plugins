@@ -1,5 +1,10 @@
 # Changelog for CashWay PrestaShop module
 
+
+## 31 mars - 0.1.1, dev version
+
+ * fix install process
+
 ## 18 mars - 0.1.0, dev version
 
  * added cron task: check local orders pending payment,
