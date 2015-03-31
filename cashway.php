@@ -85,9 +85,9 @@ class CashWay extends PaymentModule
 
 		return (parent::install() &&
 				$this->installDb() &&
-				$this->installOrderState() &&
 				$this->registerHook('payment') &&
-				$this->registerHook('paymentReturn'));
+				$this->registerHook('paymentReturn') &&
+				$this->installOrderState());
 	}
 
 	private function installDb()
@@ -124,6 +124,8 @@ class CashWay extends PaymentModule
 		}
 
 		$id_order_state = (int)Db::getInstance()->Insert_ID();
+		Configuration::updateValue('PS_OS_CASHWAY', $id_order_state);
+
 		$languages = Language::getLanguages(false);
 		foreach ($languages as $language)
 			Db::getInstance()->autoExecute(_DB_PREFIX_.'order_state_lang', array(
@@ -139,8 +141,6 @@ class CashWay extends PaymentModule
 			$this->_errors[] = $this->l('Failed to copy order state icon.');
 			return false;
 		}
-
-		Configuration::updateValue('PS_OS_CASHWAY', $id_order_state);
 
 		return true;
 	}
