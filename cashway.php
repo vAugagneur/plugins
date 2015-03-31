@@ -296,13 +296,11 @@ class CashWay extends PaymentModule
 		if (!$this->active)
 			return;
 
-		$cw_errors = null;
-		$cw_res    = null;
-		$cashway   = self::getCashWayAPI();
-
-		$currency = $this->getCurrency((int)$this->context->cart->id_currency);
-		$cw_res   = $cashway->confirmTransaction(Tools::getValue('cw_barcode'),
+		$cashway = self::getCashWayAPI();
+		$cw_res = $cashway->confirmTransaction(Tools::getValue('cw_barcode'),
 												$params['objOrder']->reference, null, null);
+
+		// TODO: check $cw_res error cases
 
 		$state = $params['objOrder']->getCurrentState();
 		if (in_array($state, array(Configuration::get('PS_OS_CASHWAY'),
