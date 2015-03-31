@@ -92,7 +92,7 @@ class CashWay extends PaymentModule
 
 	private function installDb()
 	{
-
+		return true;
 	}
 
 	/**
@@ -118,7 +118,10 @@ class CashWay extends PaymentModule
 		);
 
 		if (!Db::getInstance()->autoExecute(_DB_PREFIX_.'order_state', $values_to_insert, 'INSERT'))
+		{
+			$this->_errors[] = $this->l('Failed to register a new order state.');
 			return false;
+		}
 
 		$id_order_state = (int)Db::getInstance()->Insert_ID();
 		$languages = Language::getLanguages(false);
@@ -130,9 +133,12 @@ class CashWay extends PaymentModule
 				'template' => ''
 			), 'INSERT');
 
-		if (!@copy(dirname(__FILE__).DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'logo.png',
+		if (!copy(dirname(__FILE__).DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'logo.png',
 					_PS_ROOT_DIR_.DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'os'.DIRECTORY_SEPARATOR.$id_order_state.'.gif'))
+		{
+			$this->_errors[] = $this->l('Failed to copy order state icon.');
 			return false;
+		}
 
 		Configuration::updateValue('PS_OS_CASHWAY', $id_order_state);
 
