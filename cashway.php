@@ -84,15 +84,9 @@ class CashWay extends PaymentModule
 		}
 
 		return (parent::install() &&
-				$this->installDb() &&
 				$this->registerHook('payment') &&
 				$this->registerHook('paymentReturn') &&
 				$this->installOrderState());
-	}
-
-	private function installDb()
-	{
-		return true;
 	}
 
 	/**
