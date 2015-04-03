@@ -11,7 +11,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.1.1';
+const VERSION = '0.1.2';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -156,12 +156,19 @@ class API
     }
 
 	/**
-	 * TODO: notify API about transaction, get diagnostics data.
+	 * Notify API about transaction, get diagnostics data:
+	 * about the shop, the order, the transaction.
 	*/
-	public function evaluateTransaction()
-	{
-		return null;
-	}
+    public function evaluateTransaction()
+    {
+        $payload = json_encode(array(
+            'agent'    => $this->user_agent,
+            'order'    => $this->order,
+            'customer' => $this->customer
+        ));
+
+        return $this->httpPost('/transactions/hint', $payload);
+    }
 
     /**
      * Open a confirmed CashWay transaction for the set order.
