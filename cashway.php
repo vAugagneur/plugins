@@ -41,7 +41,7 @@ class CashWay extends PaymentModule
 		// FIXME: should use self::VERSION here but https://validator.prestashop.com doesn't see to like it...
 		$this->version          = '0.1.1';
 		$this->author           = 'CashWay';
-		$this->need_instance    = 0;
+		$this->need_instance    = 1;
 		$this->bootstrap        = true;
 		//$this->module_key       = '';
 		$this->currencies       = true;
