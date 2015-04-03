@@ -85,7 +85,7 @@ class CashwayValidationModuleFrontController extends ModuleFrontController
 		$mail_vars = array(
 			'{barcode}' => $cw_barcode,
 		);
-		Configuration::updateValue('PS_OS_CASHWAY', 13);
+
 		$this->module->validateOrder((int)$cart->id,
 										Configuration::get('PS_OS_CASHWAY'),
 										$total,
