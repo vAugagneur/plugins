@@ -119,9 +119,7 @@ class CashWay extends PaymentModule
 			Configuration::updateValue('PS_OS_CASHWAY', $order_state->id);
 			if (!copy(dirname(__FILE__).DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'logo.png',
 						_PS_ROOT_DIR_.DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'os'.DIRECTORY_SEPARATOR.$order_state->id.'.gif'))
-			{
 				$this->_errors[] = $this->l('Failed to copy order state icon.');
-			}
 
 			return true;
 		}
