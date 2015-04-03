@@ -425,7 +425,7 @@ class CashWay extends PaymentModule
 
 						$history = new OrderHistory();
 						$history->id_order = $order->id;
-						$history->changeIdOrderState(12, $order, !$order->hasInvoice());
+						$history->changeIdOrderState((int)Configuration::get('PS_OS_WS_PAYMENT'), $order, !$order->hasInvoice());
 					}
 					break;
 
@@ -434,7 +434,7 @@ class CashWay extends PaymentModule
 					$order = new Order($open_orders[$ref]['id_order']);
 					$history = new OrderHistory();
 					$history->id_order = $order->id;
-					$history->changeIdOrderState(6, $order, !$order->hasInvoice());
+					$history->changeIdOrderState((int)Configuration::get('PS_OS_CANCELED'), $order, !$order->hasInvoice());
 					break;
 
 				default:
