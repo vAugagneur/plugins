@@ -1,6 +1,8 @@
 <?php
 /**
- * CashWay API wrapper library. Sourced from https://github.com/cshw/cashway-php
+ * CashWay API wrapper library.
+ *
+ * @link https://github.com/cshw/api-helpers
  *
  * @copyright 2015 Epayment Solution - CashWay (http://www.cashway.fr/)
  * @license   Apache License 2.0
@@ -9,11 +11,24 @@
 
 namespace CashWay;
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.2';
 
 const API_URL = 'https://api.cashway.fr';
 
-const ENV = 'development';
+const ENV = 'production';
+
+const PHP_MIN_VERSION = '5.4';
+
+/**
+ * Is your system PHP supported (that is, has not been EOL'd yet)?
+ * See http://php.net/releases/
+ *
+ * @return boolean
+*/
+function isPHPVersionSupported()
+{
+    return (version_compare(phpversion(), PHP_MIN_VERSION) >= 0);
+}
 
 /**
 */
@@ -141,12 +156,19 @@ class API
     }
 
 	/**
-	 * TODO: notify API about transaction, get diagnostics data.
+	 * Notify API about transaction, get diagnostics data:
+	 * about the shop, the order, the transaction.
 	*/
-	public function evaluateTransaction()
-	{
-		return null;
-	}
+    public function evaluateTransaction()
+    {
+        $payload = json_encode(array(
+            'agent'    => $this->user_agent,
+            'order'    => $this->order,
+            'customer' => $this->customer
+        ));
+
+        return $this->httpPost('/transactions/hint', $payload);
+    }
 
     /**
      * Open a confirmed CashWay transaction for the set order.
@@ -175,7 +197,7 @@ class API
     {
         $payload = json_encode(array(
             'agent'      => $this->user_agent,
-			'order_id'   => $order_id,
+            'order_id'   => $order_id,
             'email'      => $email,
             'phone'      => $phone
         ));
@@ -184,10 +206,10 @@ class API
     }
 
 
-	public function checkTransactionsForOrders($order_ids)
-	{
-		return $this->httpGet(sprintf('/shops/me/transactions'));
-	}
+    public function checkTransactionsForOrders($order_ids)
+    {
+        return $this->httpGet(sprintf('/shops/me/transactions'));
+    }
 
     public function httpPost($path, $payload)
     {
@@ -212,16 +234,16 @@ class API
 
         switch($verb) {
             case 'GET':
-				$headers = array(
-					'Accept: application/json'
-				);
+                $headers = array(
+                    'Accept: application/json'
+                );
                 $query    = http_build_query($query);
                 $transfer = cURL::GET($url . '?' . $query, $auth, $headers, $this->user_agent);
                 break;
             case 'POST':
                 $headers = array(
                     'Content-Type: application/json',
-					'Accept: application/json',
+                    'Accept: application/json',
                     'Content-Length: ' . strlen($query)
                 );
                 $transfer = cURL::POST($url, $query, $auth, $headers, $this->user_agent);
@@ -270,7 +292,7 @@ class API
 
         $this->order =  array(
             // required
-			// FIXME. This is the cart id, not the order id.
+            // FIXME. This is the cart id, not the order id.
             'id'          => $id,
             'at'          => $cart->date_add,
             'currency'    => $currency,
