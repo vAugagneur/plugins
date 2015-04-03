@@ -67,7 +67,7 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 		$country = new Country($address->id_country);
 		if ($country->iso_code != 'FR')
 			$available = array(false,
-				'This service is only available in France for the time being.');
+				$this->module->l('This service is only available in France for the time being.'));
 
 		$location = array(
 			'address' => $address->address1,
