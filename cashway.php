@@ -103,9 +103,9 @@ class CashWay extends PaymentModule
 		foreach (Language::getLanguages() as $language)
 			$order_state->name[$language['id_lang']] = 'En attente de paiement via CashWay';
 
-		$order_state->send_email = false;
+		$order_state->send_email = false; // TODO true
 		$order_state->color = 'RoyalBlue';
-		$order_state->invoice = true;
+		$order_state->invoice = false;
 		$order_state->unremovable = false;
 		$order_state->hidden = false;
 		$order_state->logable = false;
