@@ -97,46 +97,36 @@ class CashWay extends PaymentModule
 		if (Configuration::get('PS_OS_CASHWAY'))
 			return true;
 
-		$values_to_insert = array(
-			'invoice' => 1,
-			'send_email' => 0,
-			'module_name' => $this->name,
-			'color' => 'RoyalBlue',
-			'unremovable' => 0,
-			'hidden' => 0,
-			'logable' => 0,
-			'delivery' => 0,
-			'shipped' => 0,
-			'paid' => 0,
-			'deleted' => 0
-		);
+		$order_state = new OrderState();
+		$order_state->name = array();
 
-		if (!Db::getInstance()->autoExecute(_DB_PREFIX_.'order_state', $values_to_insert, 'INSERT'))
+		foreach (Language::getLanguages() as $language)
+			$order_state->name[$language['id_lang']] = 'En attente de paiement via CashWay';
+
+		$order_state->send_email = false;
+		$order_state->color = 'RoyalBlue';
+		$order_state->invoice = true;
+		$order_state->unremovable = false;
+		$order_state->hidden = false;
+		$order_state->logable = false;
+		$order_state->delivery = false;
+		$order_state->shipped = false;
+		$order_state->paid = false;
+		$order_state->deleted = false;
+
+		if ($order_state->add())
 		{
-			$this->_errors[] = $this->l('Failed to register a new order state.');
-			return false;
+			Configuration::updateValue('PS_OS_CASHWAY', $order_state->id);
+			if (!copy(dirname(__FILE__).DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'logo.png',
+						_PS_ROOT_DIR_.DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'os'.DIRECTORY_SEPARATOR.$id_order_state.'.gif'))
+			{
+				$this->_errors[] = $this->l('Failed to copy order state icon.');
+			}
+
+			return true;
 		}
 
-		$id_order_state = (int)Db::getInstance()->Insert_ID();
-		Configuration::updateValue('PS_OS_CASHWAY', $id_order_state);
-
-		$languages = Language::getLanguages(false);
-		foreach ($languages as $language)
-			Db::getInstance()->autoExecute(_DB_PREFIX_.'order_state_lang', array(
-				'id_order_state' => $id_order_state,
-				'id_lang' => $language['id_lang'],
-				'name' => 'En attente de paiement via CashWay',
-				'template' => ''
-			), 'INSERT');
-
-		if (!copy(dirname(__FILE__).DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'logo.png',
-					_PS_ROOT_DIR_.DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'os'.DIRECTORY_SEPARATOR.$id_order_state.'.gif'))
-		{
-			$this->_errors[] = $this->l('Failed to copy order state icon.');
-			return false;
-		}
-
-		return true;
+		return false;
 	}
 
 	public function uninstall()
