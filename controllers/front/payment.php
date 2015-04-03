@@ -94,6 +94,8 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->module->name.'/'
 		));
 
+		$this->context->controller->addJS('https://maps.cashway.fr/js/cashway_map.js');
+
 		$this->setTemplate('payment_execution.tpl');
 	}
 }

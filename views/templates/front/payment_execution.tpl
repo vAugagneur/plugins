@@ -79,9 +79,6 @@
 <div id="map-canvas" style="width: 100%; height: 400px;"></div>
 <input id="address" type="textbox" value="{$location.search|escape:'html'}" onsubmit="codeLocation();" />
 <input type="button" value="Trouver les points de paiement CashWay autour de cette adresse" onclick="codeLocation();" />
-<script>window.ENV = '{$env|escape}';</script>
-<script src="{$this_path_cashway|escape:'urlpathinfo'}/views/js/cashway_map.js"></script>
-
 {else}
 <p>Sorry. {$available.1|escape}
 Please select an other payment solution.</p>

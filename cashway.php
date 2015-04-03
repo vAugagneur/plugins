@@ -330,6 +330,7 @@ class CashWay extends PaymentModule
 			if (isset($params['objOrder']->reference) && !empty($params['objOrder']->reference))
 				$this->smarty->assign('reference', $params['objOrder']->reference);
 
+			$this->context->controller->addJS('https://maps.cashway.fr/js/cashway_map.js');
 		}
 		else
 			$this->smarty->assign('status', 'failed');
