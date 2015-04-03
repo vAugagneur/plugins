@@ -262,6 +262,9 @@ class CashWay extends PaymentModule
 		if (!$this->checkCurrency($params['cart']))
 			return;
 
+		if (!self::isConfiguredService())
+			return;
+
 		$this->smarty->assign(array(
 			'cart_fee' => sprintf('+ %s €',
 									number_format(\CashWay\Fee::getCartFee($params['cart']->getOrderTotal()),
@@ -270,12 +273,16 @@ class CashWay extends PaymentModule
 			'this_path_cashway' => $this->_path,
 			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
 		));
+
 		return $this->display(__FILE__, 'payment.tpl');
 	}
 
 	public function hookPaymentReturn($params)
 	{
 		if (!$this->active)
+			return;
+
+		if (!self::isConfiguredService())
 			return;
 
 		$cashway = self::getCashWayAPI();
@@ -324,6 +331,11 @@ class CashWay extends PaymentModule
 			$this->smarty->assign('status', 'failed');
 
 		return $this->display(__FILE__, 'payment_return.tpl');
+	}
+
+	public static function isConfiguredService()
+	{
+		return (null != self::getCashWayAPI());
 	}
 
 	/**
