@@ -457,7 +457,7 @@ class CashWay extends PaymentModule
 	{
 		$sql = sprintf('SELECT * FROM %sorders WHERE current_state=%d',
 						_DB_PREFIX_,
-						Configuration::get('PS_OS_CASHWAY'));
+						(int)Configuration::get('PS_OS_CASHWAY'));
 
 		$orders = Db::getInstance()->executeS($sql);
 
