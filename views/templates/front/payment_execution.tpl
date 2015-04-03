@@ -83,7 +83,7 @@
 <script src="{$this_path_cashway|escape:'urlpathinfo'}/views/js/cashway_map.js"></script>
 
 {else}
-<p>Sorry. {$available.reason|escape}
+<p>Sorry. {$available.1|escape}
 Please select an other payment solution.</p>
 {/if}
 {/if}
