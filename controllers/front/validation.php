@@ -66,11 +66,11 @@ class CashwayValidationModuleFrontController extends ModuleFrontController
 
 		$cw_res = $cashway->openTransaction();
 
-		$cw_barcode = 'failed';
+		$available = array(true, '');
 		if (array_key_exists('errors', $cw_res))
 		{
-			$cw_errors = $cw_res['errors'];
-			// FIXME: what happens then?
+			$available = array(false, $cw_res['errors'][0]['code']);
+			$cw_barcode = '-failed-';
 		}
 		else
 			$cw_barcode = $cw_res['barcode'];
@@ -79,15 +79,16 @@ class CashwayValidationModuleFrontController extends ModuleFrontController
 			'{barcode}' => $cw_barcode,
 		);
 
-		$this->module->validateOrder((int)$cart->id,
-										Configuration::get('PS_OS_CASHWAY'),
-										$total,
-										$this->module->displayName,
-										null,
-										$mail_vars,
-										(int)$currency->id,
-										false,
-										$customer->secure_key);
+		if ($cw_barcode != '-failed-')
+			$this->module->validateOrder((int)$cart->id,
+											Configuration::get('PS_OS_CASHWAY'),
+											$total,
+											$this->module->displayName,
+											null,
+											$mail_vars,
+											(int)$currency->id,
+											false,
+											$customer->secure_key);
 
 		Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id
 			.'&id_module='.(int)$this->module->id

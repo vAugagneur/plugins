@@ -285,50 +285,52 @@ class CashWay extends PaymentModule
 		if (!self::isConfiguredService())
 			return;
 
-		$cashway = self::getCashWayAPI();
-		$cw_res = $cashway->confirmTransaction(Tools::getValue('cw_barcode'),
-												$params['objOrder']->reference, null, null);
-
-		// TODO: check $cw_res error cases
-
-		$state = $params['objOrder']->getCurrentState();
-		if (in_array($state, array(Configuration::get('PS_OS_CASHWAY'),
-									Configuration::get('PS_OS_OUTOFSTOCK'),
-									Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'))))
+		$status = 'ok';
+		$barcode = Tools::getValue('cw_barcode');
+		// maybe -failed- or something valid
+		if ($barcode != '-failed-')
 		{
-			$address  = new Address($this->context->cart->id_address_delivery);
-			$location = array(
-				'address' => $address->address1,
-				'postcode' => $address->postcode,
-				'city' => $address->city,
-				'country' => $address->country
-			);
-			$location['search'] = implode(' ', $location);
+			$cashway = self::getCashWayAPI();
+			$cw_res = $cashway->confirmTransaction(Tools::getValue('cw_barcode'),
+													$params['objOrder']->reference, null, null);
 
-			$this->smarty->assign(array(
-				// FIXME. Add cart fee here.
-				'total_to_pay' => Tools::displayPrice($params['total_to_pay'],
-														$params['currencyObj'],
-														false),
-				'expires' => $cw_res['expires_at'],
-				'location' => $location,
-				'cashway_api_url' => \CashWay\API_URL,
-				'barcode' => Tools::getValue('cw_barcode'),
-				'status' => 'ok',
-				'env' => \CashWay\ENV,
-				'id_order' => $params['objOrder']->id,
-				'this_path' => $this->getPathUri(),
-				'this_path_cashway' => $this->getPathUri(),
-				'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
-			));
-
-			if (isset($params['objOrder']->reference) && !empty($params['objOrder']->reference))
-				$this->smarty->assign('reference', $params['objOrder']->reference);
-
-			$this->context->controller->addJS('https://maps.cashway.fr/js/cashway_map.js');
+			// TODO: log or report this.
+			if (array_key_exists('errors', $cw_res))
+				$status = 'failed';
 		}
 		else
-			$this->smarty->assign('status', 'failed');
+			$status = 'failed';
+
+		$address  = new Address($this->context->cart->id_address_delivery);
+		$location = array(
+			'address' => $address->address1,
+			'postcode' => $address->postcode,
+			'city' => $address->city,
+			'country' => $address->country
+		);
+		$location['search'] = implode(' ', $location);
+
+		$this->smarty->assign(array(
+			// FIXME. Add cart fee here.
+			'total_to_pay' => Tools::displayPrice($params['total_to_pay'],
+													$params['currencyObj'],
+													false),
+			'expires' => $cw_res['expires_at'],
+			'location' => $location,
+			'cashway_api_url' => \CashWay\API_URL,
+			'barcode' => $barcode,
+			'status' => $status,
+			'env' => \CashWay\ENV,
+			'id_order' => $params['objOrder']->id,
+			'this_path' => $this->getPathUri(),
+			'this_path_cashway' => $this->getPathUri(),
+			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
+		));
+
+		if (isset($params['objOrder']->reference) && !empty($params['objOrder']->reference))
+			$this->smarty->assign('reference', $params['objOrder']->reference);
+
+		$this->context->controller->addJS('https://maps.cashway.fr/js/cashway_map.js');
 
 		return $this->display(__FILE__, 'payment_return.tpl');
 	}

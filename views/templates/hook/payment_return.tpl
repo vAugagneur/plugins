@@ -62,7 +62,13 @@
 	</p>
 {else}
 	<p class="warning">
+	{if $barcode == '-failed-'}
+		{l s='The CashWay service is currently not available to register this order.' mod='cashway'}
+		{l s='Your order is intact. If you will, you may use an other payment method.' mod='cashway'}
+		<a href="/index.php?controller=order&step=3" class="exclusive_large">{l s='Choose an other payment method' mod='cashway'}</a>
+	{else}
 		{l s='We have noticed that there is a problem with your order. If you think this is an error, you can contact our' mod='cashway'}
 		<a href="{$link->getPageLink('contact', true)|escape:'html'}">{l s='customer service department.' mod='cashway'}</a>.
+	{/if}
 	</p>
 {/if}
