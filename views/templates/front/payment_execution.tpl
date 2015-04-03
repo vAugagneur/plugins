@@ -47,40 +47,43 @@
 		height="40"
 		style="margin: 0px 10px 5px 0px;" /></h3>
 
-{if $available.0}
+	{if $available.0}
 
-<form action="{$link->getModuleLink('cashway', 'validation', [], true)|escape:'html'}"
-	method="post">
+	<form action="{$link->getModuleLink('cashway', 'validation', [], true)|escape:'html'}"
+		method="post">
 
-	<ul>
-		<li><p>Votre commande s&rsquo;élève à <span id="amount" class="price">{displayPrice price=$total}</span>
-			{if $use_taxes == 1}{l s='(taxes incluses)' mod='cashway'}{/if}.</p></li>
-		{if $cart_fee > 0}
-		<li><p>En y ajoutant {displayPrice price=$cart_fee},
-			avec CashWay, vous pouvez régler en espèces vos achats.</p></li>
-		{/if}
-		<li><p>Après confirmation de votre commande,
-			vous recevrez par email et par SMS un code-barre
-			à présenter chez un des buralistes
-			présents sur la carte ci-dessous.
-			Celui pourra ainsi encaisser et valider votre paiement.
-			Votre commande sera alors immédiatement livrée.</p></li>
-		<li><p><strong>Total à payer au buraliste&nbsp;:
-			<span id="amount" class="price">{displayPrice price=$total + $cart_fee}</span>.</strong></p></li>
-	</ul>
+		<ul>
+			<li><p>Votre commande s&rsquo;élève à <span id="amount" class="price">{displayPrice price=$total}</span>
+				{if $use_taxes == 1}{l s='(taxes incluses)' mod='cashway'}{/if}.</p></li>
+			{if $cart_fee > 0}
+			<li><p>En y ajoutant {displayPrice price=$cart_fee},
+				avec CashWay, vous pouvez régler en espèces vos achats.</p></li>
+			{/if}
+			<li><p>Après confirmation de votre commande,
+				vous recevrez par email et par SMS un code-barre
+				à présenter chez un des buralistes
+				présents sur la carte ci-dessous.
+				Celui pourra ainsi encaisser et valider votre paiement.
+				Votre commande sera alors immédiatement livrée.</p></li>
+			<li><p><strong>Total à payer au buraliste&nbsp;:
+				<span id="amount" class="price">{displayPrice price=$total + $cart_fee}</span>.</strong></p></li>
+		</ul>
 
-	<p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b></p>
-	<p class="cart_navigation" id="cart_navigation">
-		<input type="submit" value="{l s='I confirm my order' mod='cashway'}" class="exclusive_large"/>
-		<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}" class="button_large">{l s='Other payment methods' mod='cashway'}</a>
-	</p>
-</form>
-
-<div id="map-canvas" style="width: 100%; height: 400px;"></div>
-<input id="address" type="textbox" value="{$location.search|escape:'html'}" onsubmit="codeLocation();" />
-<input type="button" value="Trouver les points de paiement CashWay autour de cette adresse" onclick="codeLocation();" />
-{else}
-<p>Sorry. {$available.1|escape}
-Please select an other payment solution.</p>
-{/if}
+		<p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b></p>
+		<p class="cart_navigation" id="cart_navigation">
+			<input type="submit" value="{l s='I confirm my order' mod='cashway'}" class="exclusive_large"/>
+			<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}" class="button_large">{l s='Other payment methods' mod='cashway'}</a>
+		</p>
+	</form>
+	{else}
+		<p><strong>Hélas&nbsp;: cette méthode de paiement est temporairement indisponible</strong>.
+			Nous mettons tout en œuvre pour la rétablir le plus tôt possible.
+			<span>{$available.1|escape}</span></p>
+		<p><a class="exclusive_large" href="/index.php?controller=order&step=3">Vous pouvez choisir une autre méthode</a></p>
+		<br>
+	{/if}
+	<h4>Les points de paiement présents autour de votre point de livraison&nbsp;:</h4>
+	<input id="address" type="textbox" value="{$location.search|escape:'html'}" onsubmit="codeLocation();" />
+	<input type="button" value="Trouver les points de paiement CashWay autour de cette adresse" onclick="codeLocation();" />
+	<div id="map-canvas" style="width: 100%; height: 400px;"></div>
 {/if}

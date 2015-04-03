@@ -51,12 +51,29 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 			$this->context->language->iso_code,
 			$currency[0]['iso_code']);
 
+		$available = array(true, '');
+
 		// fire & forget at this point
 		$cw_res = $cashway->evaluateTransaction();
 
-		// Limited to France for now
-		$available = array(true, '');
+		if (array_key_exists('errors', $cw_res))
+		{
+			$available = array(false);
+			switch ($cw_res['errors'][0]['code'])
+			{
+				case 'no_such_user':
+					$available[] = '<!-- CW debug: unknown user -->';
+					break;
+				case 'unavailable':
+					$available[] = '<!-- CW debug: API unavailable -->';
+					break;
+				default:
+					$available[] = '<!-- CW debug: unknown -->';
+					break;
+			}
+		}
 
+		// Limited to France for now
 		$address  = new Address($cart->id_address_delivery);
 		$country = new Country($address->id_country);
 		if ($country->iso_code != 'FR')
@@ -89,7 +106,6 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 		));
 
 		$this->context->controller->addJS('https://maps.cashway.fr/js/cashway_map.js');
-
 		$this->setTemplate('payment_execution.tpl');
 	}
 }
