@@ -172,12 +172,10 @@ class CashWay extends PaymentModule
 
 		$cashway_register_url = 'https://www.cashway.fr';
 
-		$cron_url = Tools::getShopDomain(true, true).__PS_BASE_URI__.basename(_PS_ADMIN_DIR_)
-			.'/cron_cashway_check_for_transactions.php?secure_key='.md5(_COOKIE_KEY_.Configuration::get('PS_SHOP_NAME'));
+		$cron_url = $this->context->link->getModuleLink('cashway', 'status', array('secure_key' => md5(_COOKIE_KEY_.Configuration::get('PS_SHOP_NAME'))), true);
 
 		$cron_manager_url = Tools::getShopDomain(true, true).__PS_BASE_URI__.basename(_PS_ADMIN_DIR_)
-			.'/index.php?controller=AdminModules&token='.Tools::getAdminTokenLite('AdminModules')
-			.'&configure=cronjobs&tab_module=administration&module_name=cronjobs';
+			.'/'.$this->context->link->getAdminLink('AdminModules', true).'&configure=cronjobs';
 
 		$fields_form = array(
 		array(
