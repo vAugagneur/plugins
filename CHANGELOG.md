@@ -1,5 +1,11 @@
 # Changelog for CashWay PrestaShop module
 
+## 8 avril - 0.2.0, dev version
+
+ * fix points highlighted by code audit
+ * move status update cron into new front controller
+ * manage API failures better
+ * JS map is now loaded from remote
 
 ## 31 mars - 0.1.1, dev version
 
