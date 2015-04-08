@@ -488,9 +488,14 @@ class CashWay extends PaymentModule
 		}
 
 		$orders = $cashway->checkTransactionsForOrders(array());
-		// TODO: check for error returned, return false
+		if (array_key_exists('errors', $orders))
+		{
+			\CashWay\Log::error(sprintf('Could not access CashWay API: %s', $orders['errors'][0]['code']));
+			return false;
+		}
 
-		$refs = array_map(function ($el) { return $el['shop_order_id'];
+		$refs = array_map(function ($el) {
+			return $el['shop_order_id'];
 		}, $orders['orders']);
 		$orders = array_combine($refs, array_values($orders['orders']));
 
