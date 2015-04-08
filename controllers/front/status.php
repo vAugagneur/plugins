@@ -23,15 +23,17 @@
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-if (!defined('_PS_ADMIN_DIR_'))
-	define('_PS_ADMIN_DIR_', getcwd());
-
-include(_PS_ADMIN_DIR_.'/../config/config.inc.php');
-include(_PS_MODULE_DIR_.'/cashway/cashway.php');
-
-if (Tools::getIsset('secure_key'))
+class CashwayStatusModuleFrontController extends ModuleFrontController
 {
-	$secure_key = md5(_COOKIE_KEY_.Configuration::get('PS_SHOP_NAME'));
-	if (!empty($secure_key) && $secure_key === Tools::getValue('secure_key'))
-		CashWay::checkForPayments();
+	public function initContent()
+	{
+		parent::initContent();
+		header('Content-Type: text/plain; charset=utf-8');
+		if ($this->checkAccess())
+			CashWay::checkForPayments();
+		else
+			header('HTTP/1.1 403 Forbidden');
+
+		die;
+	}
 }
