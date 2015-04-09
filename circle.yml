@@ -5,7 +5,8 @@ machine:
 dependencies:
   cache_directories:
     - 'vendor'
+    - 'bin'
 
 test:
   override:
-    - ./vendor/bin/phpcs --standard=Prestashop --colors --ignore=lib/,upgrade/ .
+    - ./bin/phpcs --standard=Prestashop --colors --ignore=lib/,upgrade/ .
