@@ -3,10 +3,11 @@ machine:
     version: '5.6.5'
 
 dependencies:
-  pre:
-    - git clone https://github.com/PrestaShop/PrestaShop-norm-validator ./vendor/PHP/CodeSniffer/Standards/Prestashop
   cache_directories:
     - './vendor'
+  override:
+    - if [[ ! -d ./vendor/PHP/CodeSniffer/Standards/Prestashop ]]; then \
+      git clone https://github.com/PrestaShop/PrestaShop-norm-validator ./vendor/PHP/CodeSniffer/Standards/Prestashop; fi
 
 test:
   override:
