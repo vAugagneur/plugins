@@ -1,6 +1,11 @@
 machine:
   php:
-    version: 5.5
+    version:
+      - 5.6.5
+
+dependencies:
+  cache_directories:
+    - 'vendor'
 
 test:
   override:
