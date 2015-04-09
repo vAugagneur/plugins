@@ -1,0 +1,7 @@
+machine:
+  php:
+    version: 5.5
+
+test:
+  override:
+    - ./vendor/bin/phpcs --standard=Prestashop --colors --ignore=lib/,upgrade/ .
