@@ -10,4 +10,4 @@ dependencies:
 
 test:
   override:
-    - phpcs --standard=./vendor/PHP/CodeSniffer/Standards/Prestashop --colors --ignore=lib/,upgrade/ .
+    - phpcs --standard=./vendor/PHP/CodeSniffer/Standards/Prestashop --colors --ignore=lib/,upgrade/ ./cashway-prestashop
