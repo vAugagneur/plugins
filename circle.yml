@@ -2,6 +2,12 @@ machine:
   php:
     version: '5.6.5'
 
+dependencies:
+  pre:
+    - git clone https://github.com/PrestaShop/PrestaShop-norm-validator ./vendor/PHP/CodeSniffer/Standards/Prestashop
+  cache_directories:
+    - './vendor'
+
 test:
   override:
-    - phpcs --standard=Prestashop --colors --ignore=lib/,upgrade/ .
+    - phpcs --standard=./vendor/PHP/CodeSniffer/Standards/Prestashop --colors --ignore=lib/,upgrade/ .
