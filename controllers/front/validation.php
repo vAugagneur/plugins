@@ -94,7 +94,9 @@ class CashwayValidationModuleFrontController extends ModuleFrontController
 
 		Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id
 			.'&id_module='.(int)$this->module->id
+			// @codingStandardsIgnoreStart
 			.'&id_order='.$this->module->currentOrder
+			// @codingStandardsIgnoreStop
 			.'&cw_barcode='.$cw_barcode
 			.'&key='.$customer->secure_key);
 	}

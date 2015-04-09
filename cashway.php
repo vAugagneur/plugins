@@ -103,7 +103,7 @@ class CashWay extends PaymentModule
 		foreach (Language::getLanguages() as $language)
 			$order_state->name[$language['id_lang']] = 'En attente de paiement via CashWay';
 
-		$order_state->send_email = false; // TODO true
+		$order_state->send_email = false;
 		$order_state->color = 'RoyalBlue';
 		$order_state->invoice = false;
 		$order_state->unremovable = false;
@@ -172,7 +172,10 @@ class CashWay extends PaymentModule
 
 		$cashway_register_url = 'https://www.cashway.fr';
 
-		$cron_url = $this->context->link->getModuleLink('cashway', 'status', array('secure_key' => md5(_COOKIE_KEY_.Configuration::get('PS_SHOP_NAME'))), true);
+		$cron_url = $this->context->link->getModuleLink('cashway',
+			'status',
+			array('secure_key' => md5(_COOKIE_KEY_.Configuration::get('PS_SHOP_NAME'))),
+			true);
 
 		$cron_manager_url = Tools::getShopDomain(true, true).__PS_BASE_URI__.basename(_PS_ADMIN_DIR_)
 			.'/'.$this->context->link->getAdminLink('AdminModules', true).'&configure=cronjobs';
