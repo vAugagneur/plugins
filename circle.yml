@@ -2,11 +2,6 @@ machine:
   php:
     version: '5.6.5'
 
-dependencies:
-  cache_directories:
-    - 'vendor'
-    - 'bin'
-
 test:
   override:
-    - ./bin/phpcs --standard=Prestashop --colors --ignore=lib/,upgrade/ .
+    - phpcs --standard=Prestashop --colors --ignore=lib/,upgrade/ .
