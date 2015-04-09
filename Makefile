@@ -1,4 +1,4 @@
-RELEASE="cashway-$(shell git tag)"
+RELEASE="cashway-$(shell git describe --tags)"
 
 localrelease:
 	git archive --prefix=cashway/ --format zip --output ${RELEASE}.zip master
