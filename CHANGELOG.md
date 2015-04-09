@@ -1,5 +1,12 @@
 # Changelog for CashWay PrestaShop module
 
+## 9 avril - 0.3.0, dev version
+
+ * removed root {validation,payment}.php out-of-sync
+   endpoints (and deprecated since PS 1.5, so breaks
+   pre 1.5 compatibility)
+ * style fixes
+
 ## 8 avril - 0.2.0, dev version
 
  * fix points highlighted by code audit
