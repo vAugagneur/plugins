@@ -383,6 +383,9 @@ class CashWay extends PaymentModule
 	*/
 	public static function checkForPayments()
 	{
+		if (!self::isConfiguredService())
+			return;
+
 		\CashWay\Log::info('== Starting CashWay background check for orders updates ==');
 		$open_orders = self::getLocalPendingOrders();
 		if (count($open_orders) == 0)

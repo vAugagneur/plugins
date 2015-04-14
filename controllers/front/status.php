@@ -29,7 +29,9 @@ class CashwayStatusModuleFrontController extends ModuleFrontController
 	{
 		parent::initContent();
 		header('Content-Type: text/plain; charset=utf-8');
-		if ($this->checkAccess())
+		if (!$this->module->active)
+			header('HTTP/1.1 404 Not Found');
+		elseif ($this->checkAccess())
 			CashWay::checkForPayments();
 		else
 			header('HTTP/1.1 403 Forbidden');
