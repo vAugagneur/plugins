@@ -196,17 +196,19 @@ class API
      *
      * @return array
     */
-    public function openTransaction()
+    public function openTransaction($force_confirm = false)
     {
-        $payload = json_encode(
-            array(
+        $payload = array(
             'agent'    => $this->user_agent,
             'order'    => $this->order,
             'customer' => $this->customer
-            )
         );
 
-        return $this->httpPost('/transactions/', $payload);
+        if ($force_confirm) {
+            $payload['confirm'] = true;
+        }
+
+        return $this->httpPost('/transactions/', json_encode($payload));
     }
 
     /**
