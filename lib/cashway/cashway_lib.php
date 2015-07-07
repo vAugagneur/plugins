@@ -202,7 +202,7 @@ class API
             'phone'      => $phone
         ));
 
-        return $this->httpPost(sprintf('/transactions/%s/confirm', $transaction_id), $payload);
+        return $this->httpPost(sprintf('/transactions/%s/confirmation', $transaction_id), $payload);
     }
 
 
