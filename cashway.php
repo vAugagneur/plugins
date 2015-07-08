@@ -331,7 +331,8 @@ class CashWay extends PaymentModule
 		if (isset($params['objOrder']->reference) && !empty($params['objOrder']->reference))
 			$this->smarty->assign('reference', $params['objOrder']->reference);
 
-		$this->context->controller->addJS('https://maps.cashway.fr/js/cashway_map.js');
+		// Nice but does not defer/async, so we inject this in the template for now
+		//$this->context->controller->addJS('https://maps.cashway.fr/js/cwm.min.js');
 
 		return $this->display(__FILE__, 'payment_return.tpl');
 	}

@@ -82,8 +82,9 @@
 		<p><a class="exclusive_large" href="/index.php?controller=order&step=3">Vous pouvez choisir une autre méthode</a></p>
 		<br>
 	{/if}
-	<h4>Les points de paiement présents autour de votre point de livraison&nbsp;:</h4>
-	<input id="address" type="textbox" value="{$location.search|escape:'html'}" onsubmit="codeLocation();" />
-	<input type="button" value="Trouver les points de paiement CashWay autour de cette adresse" onclick="codeLocation();" />
-	<div id="map-canvas" style="width: 100%; height: 400px;"></div>
+	<h4>Les points de paiement présents autour de votre adresse&nbsp;:</h4>
+	<input id="cashway-map-search" type="textbox" value="{$location.search|escape:'html'}" />
+	<input id="cashway-map-search-btn" type="button" value="Trouver les points de paiement CashWay autour de cette adresse" />
+	<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
+	<script src="https://maps.cashway.fr/js/cwm.min.js" defer async></script>
 {/if}
