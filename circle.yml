@@ -6,9 +6,9 @@ dependencies:
   cache_directories:
     - './vendor'
   override:
-    - if [[ ! -d ./vendor/PHP/CodeSniffer/Standards/Prestashop ]]; then \
+    - if [[ ! -d ./vendor/PHP/CodeSniffer/Standards/Prestashop ]]; then
       git clone https://github.com/PrestaShop/PrestaShop-norm-validator ./vendor/PHP/CodeSniffer/Standards/Prestashop; fi
 
 test:
   override:
-    - phpcs --standard=./vendor/PHP/CodeSniffer/Standards/Prestashop --colors --ignore=lib/,upgrade/,vendor/ .
+    - phpcs --standard=./vendor/PHP/CodeSniffer/Standards/Prestashop --colors --ignore=lib/,upgrade/,vendor/,tests/ .
