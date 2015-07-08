@@ -84,8 +84,8 @@ class CashWay extends PaymentModule
 		}
 
 		return (parent::install() &&
-				$this->registerHook('payment') &&
-				$this->registerHook('paymentReturn') &&
+				$this->registerHook('displayPayment') &&
+				$this->registerHook('displayPaymentReturn') &&
 				$this->installOrderState());
 	}
 
@@ -255,7 +255,7 @@ class CashWay extends PaymentModule
 		return $helper->generateForm($fields_form);
 	}
 
-	public function hookPayment($params)
+	public function hookDisplayPayment($params)
 	{
 		if (!$this->active)
 			return;
@@ -278,7 +278,7 @@ class CashWay extends PaymentModule
 		return $this->display(__FILE__, 'payment.tpl');
 	}
 
-	public function hookPaymentReturn($params)
+	public function hookDisplayPaymentReturn($params)
 	{
 		if (!$this->active)
 			return;
