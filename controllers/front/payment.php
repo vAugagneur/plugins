@@ -62,13 +62,13 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
 			switch ($cw_res['errors'][0]['code'])
 			{
 				case 'no_such_user':
-					$available[] = '<!-- CW debug: unknown user -->';
+					$available[] = ''; //'<!-- CW debug: unknown user -->';
 					break;
 				case 'unavailable':
-					$available[] = '<!-- CW debug: API unavailable -->';
+					$available[] = ''; //'<!-- CW debug: API unavailable -->';
 					break;
 				default:
-					$available[] = '<!-- CW debug: unknown -->';
+					$available[] = ''; //'<!-- CW debug: unknown -->';
 					break;
 			}
 		}
