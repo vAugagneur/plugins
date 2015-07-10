@@ -25,7 +25,7 @@
 <div class="row"><div class="col-xs-12 col-md-6">
     <p class="payment_module" style="border: 1px solid orange;">
     	<a class="cashway" href="{$link->getModuleLink('cashway', 'payment', [], true)|escape:'html'}" title="{l s='Pay with CashWay' mod='cashway'}">
-    		{$cart_fee|escape}&nbsp;: {l s='payez avec CashWay' mod='cashway'}
+            {$cart_fee|escape}&nbsp;: {l s='Payer avec CashWay' mod='cashway'}
             <br>
             <span>
             {l s='Vous payez en espèces chez un buraliste près de chez vous, la commande sera alors validée.' mod='cashway'}
