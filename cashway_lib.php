@@ -12,7 +12,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.1.2';
+const VERSION = '0.1.3';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -230,6 +230,48 @@ class API
         return $this->httpPost(sprintf('/transactions/%s/confirm', $transaction_id), $payload);
     }
 
+    /**
+     * Report a failed payment to CashWay, in order to be notified
+     * x minutes later if no subsequent order has been made.
+     *
+     * @api
+     *
+     * @param string   $order_id         order or cart id
+     * @param float    $order_amount
+     * @param string   $customer_id
+     * @param string   $customer_email
+     * @param string   $provider       that just failed
+     * @param string   $reason         of the failure
+     *
+     * @return Array
+    */
+    public function reportFailedPayment(
+        $order_id,
+        $order_amount,
+        $customer_id,
+        $customer_email,
+        $provider,
+        $reason
+    ) {
+        $payload = json_encode(
+            array(
+                'event' => 'payment_failed',
+                'created_at' => date('c'),
+                'provider' => $provider,
+                'reason' => $reason,
+                'order' => array(
+                    'id' => $order_id,
+                    'total' => $order_amount
+                ),
+                'customer' => array(
+                    'id' => $customer_id,
+                    'email' => $customer_email
+                )
+            )
+        );
+
+        return $this->httpPost('/shops/me/events', $payload);
+    }
 
     public function checkTransactionsForOrders($order_ids)
     {
