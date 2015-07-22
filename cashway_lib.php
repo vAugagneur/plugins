@@ -273,6 +273,11 @@ class API
         return $this->httpPost('/shops/me/events', $payload);
     }
 
+    public function registerAccount($params)
+    {
+        return $this->httpPost('/shops', json_encode($params));
+    }
+
     /**
      * Update account.
      * See https://help.cashway.fr/shops/#notimpl-mettre--jour-le-compte
