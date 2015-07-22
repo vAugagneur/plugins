@@ -273,6 +273,28 @@ class API
         return $this->httpPost('/shops/me/events', $payload);
     }
 
+    /**
+     * Update account.
+     * See https://help.cashway.fr/shops/#notimpl-mettre--jour-le-compte
+     *
+     * <code>
+     * $api->updateAccount(array(
+     *     'notification_url' => 'http://...',
+     *     'shared_secret' => 'ABCD'
+     * ));
+     * </code>
+     *
+     * @api
+     *
+     * @param Array $params
+     *
+     * @return Array
+    */
+    public function updateAccount($params)
+    {
+        return $this->httpPost('/shops/me', json_encode($params));
+    }
+
     public function checkTransactionsForOrders($order_ids)
     {
         return $this->httpGet(sprintf('/shops/me/transactions'));
