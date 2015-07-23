@@ -198,10 +198,10 @@ class CashWay extends PaymentModule
 				$cashway = self::getCashWayAPI();
 
 				$res = $cashway->registerAccount($params);
-				
+
 				if (isset($res['errors']))
 					foreach ($res['errors'] as $key => $value)
-						$output .= $this->displayError($value['code'].' => '.$value['message']);					
+						$output .= $this->displayError($value['code'].' => '.$value['message']);
 
 				if ($res['status'] == 'newbie')
 				{
@@ -210,7 +210,7 @@ class CashWay extends PaymentModule
 					$output .= $this->displayConfirmation($this->l('Register completed'));
 				}
 			}
-		} 
+		}
 
 		return $output.$this->renderForm();
 	}
@@ -228,7 +228,6 @@ class CashWay extends PaymentModule
 
 		$cron_manager_url = Tools::getShopDomain(true, true).__PS_BASE_URI__.basename(_PS_ADMIN_DIR_)
 			.'/'.$this->context->link->getAdminLink('AdminModules', true).'&configure=cronjobs';
-
 
 		$fields_form_registration = array(
 		array(
@@ -511,7 +510,7 @@ class CashWay extends PaymentModule
 	{
 		$new_order_status = $params['newOrderStatus'];
 
-		$order = new Order((int)$params['id_order']);		
+		$order = new Order((int)$params['id_order']);
 		if (!Validate::isLoadedObject($order))
 			return;
 
@@ -524,14 +523,14 @@ class CashWay extends PaymentModule
 			$cashway = self::getCashWayAPI();
 
 			$order_cashway = array(
-					'id' => $order->id, 
+					'id' => $order->id,
 					'total' => 0,
-					); 
+					);
 
 			$customer_cashway = array(
-					'id' => $customer->id, 
+					'id' => $customer->id,
 					'total' => $customer->email,
-					); 
+					);
 
 			$res = $cashway->reportFailedPayment($order->id, 0, $customer->id, $customer->email, $order->payment, '');
 		}
