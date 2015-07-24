@@ -1,9 +1,10 @@
-RELEASE=cashway-$(shell git describe --tags)
-RELEASE_FILE=releases/${RELEASE}.zip
+BRANCH=$(shell git symbolic-ref --short HEAD)
+TAG=$(shell git describe --tags)
+RELEASE_FILE=releases/cashway-${BRANCH}-${TAG}.zip
 
 prerelease:
 	#[[ ! -d "releases" ]] && mkdir "releases"
-	git archive --prefix=cashway/ --format zip --output ${RELEASE_FILE} master
+	git archive --prefix=cashway/ --format zip --output ${RELEASE_FILE} ${TAG}
 
 signrelease:
 	shasum -a 256 ${RELEASE_FILE} > ${RELEASE_FILE}.sha256
