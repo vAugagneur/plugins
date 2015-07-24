@@ -30,7 +30,7 @@
 		(le code barre n'est valide que jusqu'au {$expires|escape})&nbsp;:
 	</p>
 	<p>
-		<img src="{$cashway_api_url|escape}/1/barcode/{$barcode|escape:'url'}" alt="{$barcode|escape:'html'}" title="{$barcode|escape:'htmlall'}" />
+		<img src="{$cashway_api_url|escape}/1/barcode/{$barcode|escape:'url'}.png" alt="{$barcode|escape:'html'}" title="{$barcode|escape:'htmlall'}" />
 		<span style="display: block;
 					letter-spacing: 0.4rem;
 					color: black;
