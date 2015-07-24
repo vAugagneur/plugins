@@ -11,3 +11,11 @@ signrelease:
 
 cs:
 	phpcs --standard=Prestashop --colors --ignore=lib/,upgrade/,vendor/ .
+
+test_install:
+	cd tests; bundle exec rspec spec/01_install_module_spec.rb
+
+test_user:
+	cd tests; bundle exec rspec spec/02_client_use_spec.rb
+
+test: test_install test_user
