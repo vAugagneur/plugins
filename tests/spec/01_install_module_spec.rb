@@ -52,8 +52,8 @@ describe "Installation d'un nouveau module CashWay sur PrestaShop " + ENV['TEST_
 	end
 
 	it 'configure le module' do
-		find('#CASHWAY_API_KEY').set 'COUCOU la clé'
-		find('#CASHWAY_API_SECRET').set 'COUCOU le secret'
+		find('#CASHWAY_API_KEY').set ENV['API_KEY']
+		find('#CASHWAY_API_SECRET').set ENV['API_SECRET']
 		click_button 'Enregistrer'
 		expect(page).to have_content 'Clé mise à jour.'
 		expect(page).to have_content 'Secret mis à jour.'
