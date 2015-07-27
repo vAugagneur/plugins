@@ -46,7 +46,7 @@ class CashWay extends PaymentModule
 		//$this->module_key       = '';
 		$this->currencies       = true;
 		$this->currencies_mode  = 'checkbox';
-		$this->controllers      = array('payment', 'validation');
+		$this->controllers      = array('payment', 'validation', 'notification');
 		$this->is_eu_compatible = 1;
 
 		$this->ps_versions_compliancy = array('min' => '1.5');
@@ -141,7 +141,6 @@ class CashWay extends PaymentModule
 	public function getContent()
 	{
 		$output = null;
-
 		if (Tools::isSubmit('submit'.$this->name))
 		{
 			$key    = (string)Tools::getValue('CASHWAY_API_KEY');
@@ -163,6 +162,12 @@ class CashWay extends PaymentModule
 				$output .= $this->displayConfirmation($this->l('API secret updated.'));
 			}
 
+			$notification_url = $this->context->link->getModuleLink($this->name, 'notification');
+
+			$cashway = self::getCashWayAPI();
+
+			$cashway->updateAccount(array('notification_url' => $notification_url));
+
 			Configuration::updateValue('CASHWAY_PAYMENT_TEMPLATE', Tools::getValue('CASHWAY_PAYMENT_TEMPLATE'));
 		}
 
@@ -176,7 +181,7 @@ class CashWay extends PaymentModule
 			$params['country'] = Tools::getValue('country');
 			$params['company'] = Tools::getValue('company');
 			$params['siren'] = Tools::getValue('siren');
-			$params['url'] = 'http://www.test2.fr';//$this->context->shop->getBaseURL();
+			$params['url'] = $this->context->shop->getBaseURL();
 
 			if (!$params['siren'] || empty($params['siren']))
 				$params['siren'] = str_pad('', 9, '0');
@@ -207,6 +212,10 @@ class CashWay extends PaymentModule
 				{
 					Configuration::updateValue('CASHWAY_API_KEY', $res['api_key']);
 					Configuration::updateValue('CASHWAY_API_SECRET', $res['api_secret']);
+					$notification_url = $this->context->link->getModuleLink($this->name, 'notification');
+
+					$cashway->updateAccount(array('notification_url' => $notification_url));
+
 					$output .= $this->displayConfirmation($this->l('Register completed'));
 				}
 			}
@@ -442,12 +451,14 @@ class CashWay extends PaymentModule
 		return $this->display(__FILE__, 'payment.tpl');
 	}
 
+	// @codingStandardsIgnoreStart
 	// public function hookDisplayOrderConfirmation($params)
 	// {
 	// 	return $this->hookDisplayPayment($params);
 	// }
 
 	public function hookDisplayPaymentReturn($params, $id_module)
+	// @codingStandardsIgnoreStop
 	{
 		if (!$this->active)
 			return;
@@ -523,14 +534,14 @@ class CashWay extends PaymentModule
 			$cashway = self::getCashWayAPI();
 
 			$order_cashway = array(
-					'id' => $order->id,
-					'total' => 0,
-					);
+				'id' => $order->id,
+				'total' => 0,
+			);
 
 			$customer_cashway = array(
-					'id' => $customer->id,
-					'total' => $customer->email,
-					);
+				'id' => $customer->id,
+				'total' => $customer->email,
+			);
 
 			$res = $cashway->reportFailedPayment($order->id, 0, $customer->id, $customer->email, $order->payment, '');
 		}
