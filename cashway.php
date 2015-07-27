@@ -46,7 +46,7 @@ class CashWay extends PaymentModule
 		//$this->module_key       = '';
 		$this->currencies       = true;
 		$this->currencies_mode  = 'checkbox';
-		$this->controllers      = array('payment', 'validation');
+		$this->controllers      = array('payment', 'validation', 'notification');
 		$this->is_eu_compatible = 1;
 
 		$this->ps_versions_compliancy = array('min' => '1.5');
@@ -163,6 +163,14 @@ class CashWay extends PaymentModule
 				$output .= $this->displayConfirmation($this->l('API secret updated.'));
 			}
 
+			$notification_url = $this->context->link->getModuleLink($this->name, 'notification');
+			
+			$cashway = self::getCashWayAPI();
+
+			$res = $cashway->registerAccount($params);
+
+			$cashway->updateAccount(array('notification_url' => $notification_url));
+
 			Configuration::updateValue('CASHWAY_PAYMENT_TEMPLATE', Tools::getValue('CASHWAY_PAYMENT_TEMPLATE'));
 		}
 
@@ -176,7 +184,7 @@ class CashWay extends PaymentModule
 			$params['country'] = Tools::getValue('country');
 			$params['company'] = Tools::getValue('company');
 			$params['siren'] = Tools::getValue('siren');
-			$params['url'] = 'http://www.test2.fr';//$this->context->shop->getBaseURL();
+			$params['url'] = $this->context->shop->getBaseURL();
 
 			if (!$params['siren'] || empty($params['siren']))
 				$params['siren'] = str_pad('', 9, '0');
@@ -207,6 +215,7 @@ class CashWay extends PaymentModule
 				{
 					Configuration::updateValue('CASHWAY_API_KEY', $res['api_key']);
 					Configuration::updateValue('CASHWAY_API_SECRET', $res['api_secret']);
+					
 					$output .= $this->displayConfirmation($this->l('Register completed'));
 				}
 			}
