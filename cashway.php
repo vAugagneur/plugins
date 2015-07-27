@@ -141,7 +141,6 @@ class CashWay extends PaymentModule
 	public function getContent()
 	{
 		$output = null;
-
 		if (Tools::isSubmit('submit'.$this->name))
 		{
 			$key    = (string)Tools::getValue('CASHWAY_API_KEY');
