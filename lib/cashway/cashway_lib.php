@@ -12,7 +12,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.3.0';
+const VERSION = '0.3.1';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -93,6 +93,16 @@ class API
 {
     /**
      * Is $data received really signed with our $secret?
+     * See https://help.cashway.fr/shops/#recevoir-des-notifications
+     * Typical usage:
+     *
+     * <code>
+     * $headers = getallheaders();
+     * $data = file_get_contents('php://input');
+     * if (CashWay::API::isDataValid($data, $shared_secret, $headers['X-CashWay-Signature'])) {
+     *     // $data is correct
+     * }
+     * </code>
      *
      * @param string $data received $data we are verifying
      * @param string $secret shared secret between parties, used to sign $data
