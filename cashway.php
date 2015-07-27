@@ -451,12 +451,15 @@ class CashWay extends PaymentModule
 		return $this->display(__FILE__, 'payment.tpl');
 	}
 
-	// @codingStandardsIgnoreStart
-	// public function hookDisplayOrderConfirmation($params)
-	// {
-	// 	return $this->hookDisplayPayment($params);
-	// }
+	/*
+	// Pourrait être utile pour intercepter un retour d'échec de paiement
+	// mais pas de certitude que ce soit systématique avec cette méthode.
+	public function hookDisplayOrderConfirmation($params) {
+		return $this->hookDisplayPayment($params);
+	}
+	*/
 
+	// @codingStandardsIgnoreStart
 	public function hookDisplayPaymentReturn($params, $id_module)
 	// @codingStandardsIgnoreStop
 	{
