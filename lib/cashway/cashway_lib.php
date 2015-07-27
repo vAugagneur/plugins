@@ -12,7 +12,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.2.0';
+const VERSION = '0.3.0';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -91,6 +91,22 @@ class Fee
 */
 class API
 {
+    /**
+     * Is $data received really signed with our $secret?
+     *
+     * @param string $data received $data we are verifying
+     * @param string $secret shared secret between parties, used to sign $data
+     * @param string $signature received signature of $data, in the form "algo=value"
+     *
+     * @return boolean
+    */
+    public static function isDataValid($data, $secret, $signature)
+    {
+        $signature = explode('=', $signature);
+
+        return hash_hmac($signature[0], $data, $secret, false) === $signature[1];
+    }
+
     /**
      * @api
     */
