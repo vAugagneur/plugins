@@ -163,7 +163,7 @@ class CashWay extends PaymentModule
 			}
 
 			$notification_url = $this->context->link->getModuleLink($this->name, 'notification');
-			
+
 			$cashway = self::getCashWayAPI();
 
 			$cashway->updateAccount(array('notification_url' => $notification_url));
@@ -451,12 +451,14 @@ class CashWay extends PaymentModule
 		return $this->display(__FILE__, 'payment.tpl');
 	}
 
+	// @codingStandardsIgnoreStart
 	// public function hookDisplayOrderConfirmation($params)
 	// {
 	// 	return $this->hookDisplayPayment($params);
 	// }
 
 	public function hookDisplayPaymentReturn($params, $id_module)
+	// @codingStandardsIgnoreStop
 	{
 		if (!$this->active)
 			return;
@@ -532,14 +534,14 @@ class CashWay extends PaymentModule
 			$cashway = self::getCashWayAPI();
 
 			$order_cashway = array(
-					'id' => $order->id,
-					'total' => 0,
-					);
+				'id' => $order->id,
+				'total' => 0,
+			);
 
 			$customer_cashway = array(
-					'id' => $customer->id,
-					'total' => $customer->email,
-					);
+				'id' => $customer->id,
+				'total' => $customer->email,
+			);
 
 			$res = $cashway->reportFailedPayment($order->id, 0, $customer->id, $customer->email, $order->payment, '');
 		}

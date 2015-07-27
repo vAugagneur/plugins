@@ -28,18 +28,35 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 {
 	public function postProcess()
 	{
-		switch (Tools::getValue('event')) {
+		switch (Tools::getValue('event'))
+		{
 			case 'conversion_expired':
 				$order = new Order((int)Tools::getValue('order_id'));
 				if (!Validate::isLoadedObject($order))
 					break;
-				
-				$customer = new Customer($order->id_customer);
-				$reorder_url = $this->context->link->getPageLink('order', true, $this->context->language->id, array('submitReorder' => '1', 'id_order' => (int)$order->id));
-				Mail::Send($this->context->language->id, 'conversion_expired', Mail::l('', $this->context->language->id), array('{reorder_url}' => $reorder_url), $customer->email, null, null, null, null, null, dirname(__FILE__).'/mails/', false, $this->context->shop->id);
 
+				$customer = new Customer($order->id_customer);
+				$reorder_url = $this->context->link->getPageLink('order',
+					true,
+					$this->context->language->id,
+					array('submitReorder' => '1',
+						'id_order' => (int)$order->id));
+
+				Mail::Send($this->context->language->id,
+					'conversion_expired',
+					Mail::l('', $this->context->language->id),
+					array('{reorder_url}' => $reorder_url),
+					$customer->email,
+					null,
+					null,
+					null,
+					null,
+					null,
+					dirname(__FILE__).'/mails/',
+					false,
+					$this->context->shop->id);
 				break;
-			
+
 			default:
 				# code...
 				break;
