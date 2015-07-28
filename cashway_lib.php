@@ -360,12 +360,16 @@ class API
         }
 
         $ret  = null;
+        $auth = null;
         $url  = $this->api_base_url . $path;
-        $auth = implode(
-            ':',
-            array($this->conf['API_KEY'],
-                                   $this->conf['API_SECRET'])
-        );
+
+        if ($this->conf['API_KEY'] != '') {
+            $auth = implode(
+                ':',
+                array($this->conf['API_KEY'],
+                      $this->conf['API_SECRET'])
+            );
+        }
 
         switch($verb) {
             case 'GET':
