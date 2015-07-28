@@ -214,6 +214,7 @@ class CashWay extends PaymentModule
 					Configuration::updateValue('CASHWAY_API_SECRET', $res['api_secret']);
 					$notification_url = $this->context->link->getModuleLink($this->name, 'notification');
 
+					$cashway = self::getCashWayAPI();
 					$cashway->updateAccount(array('notification_url' => $notification_url));
 
 					$output .= $this->displayConfirmation($this->l('Register completed'));
@@ -552,21 +553,24 @@ class CashWay extends PaymentModule
 
 	public static function isConfiguredService()
 	{
-		return (null != self::getCashWayAPI());
+		return (Configuration::get('CASHWAY_API_KEY') &&
+			Configuration::get('CASHWAY_API_SECRET'));
 	}
 
 	/**
 	*/
 	public static function getCashWayAPI()
 	{
-		if (Configuration::get('CASHWAY_API_KEY') && Configuration::get('CASHWAY_API_SECRET'))
-			return new \Cashway\API(array(
-				'API_KEY' => Configuration::get('CASHWAY_API_KEY'),
-				'API_SECRET' => Configuration::get('CASHWAY_API_SECRET'),
-				'USER_AGENT' => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_
-			));
+		$options = array(
+			'USER_AGENT' => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_
+		);
 
-		return null;
+		if (self::isConfiguredService()) {
+			$options['API_KEY']    = Configuration::get('CASHWAY_API_KEY');
+			$options['API_SECRET'] = Configuration::get('CASHWAY_API_SECRET');
+		}
+
+		return new \Cashway\API($options);
 	}
 
 	public function checkCurrency($cart)
@@ -700,13 +704,13 @@ class CashWay extends PaymentModule
 	*/
 	public static function getRemoteOrderStatus()
 	{
-		$cashway = self::getCashWayAPI();
-		if (is_null($cashway))
+		if (!self::isConfiguredService())
 		{
-			\CashWay\Log::error('Could not access CashWay API.');
+			\CashWay\Log::error('Service is not configured.');
 			return false;
 		}
 
+		$cashway = self::getCashWayAPI();
 		$orders = $cashway->checkTransactionsForOrders(array());
 		if (array_key_exists('errors', $orders))
 		{
