@@ -423,6 +423,7 @@ class API
      *
      * @return void
     */
+    // @codingStandardsIgnoreLine
     private function setOrder_prestashop($id, $cart, $customer, $language, $currency)
     {
         $address = new \AddressCore($cart->id_address_delivery);
@@ -476,6 +477,7 @@ class API
 /**
  * Simple cURL wrapper.
 */
+// @codingStandardsIgnoreLine
 class cURL
 {
     /**
