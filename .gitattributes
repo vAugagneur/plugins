@@ -1,3 +1,4 @@
 Makefile export-ignore
 .editorconfig export-ignore
 tests export-ignore
+releases export-ignore
