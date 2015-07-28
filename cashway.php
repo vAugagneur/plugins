@@ -350,6 +350,42 @@ class CashWay extends PaymentModule
 							'id' => 'key'
 						)
 					),
+					array(
+						'type' => 'switch',
+						'label' => $this->l('Send email'),
+						'name' => 'CASHWAY_SEND_EMAIL',
+						'is_bool' => true,
+						'values' => array(
+									array(
+										'id' => 'active_on',
+										'value' => 1,
+										'label' => $this->l('Enabled')
+									),
+									array(
+										'id' => 'active_off',
+										'value' => 0,
+										'label' => $this->l('Disabled')
+									)
+								),
+					),
+					array(
+						'type' => 'switch',
+						'label' => $this->l('Use staging'),
+						'name' => 'CASHWAY_USE_STAGING',
+						'is_bool' => true,
+						'values' => array(
+									array(
+										'id' => 'active_on',
+										'value' => 1,
+										'label' => $this->l('Enabled')
+									),
+									array(
+										'id' => 'active_off',
+										'value' => 0,
+										'label' => $this->l('Disabled')
+									)
+								),
+						),
 				),
 				'submit' => array(
 					'title' => $this->l('Save'),
@@ -568,6 +604,7 @@ class CashWay extends PaymentModule
 		if (self::isConfiguredService()) {
 			$options['API_KEY']    = Configuration::get('CASHWAY_API_KEY');
 			$options['API_SECRET'] = Configuration::get('CASHWAY_API_SECRET');
+			$options['USE_STAGING'] = Configuration::get('CASHWAY_USE_STAGING');
 		}
 
 		return new \Cashway\API($options);
