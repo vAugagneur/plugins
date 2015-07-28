@@ -28,7 +28,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	public function postProcess()
 	{
 		$this->getValidPayload('php://input');
-		$handler = $this->_snakeToCamel('on_' + $headers['X-CashWay-Event']);
+		$handler = $this->snakeToCamel('on_' . $this->headers['X-CashWay-Event']);
 
 		method_exists($this, $handler) ?
 			$this->$handler() :
