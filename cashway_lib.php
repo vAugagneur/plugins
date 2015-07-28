@@ -363,7 +363,7 @@ class API
         $auth = null;
         $url  = $this->api_base_url . $path;
 
-        if ($this->conf['API_KEY'] != '') {
+        if (isset($this->conf['API_KEY']) && $this->conf['API_KEY'] != '') {
             $auth = implode(
                 ':',
                 array($this->conf['API_KEY'],
