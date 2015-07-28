@@ -27,10 +27,8 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 {
 	public function postProcess()
 	{
-		header('Content-Type: application/json; charset=utf-8');
-
 		$this->getValidPayload('php://input');
-		$handler = $this->_snakeToCamel('on_' + $headers['X-CashWay-Event']);
+		$handler = $this->snakeToCamel('on_' . $this->headers['X-CashWay-Event']);
 
 		method_exists($this, $handler) ?
 			$this->$handler() :
@@ -108,10 +106,14 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 		$this->headers = getallheaders();
 
 		$data = file_get_contents($file);
-		$signature = $this->headers['X-CashWay-Signature'];
 
-		if ($signature == 'none')
-			$this->terminateReply(400, 'A signature is required.');
+		if (!array_key_exists('X-CashWay-Signature', $this->headers))
+			$this->terminateReply(400, 'A signature header is required.');
+
+		$signature = trim($this->headers['X-CashWay-Signature']);
+
+		if ($signature == 'none' || $signature == '')
+			$this->terminateReply(400, 'A real signature is required.');
 
 		if (!\CashWay\API::isDataValid($data, Configuration::get('CASHWAY_SHARED_SECRET'), $signature))
 			$this->terminateReply(400, 'Payload signature does not match.');
@@ -131,7 +133,8 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 			400 => array('400 Bad Request', false)
 		);
 
-		header('HTTP/1.1 ' + $codes[$code][0], true, $code);
+		http_response_code($code);
+		header('Content-Type: application/json; charset=utf-8');
 
 		echo json_encode(array(
 			'status'  => $codes[$code][1] ? 'ok' : 'error',
