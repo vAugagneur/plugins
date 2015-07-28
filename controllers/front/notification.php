@@ -30,7 +30,9 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	{
 		$headers = getallheaders();
 		$data = file_get_contents('php://input');
-		if (!\CashWay\API::isDataValid($data, $shared_secret, $headers['X-CashWay-Signature']))
+		if (!\CashWay\API::isDataValid($data,
+				Configuration::get('CASHWAY_SHARED_SECRET'),
+				$headers['X-CashWay-Signature']))
 			exit;
 
 		switch (Tools::getValue('event'))

@@ -87,7 +87,13 @@ class CashWay extends PaymentModule
 				$this->registerHook('displayPayment') &&
 				$this->registerHook('displayPaymentReturn') &&
 				$this->registerHook('actionOrderStatusUpdate') &&
+				$this->installDefaultValues() &&
 				$this->installOrderState());
+	}
+
+	private function installDefaultValues()
+	{
+		Configuration::updateValue('CASHWAY_SHARED_SECRET', bin2hex(openssl_random_pseudo_bytes(24)));
 	}
 
 	/**
@@ -166,7 +172,10 @@ class CashWay extends PaymentModule
 
 			$cashway = self::getCashWayAPI();
 
-			$cashway->updateAccount(array('notification_url' => $notification_url));
+			$cashway->updateAccount(array(
+				'notification_url' => $notification_url,
+				'shared_secret' => Configuration::get('CASHWAY_SHARED_SECRET')
+			));
 
 			Configuration::updateValue('CASHWAY_PAYMENT_TEMPLATE', Tools::getValue('CASHWAY_PAYMENT_TEMPLATE'));
 			Configuration::updateValue('CASHWAY_SEND_EMAIL', Tools::getValue('CASHWAY_SEND_EMAIL'));
@@ -217,7 +226,10 @@ class CashWay extends PaymentModule
 					$notification_url = $this->context->link->getModuleLink($this->name, 'notification');
 
 					$cashway = self::getCashWayAPI();
-					$cashway->updateAccount(array('notification_url' => $notification_url));
+					$cashway->updateAccount(array(
+						'notification_url' => $notification_url,
+						'shared_secret' => Configuration::get('CASHWAY_SHARED_SECRET')
+					));
 
 					$output .= $this->displayConfirmation($this->l('Register completed'));
 				}
