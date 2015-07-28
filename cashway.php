@@ -414,11 +414,7 @@ class CashWay extends PaymentModule
 				'description' =>
 					'<p>'.sprintf($this->l('Get your CashWay API credentials by registering on %s.'),
 						sprintf('<a href="%s" target="blank">%s</a>', $cashway_register_url, $cashway_register_url))
-					.'</p><p>'
-						.sprintf($this->l('Please make sure a Cron task calls this address about every 2 hours to update order payment status:')
-						.sprintf('<br><textarea onclick="this.focus();this.select();" readonly>%s</textarea>', $cron_url))
-						.'</p><p>'.sprintf($this->l('You may do so using PrestaShop %sCron Task Manager%s.'),
-								'<a href="'.$cron_manager_url.'">', '</a>').'</p>'
+					.'</p>'
 			)
 		));
 
