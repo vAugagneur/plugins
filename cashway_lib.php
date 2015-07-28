@@ -490,15 +490,17 @@ class cURL
     */
     public static function GET($url, $auth, $headers, $user_agent)
     {
-        return self::curlDo(
-            $url,
-            array(
-                CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_USERAGENT  => $user_agent,
-                CURLOPT_HTTPAUTH   => CURLAUTH_BASIC,
-                CURLOPT_USERPWD    => $auth
-            )
+        $opts = array(
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_USERAGENT  => $user_agent
         );
+
+        if (null !== $auth) {
+            $opts[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
+            $opts[CURLOPT_USERPWD]  = $auth;
+        }
+
+        return self::curlDo($url, $opts);
     }
 
     /**
@@ -514,17 +516,19 @@ class cURL
     */
     public static function POST($url, $payload, $auth, $headers, $user_agent)
     {
-        return self::curlDo(
-            $url,
-            array(
-                CURLOPT_POST       => true,
-                CURLOPT_POSTFIELDS => $payload,
-                CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_USERAGENT  => $user_agent,
-                CURLOPT_HTTPAUTH   => CURLAUTH_BASIC,
-                CURLOPT_USERPWD    => $auth
-            )
+        $opts = array(
+            CURLOPT_POST       => true,
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_USERAGENT  => $user_agent,
         );
+
+        if (null !== $auth) {
+            $opts[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
+            $opts[CURLOPT_USERPWD]  = $auth;
+        }
+
+        return self::curlDo($url, $opts);
     }
 
     public static function curlDo($url, $options)
