@@ -214,6 +214,7 @@ class CashWay extends PaymentModule
 					Configuration::updateValue('CASHWAY_API_SECRET', $res['api_secret']);
 					$notification_url = $this->context->link->getModuleLink($this->name, 'notification');
 
+					$cashway = self::getCashWayAPI();
 					$cashway->updateAccount(array('notification_url' => $notification_url));
 
 					$output .= $this->displayConfirmation($this->l('Register completed'));
