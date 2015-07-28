@@ -106,10 +106,14 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 		$this->headers = getallheaders();
 
 		$data = file_get_contents($file);
-		$signature = $this->headers['X-CashWay-Signature'];
 
-		if ($signature == 'none')
-			$this->terminateReply(400, 'A signature is required.');
+		if (!array_key_exists('X-CashWay-Signature', $this->headers))
+			$this->terminateReply(400, 'A signature header is required.');
+
+		$signature = trim($this->headers['X-CashWay-Signature']);
+
+		if ($signature == 'none' || $signature == '')
+			$this->terminateReply(400, 'A real signature is required.');
 
 		if (!\CashWay\API::isDataValid($data, Configuration::get('CASHWAY_SHARED_SECRET'), $signature))
 			$this->terminateReply(400, 'Payload signature does not match.');
