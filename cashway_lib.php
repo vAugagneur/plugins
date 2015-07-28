@@ -14,7 +14,9 @@ namespace CashWay;
 
 const VERSION = '0.3.1';
 
-const API_URL = 'https://api-staging.cashway.fr';
+const API_URL = 'https://api.cashway.fr';
+
+const API_URL_STAGING = 'https://api-staging.cashway.fr';
 
 const ENV = 'production';
 
@@ -160,12 +162,22 @@ class API
      * scheme, host, port, base path, version),
      * depending on context.
      *
+     * Precedence is: conf['API_URL'] > conf['API_URL_STAGING'] > self::API_URL.
+     *
      * @return String
     */
     private function getApiBaseUrl()
     {
-        $host    = isset($this->conf['API_URL']) ? $this->conf['API_URL'] : API_URL;
         $version = '1';
+        $host    = API_URL;
+
+        if (isset($this->conf['USE_STAGING']) && $this->conf['USE_STAGING']) {
+            $host = API_URL_STAGING;
+        }
+
+        if (isset($this->conf['API_URL'])) {
+            $host = $this->conf['API_URL'];
+        }
 
         return sprintf('%s/%s', $host, $version);
     }
