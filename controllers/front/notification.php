@@ -36,8 +36,8 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 		switch (Tools::getValue('event'))
 		{
 			case 'conversion_expired':
-				
-				if (!Configuration::get('CASHWAY_SEND_EMAIL'))	
+
+				if (!Configuration::get('CASHWAY_SEND_EMAIL'))
 					break;
 
 				$order = new Order((int)Tools::getValue('order_id'));
