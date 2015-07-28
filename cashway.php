@@ -94,6 +94,8 @@ class CashWay extends PaymentModule
 	private function installDefaultValues()
 	{
 		Configuration::updateValue('CASHWAY_SHARED_SECRET', bin2hex(openssl_random_pseudo_bytes(24)));
+
+		return true;
 	}
 
 	/**
