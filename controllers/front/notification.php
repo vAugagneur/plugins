@@ -27,8 +27,6 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 {
 	public function postProcess()
 	{
-		header('Content-Type: application/json; charset=utf-8');
-
 		$this->getValidPayload('php://input');
 		$handler = $this->_snakeToCamel('on_' + $headers['X-CashWay-Event']);
 
@@ -131,7 +129,8 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 			400 => array('400 Bad Request', false)
 		);
 
-		header('HTTP/1.1 ' + $codes[$code][0], true, $code);
+		http_response_code($code);
+		header('Content-Type: application/json; charset=utf-8');
 
 		echo json_encode(array(
 			'status'  => $codes[$code][1] ? 'ok' : 'error',
