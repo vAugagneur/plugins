@@ -12,7 +12,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.4.0';
+const VERSION = '0.4.1';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -363,7 +363,7 @@ class API
         $auth = null;
         $url  = $this->api_base_url . $path;
 
-        if ($this->conf['API_KEY'] != '') {
+        if (isset($this->conf['API_KEY']) && $this->conf['API_KEY'] != '') {
             $auth = implode(
                 ':',
                 array($this->conf['API_KEY'],
@@ -423,6 +423,7 @@ class API
      *
      * @return void
     */
+    // @codingStandardsIgnoreLine
     private function setOrder_prestashop($id, $cart, $customer, $language, $currency)
     {
         $address = new \AddressCore($cart->id_address_delivery);
@@ -476,6 +477,7 @@ class API
 /**
  * Simple cURL wrapper.
 */
+// @codingStandardsIgnoreLine
 class cURL
 {
     /**
@@ -490,15 +492,17 @@ class cURL
     */
     public static function GET($url, $auth, $headers, $user_agent)
     {
-        return self::curlDo(
-            $url,
-            array(
-                CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_USERAGENT  => $user_agent,
-                CURLOPT_HTTPAUTH   => CURLAUTH_BASIC,
-                CURLOPT_USERPWD    => $auth
-            )
+        $opts = array(
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_USERAGENT  => $user_agent
         );
+
+        if (null !== $auth) {
+            $opts[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
+            $opts[CURLOPT_USERPWD]  = $auth;
+        }
+
+        return self::curlDo($url, $opts);
     }
 
     /**
@@ -514,17 +518,19 @@ class cURL
     */
     public static function POST($url, $payload, $auth, $headers, $user_agent)
     {
-        return self::curlDo(
-            $url,
-            array(
-                CURLOPT_POST       => true,
-                CURLOPT_POSTFIELDS => $payload,
-                CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_USERAGENT  => $user_agent,
-                CURLOPT_HTTPAUTH   => CURLAUTH_BASIC,
-                CURLOPT_USERPWD    => $auth
-            )
+        $opts = array(
+            CURLOPT_POST       => true,
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_USERAGENT  => $user_agent,
         );
+
+        if (null !== $auth) {
+            $opts[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
+            $opts[CURLOPT_USERPWD]  = $auth;
+        }
+
+        return self::curlDo($url, $opts);
     }
 
     public static function curlDo($url, $options)

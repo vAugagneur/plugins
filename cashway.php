@@ -169,6 +169,8 @@ class CashWay extends PaymentModule
 			$cashway->updateAccount(array('notification_url' => $notification_url));
 
 			Configuration::updateValue('CASHWAY_PAYMENT_TEMPLATE', Tools::getValue('CASHWAY_PAYMENT_TEMPLATE'));
+			Configuration::updateValue('CASHWAY_SEND_EMAIL', Tools::getValue('CASHWAY_SEND_EMAIL'));
+			Configuration::updateValue('CASHWAY_USE_STAGING', Tools::getValue('CASHWAY_USE_STAGING'));
 		}
 
 		if (Tools::isSubmit('submitRegister'))
@@ -450,6 +452,8 @@ class CashWay extends PaymentModule
 			'CASHWAY_API_KEY' => Tools::getValue('CASHWAY_API_KEY', Configuration::get('CASHWAY_API_KEY')),
 			'CASHWAY_API_SECRET' => Tools::getValue('CASHWAY_API_SECRET', Configuration::get('CASHWAY_API_SECRET')),
 			'CASHWAY_PAYMENT_TEMPLATE' => Tools::getValue('CASHWAY_PAYMENT_TEMPLATE', Configuration::get('CASHWAY_PAYMENT_TEMPLATE')),
+			'CASHWAY_SEND_EMAIL' => Tools::getValue('CASHWAY_SEND_EMAIL', Configuration::get('CASHWAY_SEND_EMAIL')),
+			'CASHWAY_USE_STAGING' => Tools::getValue('CASHWAY_USE_STAGING', Configuration::get('CASHWAY_USE_STAGING')),
 			'name' => Tools::getValue('name'),
 			'email' => Tools::getValue('email'),
 			'phone' => Tools::getValue('phone'),
@@ -598,13 +602,13 @@ class CashWay extends PaymentModule
 	public static function getCashWayAPI()
 	{
 		$options = array(
-			'USER_AGENT' => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_
+			'USER_AGENT' => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_,
+			'USE_STAGING' => Configuration::get('CASHWAY_USE_STAGING'),
 		);
 
 		if (self::isConfiguredService()) {
 			$options['API_KEY']    = Configuration::get('CASHWAY_API_KEY');
 			$options['API_SECRET'] = Configuration::get('CASHWAY_API_SECRET');
-			$options['USE_STAGING'] = Configuration::get('CASHWAY_USE_STAGING');
 		}
 
 		return new \Cashway\API($options);
