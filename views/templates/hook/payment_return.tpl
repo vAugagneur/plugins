@@ -24,21 +24,14 @@
 
 {if $status == 'ok'}
 
-	<p>Pour régler les <span class="price"><strong>{$total_to_pay|escape}</strong></span> de votre commande,
+	<p>Pour régler les <span class="price">{$total_to_pay|escape} {$cart_fee|escape}</span> de votre commande,
+
 		vous pouvez maintenant vous rendre dans un des points de paiement
-		indiqués sur la carte ci-dessous, muni du code barre suivant, dans les 3 jours
-		(le code barre n'est valide que jusqu'au {$expires|escape})&nbsp;:
+		indiqués sur la carte ci-dessous, muni du code suivant : <code>{$barcode|escape:'htmlall'|substr:7:15|wordwrap:3:' ':true}</code>
+		(ce code n'est valide que jusqu'au {$expires|date_format:"%A %e %B"}
+		à {$expires|date_format:"%H"}h).
 	</p>
-	<p>
-		<img id="cashway-barcode-img" src="{$cashway_api_url|escape}/1/barcode/{$barcode|escape:'url'}.png" alt="{$barcode|escape:'html'}" title="{$barcode|escape:'htmlall'}" />
-		<span id="cashway-barcode-label" style="display: block;
-					letter-spacing: 0.4rem;
-					color: black;
-					font-family: courier, mono;
-					font-size: 1.6rem;
-					align: center;">
-			{$barcode|escape:'htmlall'}</span>
-	</p>
+	<p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a>.</p>
 
 	<p>
 	{if !isset($reference)}

@@ -56,23 +56,22 @@
 			<li><p>Votre commande s&rsquo;élève à <span id="amount" class="price">{displayPrice price=$total}</span>
 				{if $use_taxes == 1}{l s='(taxes incluses)' mod='cashway'}{/if}.</p></li>
 			{if $cart_fee > 0}
-			<li><p>En y ajoutant {displayPrice price=$cart_fee},
-				avec CashWay, vous pouvez régler en espèces vos achats.</p></li>
+			<li><p>Frais destinés à votre buraliste&nbsp;: {displayPrice price=$cart_fee}.</p></li>
 			{/if}
 			<li><p>Après confirmation de votre commande,
-				vous recevrez par email et par SMS un code-barre
+				vous recevrez par email et par SMS un code
 				à présenter chez un des buralistes
-				présents sur la carte ci-dessous.
-				Celui pourra ainsi encaisser et valider votre paiement.
-				Votre commande sera alors immédiatement livrée.</p></li>
+				présents sur la carte ci-dessous.</p>
+				<p>Celui pourra ainsi encaisser et valider votre paiement.</p>
+				<p>Votre commande sera alors immédiatement traitée par nos services.</p></li>
 			<li><p><strong>Total à payer au buraliste&nbsp;:
 				<span id="amount" class="price">{displayPrice price=$total + $cart_fee}</span>.</strong></p></li>
 		</ul>
 
 		<p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b></p>
 		<p class="cart_navigation" id="cart_navigation">
-			<input type="submit" value="{l s='I confirm my order' mod='cashway'}" class="exclusive_large"/>
-			<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}" class="button_large">{l s='Other payment methods' mod='cashway'}</a>
+			<input type="image" src="{$this_path_cashway|escape:'urlpathinfo'}/views/img/cashway-confirm.png" alt="{l s='I confirm my order' mod='cashway'}"/>
+			<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}">{l s='Other payment methods' mod='cashway'}</a>
 		</p>
 	</form>
 	{else}

@@ -30,7 +30,7 @@ require dirname(__FILE__).'/lib/cashway/cashway_lib.php';
 
 class CashWay extends PaymentModule
 {
-	const VERSION = '0.5.1';
+	const VERSION = '0.5.2';
 
 	/**
 	*/
@@ -39,7 +39,7 @@ class CashWay extends PaymentModule
 		$this->name             = 'cashway';
 		$this->tab              = 'payments_gateways';
 		// FIXME: should use self::VERSION here but https://validator.prestashop.com doesn't see to like it...
-		$this->version          = '0.5.1';
+		$this->version          = '0.5.2';
 		$this->author           = 'CashWay';
 		$this->need_instance    = 1;
 		$this->bootstrap        = true;
@@ -510,9 +510,7 @@ class CashWay extends PaymentModule
 	}
 	*/
 
-	// @codingStandardsIgnoreStart
-	public function hookDisplayPaymentReturn($params, $id_module)
-	// @codingStandardsIgnoreStop
+	public function hookDisplayPaymentReturn($params)
 	{
 		if (!$this->active)
 			return;
@@ -538,10 +536,10 @@ class CashWay extends PaymentModule
 
 		$address  = new Address($this->context->cart->id_address_delivery);
 		$location = array(
-			'address' => $address->address1,
+			'address'  => $address->address1,
 			'postcode' => $address->postcode,
-			'city' => $address->city,
-			'country' => $address->country
+			'city'     => $address->city,
+			'country'  => $address->country
 		);
 		$location['search'] = implode(' ', $location);
 
@@ -550,6 +548,8 @@ class CashWay extends PaymentModule
 			'total_to_pay' => Tools::displayPrice($params['total_to_pay'],
 													$params['currencyObj'],
 													false),
+			'cart_fee' => sprintf('+ %s €',
+				number_format(\CashWay\Fee::getCartFee($params['total_to_pay']), 0, ',', '&nbsp;')),
 			'expires' => $cw_res['expires_at'],
 			'location' => $location,
 			'cashway_api_url' => \CashWay\API_URL,

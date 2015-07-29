@@ -62,7 +62,7 @@ describe "Test d'une première commande sur " + ENV['TEST_SERVER'] do
 	it "consulte la marche à suivre" do
 		expect(page).to have_content 'Confirmation de commande'
 		expect(page).to have_content 'vous pouvez maintenant vous rendre dans un des points de paiement indiqués sur la carte ci-dessous'
-		expect(page).to have_content 'Votre commande sera validée dès validation du paiement par le bureau de paiement.'
+		expect(page).to have_content 'Votre commande sera validée dès validation du paiement par le distributeur.'
 		expect(page).to have_content 'Veuillez bien noter et conserver la référence de la commande'
 
 		barcode = find('#cashway-barcode-label').text
