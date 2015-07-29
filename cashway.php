@@ -510,9 +510,7 @@ class CashWay extends PaymentModule
 	}
 	*/
 
-	// @codingStandardsIgnoreStart
-	public function hookDisplayPaymentReturn($params, $id_module)
-	// @codingStandardsIgnoreStop
+	public function hookDisplayPaymentReturn($params)
 	{
 		if (!$this->active)
 			return;
