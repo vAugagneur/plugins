@@ -24,7 +24,8 @@
 
 {if $status == 'ok'}
 
-	<p>Pour régler les <span class="price"><strong>{$total_to_pay|escape}</strong></span> de votre commande,
+	<p>Pour régler les <span class="price">{$total_to_pay|escape} {$cart_fee|escape}</span> de votre commande,
+
 		vous pouvez maintenant vous rendre dans un des points de paiement
 		indiqués sur la carte ci-dessous, muni du code barre suivant, dans les 3 jours
 		(le code barre n'est valide que jusqu'au {$expires|escape})&nbsp;:

@@ -548,6 +548,8 @@ class CashWay extends PaymentModule
 			'total_to_pay' => Tools::displayPrice($params['total_to_pay'],
 													$params['currencyObj'],
 													false),
+			'cart_fee' => sprintf('+ %s €',
+				number_format(\CashWay\Fee::getCartFee($params['total_to_pay']), 0, ',', '&nbsp;')),
 			'expires' => $cw_res['expires_at'],
 			'location' => $location,
 			'cashway_api_url' => \CashWay\API_URL,
