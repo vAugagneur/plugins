@@ -536,10 +536,10 @@ class CashWay extends PaymentModule
 
 		$address  = new Address($this->context->cart->id_address_delivery);
 		$location = array(
-			'address' => $address->address1,
+			'address'  => $address->address1,
 			'postcode' => $address->postcode,
-			'city' => $address->city,
-			'country' => $address->country
+			'city'     => $address->city,
+			'country'  => $address->country
 		);
 		$location['search'] = implode(' ', $location);
 
