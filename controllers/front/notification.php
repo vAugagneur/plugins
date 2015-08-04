@@ -28,7 +28,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	public function postProcess()
 	{
 		$this->getValidPayload('php://input');
-		$handler = $this->snakeToCamel('on_'.$this->headers['X-CashWay-Event']);
+		$handler = $this->snakeToCamel('on_'.$this->headers['x-cashway-event']);
 
 		method_exists($this, $handler) ?
 			$this->$handler() :
@@ -79,17 +79,32 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	private function onTransactionPaid()
 	{
 		// FIXME, port code from this function directly here.
-		$this->checkForPayments();
+		$this->onGenericCheck();
 	}
 
 	private function onTransactionExpired()
 	{
-		$this->checkForPayments();
+		$this->onGenericCheck();
 	}
 
 	private function onTransactionConfirmed()
 	{
-		$this->checkForPayments();
+		$this->onGenericCheck();
+	}
+
+	private function onStatusCheck()
+	{
+		$this->onGenericCheck();
+	}
+
+	private function onGenericCheck()
+	{
+		ob_start();
+		CashWay::checkForPayments();
+		$this->terminateReply(200, array(
+			'fn' => 'checkForPayments',
+			'log' => explode("\n", ob_get_clean())
+		));
 	}
 
 	/**
@@ -103,14 +118,15 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	*/
 	private function getValidPayload($file)
 	{
-		$this->headers = getallheaders();
+		$this->headers = array_change_key_case(getallheaders(), CASE_LOWER);
 
 		$data = file_get_contents($file);
+		$hkey = 'x-cashway-signature';
 
-		if (!array_key_exists('X-CashWay-Signature', $this->headers))
+		if (!array_key_exists($hkey, $this->headers))
 			$this->terminateReply(400, 'A signature header is required.');
 
-		$signature = trim($this->headers['X-CashWay-Signature']);
+		$signature = trim($this->headers[$hkey]);
 
 		if ($signature == 'none' || $signature == '')
 			$this->terminateReply(400, 'A real signature is required.');
@@ -128,6 +144,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	private function terminateReply($code, $message)
 	{
 		$codes = array(
+			200 => array('200 OK',          true),
 			201 => array('201 Created',     true),
 			202 => array('202 Accepted',    true),
 			400 => array('400 Bad Request', false)

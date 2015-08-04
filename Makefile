@@ -2,6 +2,10 @@ BRANCH=$(shell git symbolic-ref --short HEAD)
 TAG=$(shell git describe --tags)
 RELEASE_FILE=releases/cashway-${BRANCH}-${TAG}.zip
 
+usage:
+	@echo "Available targets:"
+	@cat Makefile | grep "^[A-z]" | awk '{print " - "$$1}' | sed "s/://g"
+
 prerelease:
 	#[[ ! -d "releases" ]] && mkdir "releases"
 	git archive --prefix=cashway/ --format zip --output ${RELEASE_FILE} ${TAG}

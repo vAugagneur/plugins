@@ -99,9 +99,9 @@ class API
      * Typical usage:
      *
      * <code>
-     * $headers = getallheaders();
+     * $headers = array_change_key_case(getallheaders(), CASE_LOWER);
      * $data = file_get_contents('php://input');
-     * if (CashWay::API::isDataValid($data, $shared_secret, $headers['X-CashWay-Signature'])) {
+     * if (CashWay::API::isDataValid($data, $shared_secret, $headers['x-cashway-signature'])) {
      *     // $data is correct
      * }
      * </code>
