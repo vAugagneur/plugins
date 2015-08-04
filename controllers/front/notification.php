@@ -28,7 +28,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	public function postProcess()
 	{
 		$this->getValidPayload('php://input');
-		$handler = $this->snakeToCamel('on_'.$this->headers['X-CashWay-Event']);
+		$handler = $this->snakeToCamel('on_'.$this->headers['x-cashway-event']);
 
 		method_exists($this, $handler) ?
 			$this->$handler() :
@@ -103,14 +103,15 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	*/
 	private function getValidPayload($file)
 	{
-		$this->headers = getallheaders();
+		$this->headers = array_change_key_case(getallheaders(), CASE_LOWER);
 
 		$data = file_get_contents($file);
+		$hkey = 'x-cashway-signature';
 
-		if (!array_key_exists('X-CashWay-Signature', $this->headers))
+		if (!array_key_exists($hkey, $this->headers))
 			$this->terminateReply(400, 'A signature header is required.');
 
-		$signature = trim($this->headers['X-CashWay-Signature']);
+		$signature = trim($this->headers[$hkey]);
 
 		if ($signature == 'none' || $signature == '')
 			$this->terminateReply(400, 'A real signature is required.');
