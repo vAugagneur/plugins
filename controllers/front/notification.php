@@ -79,17 +79,32 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	private function onTransactionPaid()
 	{
 		// FIXME, port code from this function directly here.
-		$this->checkForPayments();
+		$this->onGenericCheck();
 	}
 
 	private function onTransactionExpired()
 	{
-		$this->checkForPayments();
+		$this->onGenericCheck();
 	}
 
 	private function onTransactionConfirmed()
 	{
-		$this->checkForPayments();
+		$this->onGenericCheck();
+	}
+
+	private function onStatusCheck()
+	{
+		$this->onGenericCheck();
+	}
+
+	private function onGenericCheck()
+	{
+		ob_start();
+		CashWay::checkForPayments();
+		$this->terminateReply(200, array(
+			'fn' => 'checkForPayments',
+			'log' => explode("\n", ob_get_clean())
+		));
 	}
 
 	/**
@@ -129,6 +144,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	private function terminateReply($code, $message)
 	{
 		$codes = array(
+			200 => array('200 OK',          true),
 			201 => array('201 Created',     true),
 			202 => array('202 Accepted',    true),
 			400 => array('400 Bad Request', false)
