@@ -461,7 +461,7 @@ class CashWay extends PaymentModule
 		$name = Configuration::get('PS_SHOP_NAME'); //employee name $this->context->employee->firstname;
 		$email = Configuration::get('PS_SHOP_EMAIL');
 		$phone = Configuration::get('PS_SHOP_PHONE');
-		$country = Country::getNameById($this->context->langage->id, (int)Configuration::get('PS_SHOP_COUNTRY_ID'));
+		$country = Country::getNameById($this->context->language->id, (int)Configuration::get('PS_SHOP_COUNTRY_ID'));
 		$company = Configuration::get('PS_SHOP_NAME');
 
 		return array(
