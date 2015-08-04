@@ -1,5 +1,24 @@
 # Changelog for CashWay PrestaShop module
 
+## 4 August 2015 - 0.6
+
+New:
+
+ * payment pages have 2 configurable buttons
+ * account registration is available from the module, for first-time users
+ * notifications may be received and sent from/to API now, for several events
+   (payment_failed, transaction_*, conversion_expired, status_check)
+
+Removed:
+
+ * Cron task
+
+Dev notes:
+
+ * reorganized code, lots of fixes, updated dependencies (cashway_lib, maps)
+ * added CircleCI config, Makefile, Capybara tests (install, basic customer path)
+ * intermediary 0.4.x & 0.5.x releases
+
 ## 9 avril - 0.3.0, dev version
 
  * removed root {validation,payment}.php out-of-sync
@@ -23,7 +42,6 @@
  * added cron task: check local orders pending payment,
    check transactions status by CashWay service,
    compare, update.
-
 
 ## 12 mars 2015 - 0.0.1, dev version
 
