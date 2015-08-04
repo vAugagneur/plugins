@@ -218,10 +218,11 @@ class CashWay extends PaymentModule
 				$res = $cashway->registerAccount($params);
 
 				if (isset($res['errors']))
+				{
 					foreach ($res['errors'] as $key => $value)
 						$output .= $this->displayError($value['code'].' => '.$value['message']);
-
-				if ($res['status'] == 'newbie')
+				}
+				elseif ($res['status'] == 'newbie')
 				{
 					Configuration::updateValue('CASHWAY_API_KEY', $res['api_key']);
 					Configuration::updateValue('CASHWAY_API_SECRET', $res['api_secret']);
