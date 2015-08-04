@@ -623,7 +623,8 @@ class CashWay extends PaymentModule
 			'USE_STAGING' => Configuration::get('CASHWAY_USE_STAGING'),
 		);
 
-		if (self::isConfiguredService()) {
+		if (self::isConfiguredService())
+		{
 			$options['API_KEY']    = Configuration::get('CASHWAY_API_KEY');
 			$options['API_SECRET'] = Configuration::get('CASHWAY_API_SECRET');
 		}
