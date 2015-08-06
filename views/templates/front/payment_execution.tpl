@@ -71,7 +71,6 @@
 		<p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b></p>
 		<p class="cart_navigation" id="cart_navigation">
 			<input type="image" src="{$this_path_cashway|escape:'urlpathinfo'}/views/img/cashway-confirm.png" alt="{l s='I confirm my order' mod='cashway'}"/>
-			<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}">{l s='Other payment methods' mod='cashway'}</a>
 		</p>
 	</form>
 	{else}
@@ -86,4 +85,6 @@
 	<input id="cashway-map-search-btn" type="button" value="Trouver les points de paiement CashWay autour de cette adresse" />
 	<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
 	<script src="https://maps.cashway.fr/js/cwm.min.js" defer async></script>
+
+	<p style="margin-top: 2rem"><a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}">{l s='Other payment methods' mod='cashway'}</a></p>
 {/if}
