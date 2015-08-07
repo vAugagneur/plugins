@@ -707,25 +707,15 @@ class CashWay extends PaymentModule
 					if ($open_orders[$ref]['total_paid_real'] >= $cw_orders[$ref]['order_total'])
 						\CashWay\Log::warn('I, It has already been updated: skipping.');
 					else
-					{
-						$order = new Order($open_orders[$ref]['id_order']);
-						$order->addOrderPayment($cw_orders[$ref]['order_total'],
-							'CashWay',
-							$cw_orders[$ref]['barcode']);
-						$order->setInvoice(true);
-
-						$history = new OrderHistory();
-						$history->id_order = $order->id;
-						$history->changeIdOrderState((int)Configuration::get('PS_OS_WS_PAYMENT'), $order, !$order->hasInvoice());
-					}
+						self::setOrderAs((int)Configuration::get('PS_OS_WS_PAYMENT'),
+										$open_orders[$ref]['id_order'],
+										$cw_orders[$ref]['order_total'],
+										$cw_orders[$ref]['barcode']);
 					break;
 
 				case 'expired':
 					\CashWay\Log::info(sprintf('I, found order %s expired. Updating local record.', $ref));
-					$order = new Order($open_orders[$ref]['id_order']);
-					$history = new OrderHistory();
-					$history->id_order = $order->id;
-					$history->changeIdOrderState((int)Configuration::get('PS_OS_CANCELED'), $order, !$order->hasInvoice());
+					self::setOrderAs((int)Configuration::get('PS_OS_CANCELED'), $open_orders[$ref]['id_order']);
 					break;
 
 				default:
@@ -736,6 +726,28 @@ class CashWay extends PaymentModule
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * @param integer $state
+	 * @param integer $order_id
+	 * @param float $order_total
+	 * @param string $barcode
+	 *
+	 * @return void
+	*/
+	private static function setOrderAs($state, $order_id, $order_total = null, $barcode = null)
+	{
+		$order = new Order((int)$order_id);
+		if (!is_null($order_total) && !is_null($barcode))
+		{
+			$order->addOrderPayment($order_total, 'CashWay', $barcode);
+			$order->setInvoice(true);
+		}
+
+		$history = new OrderHistory();
+		$history->id_order = (int)$order->id;
+		$history->changeIdOrderState((int)$state, $order);
 	}
 
 	/**
