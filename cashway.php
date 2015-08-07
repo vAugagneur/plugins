@@ -31,7 +31,7 @@ require dirname(__FILE__).'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-	const VERSION = '0.6.3';
+	const VERSION = '0.6.4';
 
 	/**
 	*/
@@ -40,7 +40,7 @@ class CashWay extends PaymentModule
 		$this->name             = 'cashway';
 		$this->tab              = 'payments_gateways';
 		// FIXME: should use self::VERSION here but https://validator.prestashop.com doesn't see to like it...
-		$this->version          = '0.6.3';
+		$this->version          = '0.6.4';
 		$this->author           = 'CashWay';
 		$this->need_instance    = 1;
 		$this->bootstrap        = true;
@@ -692,18 +692,24 @@ class CashWay extends PaymentModule
 			{
 				case 'paid':
 					\CashWay\Log::info(sprintf('I, found order %s was paid. Updating local record.', $ref));
-					if ($cw_orders[$ref]['paid_amount'] != $open_orders[$ref]['total_paid'])
-						\CashWay\Log::warn(sprintf('W, Found order %s but paid amount does not match: is %.2f but should be %.2f.',
+					if ($cw_orders[$ref]['order_total'] != $open_orders[$ref]['total_paid'])
+						\CashWay\Log::warn(sprintf('W, Found order %s, CW.order_total (%.2f) does not match total_paid (%.2f).',
+							$ref,
+							$cw_orders[$ref]['order_total'],
+							$open_orders[$ref]['total_paid']));
+
+					if ($cw_orders[$ref]['paid_amount'] <= $open_orders[$ref]['total_paid'])
+						\CashWay\Log::warn(sprintf('W, Found order %s but CW.paid_amount (%.2f) <= total_paid (%.2f).',
 							$ref,
 							$cw_orders[$ref]['paid_amount'],
 							$open_orders[$ref]['total_paid']));
 
 					if ($open_orders[$ref]['total_paid_real'] >= $cw_orders[$ref]['order_total'])
-						\CashWay\Log::warn('Well, it looks like it has already been updated: skipping this step.');
+						\CashWay\Log::warn('I, It has already been updated: skipping.');
 					else
 					{
 						$order = new Order($open_orders[$ref]['id_order']);
-						$order->addOrderPayment($cw_orders[$ref]['paid_amount'],
+						$order->addOrderPayment($cw_orders[$ref]['order_total'],
 							'CashWay',
 							$cw_orders[$ref]['barcode']);
 						$order->setInvoice(true);
