@@ -82,9 +82,16 @@
 		<br>
 		<img src="https://api.cashway.fr/1/n/pu/considered?v=failed" alt="" />
 	{/if}
-	<h4>Les points de paiement présents autour de votre adresse&nbsp;:</h4>
-	<input id="cashway-map-search" type="textbox" value="{$location.search|escape:'html'}" />
-	<input id="cashway-map-search-btn" type="button" value="Trouver les points de paiement CashWay autour de cette adresse" />
+	<br>
+	<h4 id="cashway-map-l">Les distributeurs présents autour de votre adresse&nbsp;:</h4>
+	<input id="cashway-map-search"
+		   type="textbox"
+		   class="form-control ac_input"
+		   value="{$location.search|escape:'html'}" />
+	<input id="cashway-map-search-btn"
+		   type="button"
+		   class="btn btn-info button button-small"
+		   value="Trouver les distributeurs CashWay autour de cette adresse" />
 	<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
 	<script src="https://maps.cashway.fr/js/cwm.min.js" defer async></script>
 
