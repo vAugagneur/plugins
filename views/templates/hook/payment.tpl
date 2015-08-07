@@ -55,5 +55,5 @@
         </p>
     </div>
 </div>
-<img src="{$cashway_api_base_url}/1/n/pu/offered?v=sim" alt="" />
+<img src="{$cashway_api_base_url}/n/pu/offered?v=sim" alt="" />
 {/if}
