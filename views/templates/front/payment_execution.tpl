@@ -71,19 +71,29 @@
 		<p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b></p>
 		<p class="cart_navigation" id="cart_navigation">
 			<input type="image" src="{$this_path_cashway|escape:'urlpathinfo'}/views/img/cashway-confirm.png" alt="{l s='I confirm my order' mod='cashway'}"/>
-			<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}">{l s='Other payment methods' mod='cashway'}</a>
 		</p>
 	</form>
+	<img src="https://api.cashway.fr/1/n/pu/considered?v=ok" alt="" />
 	{else}
 		<p><strong>Hélas&nbsp;: cette méthode de paiement est temporairement indisponible</strong>.
 			Nous mettons tout en œuvre pour la rétablir le plus tôt possible.
 			<span>{$available.1|escape}</span></p>
 		<p><a class="exclusive_large" href="/index.php?controller=order&step=3">Vous pouvez choisir une autre méthode</a></p>
 		<br>
+		<img src="https://api.cashway.fr/1/n/pu/considered?v=failed" alt="" />
 	{/if}
-	<h4>Les points de paiement présents autour de votre adresse&nbsp;:</h4>
-	<input id="cashway-map-search" type="textbox" value="{$location.search|escape:'html'}" />
-	<input id="cashway-map-search-btn" type="button" value="Trouver les points de paiement CashWay autour de cette adresse" />
+	<br>
+	<h4 id="cashway-map-l">Les distributeurs présents autour de votre adresse&nbsp;:</h4>
+	<input id="cashway-map-search"
+		   type="textbox"
+		   class="form-control ac_input"
+		   value="{$location.search|escape:'html'}" />
+	<input id="cashway-map-search-btn"
+		   type="button"
+		   class="btn btn-info button button-small"
+		   value="Trouver les distributeurs CashWay autour de cette adresse" />
 	<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
 	<script src="https://maps.cashway.fr/js/cwm.min.js" defer async></script>
+
+	<p style="margin-top: 2rem"><a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}">{l s='Other payment methods' mod='cashway'}</a></p>
 {/if}

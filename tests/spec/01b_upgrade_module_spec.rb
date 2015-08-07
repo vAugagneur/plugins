@@ -2,7 +2,7 @@ require 'spec_helper'
 
 MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 
-describe "Suppression + installation du module CashWay sur PrestaShop " + ENV['TEST_SERVER'] do
+describe "Mise à jour du module CashWay sur PrestaShop " + ENV['TEST_SERVER'] do
 
 	it "charge la page d'admin" do
 		session.visit ENV['ADMIN_PATH']
@@ -23,15 +23,7 @@ describe "Suppression + installation du module CashWay sur PrestaShop " + ENV['T
 
 	it 'vérifie si le module est là' do
 		find('#moduleQuicksearch').set ENV['MODULE_NAME']
-	end
-
-	it 'supprime le module existant' do
-		skip "Le module n'est pas installé" unless page.has_selector? '#' + MODULE_ANCHOR
-
-		find(:xpath, '//*[@id="' + MODULE_ANCHOR + '"]/../../td[4]/div/div/button').click
-		click_link 'Supprimer'
-		page.driver.browser.switch_to.alert.accept
-		expect(page).to have_content 'Module supprimé avec succès.'
+		fail "Le module n'est pas installé" unless page.has_selector? '#' + MODULE_ANCHOR
 	end
 
 	it 'charge une nouvelle archive du module' do
@@ -41,21 +33,5 @@ describe "Suppression + installation du module CashWay sur PrestaShop " + ENV['T
 		page.all('input[id="file"]', visible: false).first.set File.absolute_path(ENV['MODULE_ARCHIVE'])
 		click_button 'Charger le module'
 		expect(page).to have_content 'Le module a bien été téléchargé.'
-	end
-
-	it 'installe le module' do
-		find('#moduleQuicksearch').set ENV['MODULE_NAME']
-		fail "Le module n'est pas là..." unless page.has_selector? '#' + MODULE_ANCHOR
-		click_link "Installer"
-		click_link "Continuer l'installation"
-		expect(page).to have_content 'Module(s) installé(s) avec succès.'
-	end
-
-	it 'configure le module' do
-		find('#CASHWAY_API_KEY').set ENV['API_KEY']
-		find('#CASHWAY_API_SECRET').set ENV['API_SECRET']
-		click_button 'Enregistrer'
-		expect(page).to have_content 'Clé mise à jour.'
-		expect(page).to have_content 'Secret mis à jour.'
 	end
 end

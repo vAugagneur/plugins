@@ -19,8 +19,11 @@ signrelease:
 cs:
 	phpcs --standard=Prestashop --colors --ignore=lib/,upgrade/,vendor/ .
 
-install_epayment:
+reset_epayment:
 	cd tests; cp .env.epayment .env; bundle exec rspec spec/01_install_module_spec.rb
+
+upgrade_epayment:
+	cd tests; cp .env.epayment .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
 
 test_install:
 	cd tests; cp .env.local .env; bundle exec rspec spec/01_install_module_spec.rb
