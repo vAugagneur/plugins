@@ -38,7 +38,7 @@
         </p>
     </div>
 </div>
-<img src="https://api.cashway.fr/1/n/pu/offered?v=col" alt="" />
+<img src="{$cashway_api_base_url}/n/pu/offered?v=col" alt="" />
 {elseif $template_type == 'normal'}
 
 <div class="row">
@@ -55,5 +55,5 @@
         </p>
     </div>
 </div>
-<img src="https://api.cashway.fr/1/n/pu/offered?v=sim" alt="" />
+<img src="{$cashway_api_base_url}/1/n/pu/offered?v=sim" alt="" />
 {/if}

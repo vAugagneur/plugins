@@ -504,7 +504,8 @@ class CashWay extends PaymentModule
 													0, ',', '&nbsp;')),
 			'this_path' => $this->_path,
 			'this_path_cashway' => $this->_path,
-			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
+			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
+			'cashway_api_base_url' => self::getCashWayAPI()->api_base_url
 		));
 
 		return $this->display(__FILE__, 'payment.tpl');
