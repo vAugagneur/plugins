@@ -1,6 +1,7 @@
 BRANCH=$(shell git symbolic-ref --short HEAD)
 TAG=$(shell git describe --tags)
 RELEASE_FILE=releases/cashway-${BRANCH}-${TAG}.zip
+TS=$(date +"%Y-%m-%dT%H:%M:%SZ")
 
 usage:
 	@echo "Available targets:"
@@ -32,3 +33,6 @@ test_user:
 	cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_spec.rb
 
 test: test_install test_user
+
+copydeps:
+	wget -O lib/cashway/cashway_lib.php https://raw.githubusercontent.com/cshw/api-helpers/master/php/cashway_lib.php?${TS}
