@@ -478,6 +478,9 @@ class API
             )
         );
     }
+
+    private function setOrder_magento() {}
+    private function setOrder_woocommerce() {}
 }
 
 /**
