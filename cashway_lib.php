@@ -356,7 +356,10 @@ class API
     public function httpDo($verb, $path, $query)
     {
         if (!in_array($verb, array('GET', 'POST'))) {
-            return;
+            return array('errors' => array(array(
+                'code' => 'method_not_supported',
+                'status' => 0
+            )));
         }
 
         $ret  = null;
