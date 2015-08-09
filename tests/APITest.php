@@ -50,7 +50,7 @@ class APITest extends PHPUnit_Framework_TestCase
 
         $api = new \CashWay\API(get_conf());
         $res = $api->registerAccount($sent_data);
-        $this->assertJsonStringEqualsJsonString(json_encode($sent_data), $res['body']);
+        $this->assertEquals($sent_data, json_decode($res['body'], true));
     }
 
     function testUpdateAccount()
@@ -59,7 +59,7 @@ class APITest extends PHPUnit_Framework_TestCase
 
         $api = new \CashWay\API(get_conf());
         $res = $api->updateAccount($sent_data);
-        $this->assertJsonStringEqualsJsonString(json_encode($sent_data), $res['body']);
+        $this->assertEquals($sent_data, json_decode($res['body'], true));
     }
 
     function testOpenTransaction()
