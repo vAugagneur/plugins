@@ -479,7 +479,10 @@ class API
         );
     }
 
+    // @codingStandardsIgnoreLine
     private function setOrder_magento() {}
+
+    // @codingStandardsIgnoreLine
     private function setOrder_woocommerce() {}
 }
 
