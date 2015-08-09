@@ -386,6 +386,9 @@ class API
                 );
                 break;
             case 'POST':
+                if (!is_string($query)) {
+                    $query = json_encode($query);
+                }
                 $headers = array(
                     'Content-Type: application/json',
                     'Accept: application/json',
