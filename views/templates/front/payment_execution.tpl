@@ -23,9 +23,9 @@
 *}
 
 {capture name=path}
-	<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}"
+	<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'htmlall':'UTF-8'}"
 		title="{l s='Go back to the Checkout' mod='cashway'}">{l s='Checkout' mod='cashway'}</a>
-	<span class="navigation-pipe">{$navigationPipe|escape:'html'}</span>
+	<span class="navigation-pipe">{$navigationPipe|escape:'htmlall':'UTF-8'}</span>
 	{l s='Check payment' mod='cashway'}
 {/capture}
 
@@ -41,7 +41,7 @@
 {else}
 
 <h3>{l s='Paiement avec ' mod='cashway'}
-	<img src="{$this_path_cashway|escape:'urlpathinfo'}/views/img/cashway-180x40.png"
+	<img src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}/views/img/cashway-180x40.png"
 		alt="{l s='CashWay' mod='cashway'}"
 		width="180"
 		height="40"
@@ -49,7 +49,7 @@
 
 	{if $available.0}
 
-	<form action="{$link->getModuleLink('cashway', 'validation', [], true)|escape:'html'}"
+	<form action="{$link->getModuleLink('cashway', 'validation', [], true)|escape:'htmlall':'UTF-8'}"
 		method="post">
 
 		<ul>
@@ -70,14 +70,14 @@
 
 		<p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b></p>
 		<p class="cart_navigation" id="cart_navigation">
-			<input type="image" src="{$this_path_cashway|escape:'urlpathinfo'}/views/img/cashway-confirm.png" alt="{l s='I confirm my order' mod='cashway'}"/>
+			<input type="image" src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}/views/img/cashway-confirm.png" alt="{l s='I confirm my order' mod='cashway'}"/>
 		</p>
 	</form>
 	<img src="{$cashway_api_base_url}/n/pu/considered?v=ok" alt="" />
 	{else}
 		<p><strong>Hélas&nbsp;: cette méthode de paiement est temporairement indisponible</strong>.
 			Nous mettons tout en œuvre pour la rétablir le plus tôt possible.
-			<span>{$available.1|escape}</span></p>
+			<span>{$available.1|escape:'htmlall':'UTF-8'}</span></p>
 		<p><a class="exclusive_large" href="/index.php?controller=order&step=3">Vous pouvez choisir une autre méthode</a></p>
 		<br>
 		<img src="{$cashway_api_base_url}/n/pu/considered?v=failed" alt="" />
@@ -87,7 +87,7 @@
 	<input id="cashway-map-search"
 		   type="textbox"
 		   class="form-control ac_input"
-		   value="{$location.search|escape:'html'}" />
+		   value="{$location.search|escape:'htmlall':'UTF-8'}" />
 	<input id="cashway-map-search-btn"
 		   type="button"
 		   class="btn btn-info button button-small"
@@ -95,5 +95,5 @@
 	<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
 	<script src="https://maps.cashway.fr/js/cwm.min.js" defer async></script>
 
-	<p style="margin-top: 2rem"><a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}">{l s='Other payment methods' mod='cashway'}</a></p>
+	<p style="margin-top: 2rem"><a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'htmlall':'UTF-8'}">{l s='Other payment methods' mod='cashway'}</a></p>
 {/if}
