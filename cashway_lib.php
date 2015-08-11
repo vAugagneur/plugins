@@ -355,6 +355,8 @@ class API
 
     public function httpDo($verb, $path, $query)
     {
+        $this->last_http_code = null;
+
         if (!in_array($verb, array('GET', 'POST'))) {
             return array('errors' => array(array(
                 'code' => 'method_not_supported',
@@ -410,6 +412,7 @@ class API
                 'status' => $transfer['error']
             )));
         } else {
+            $this->last_http_code = $transfer['code'];
             $ret = json_decode($transfer['body'], true);
         }
 
@@ -565,8 +568,10 @@ class cURL
             && curl_setopt_array($ch, $options))
         ) {
             $error = 'curl (x): failed to set options.';
+            $code  = 0;
         } else {
             $body = curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
             if (false === $body) {
                 $error = sprintf(
@@ -580,6 +585,7 @@ class cURL
 
         return array(
             'body'  => $body,
+            'code'  => $code,
             'error' => $error
         );
     }
