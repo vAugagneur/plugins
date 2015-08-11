@@ -32,7 +32,7 @@ require dirname(__FILE__).'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.7.1';
+    const VERSION = '0.7.2';
 
     /**
     */
@@ -94,7 +94,7 @@ class CashWay extends PaymentModule
                 $this->installOrderState());
     }
 
-    private function installDefaultValues()
+    public function installDefaultValues()
     {
         Configuration::updateValue('CASHWAY_SHARED_SECRET', bin2hex(openssl_random_pseudo_bytes(24)));
 
