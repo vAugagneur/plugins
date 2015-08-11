@@ -22,6 +22,7 @@ class HTTPTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/1/path/to/test', $res['request']);
         $this->assertJsonStringEqualsJsonString(json_encode(array('query' => 'value')),
             $res['body']);
+        $this->assertEquals('200', $api->last_http_code);
     }
 
     public function testHttpDo()
@@ -49,5 +50,6 @@ class HTTPTest extends PHPUnit_Framework_TestCase
         $tr = json_decode($res['body'], true);
         $this->assertEquals('GET', $tr['method']);
         $this->assertEquals('/', $tr['request']);
+        $this->assertEquals('200', $res['code']);
     }
 }
