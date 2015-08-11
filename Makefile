@@ -36,3 +36,4 @@ test: test_install test_user
 
 copydeps:
 	wget -O lib/cashway/cashway_lib.php https://raw.githubusercontent.com/cshw/api-helpers/master/php/cashway_lib.php?${TS}
+	wget -O lib/cashway/compat.php https://raw.githubusercontent.com/cshw/api-helpers/master/php/compat.php?${TS}
