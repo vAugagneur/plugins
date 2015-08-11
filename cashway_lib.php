@@ -116,6 +116,11 @@ class API
     {
         $signature = explode('=', $signature);
 
+        $supported_signatures = array('sha256', 'sha384', 'sha512');
+        if (!in_array($signature[0], $supported_signatures)) {
+            return false;
+        }
+
         return hash_hmac($signature[0], $data, $secret, false) === $signature[1];
     }
 
