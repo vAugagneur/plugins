@@ -1,6 +1,6 @@
 # Changelog for CashWay PrestaShop module
 
-## 12 August 2015 - 0.7
+## 12 August 2015 - 0.7.1
 
 Fixes:
 
