@@ -741,6 +741,7 @@ class CashWay extends PaymentModule
 		$history = new OrderHistory();
 		$history->id_order = (int)$order->id;
 		$history->changeIdOrderState((int)$state, $order);
+		$history->addWithEmail(true);
 	}
 
 	/**
