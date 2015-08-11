@@ -23,11 +23,12 @@
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-if (!defined('_PS_VERSION_'))
-	exit;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 function upgrade_module_0_4($module)
 {
-	$module->registerHook('actionOrderStatusUpdate');
-	return true;
+    $module->registerHook('actionOrderStatusUpdate');
+    return true;
 }

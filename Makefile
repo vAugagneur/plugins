@@ -18,7 +18,11 @@ signrelease:
 	gpg --sign --armor ${RELEASE_FILE}.sha256
 
 cs:
-	phpcs --standard=Prestashop --colors --ignore=lib/,upgrade/,vendor/ .
+	phpcs --encoding=utf-8 \
+		--standard=PSR2 \
+		--colors \
+		--ignore=lib/ \
+		.
 
 reset_epayment:
 	cd tests; cp .env.epayment .env; bundle exec rspec spec/01_install_module_spec.rb
