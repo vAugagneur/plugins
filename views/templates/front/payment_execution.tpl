@@ -73,14 +73,14 @@
 			<input type="image" src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}/views/img/cashway-confirm.png" alt="{l s='I confirm my order' mod='cashway'}"/>
 		</p>
 	</form>
-	<img src="{$cashway_api_base_url}/n/pu/considered?v=ok" alt="" />
+	<img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?v=ok" alt="" />
 	{else}
 		<p><strong>Hélas&nbsp;: cette méthode de paiement est temporairement indisponible</strong>.
 			Nous mettons tout en œuvre pour la rétablir le plus tôt possible.
 			<span>{$available.1|escape:'htmlall':'UTF-8'}</span></p>
 		<p><a class="exclusive_large" href="/index.php?controller=order&step=3">Vous pouvez choisir une autre méthode</a></p>
 		<br>
-		<img src="{$cashway_api_base_url}/n/pu/considered?v=failed" alt="" />
+		<img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?v=failed" alt="" />
 	{/if}
 	<br>
 	<h4 id="cashway-map-l">Les distributeurs présents autour de votre adresse&nbsp;:</h4>

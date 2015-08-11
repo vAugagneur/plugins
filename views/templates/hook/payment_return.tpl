@@ -28,8 +28,8 @@
 
 		vous pouvez maintenant vous rendre dans un des points de paiement
 		indiqués sur la carte ci-dessous, muni du code suivant : <code>{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
-		(ce code n'est valide que jusqu'au {$expires|date_format:"%A %e %B"}
-		à {$expires|date_format:"%H"}h).
+		(ce code n'est valide que jusqu'au {$expires|date_format:"%A %e %B"|escape:'htmlall':'UTF-8'}
+		à {$expires|date_format:"%H"|escape:'htmlall':'UTF-8'}h).
 	</p>
 	<p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a>.</p>
 
