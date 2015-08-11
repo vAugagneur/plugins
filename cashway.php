@@ -171,14 +171,7 @@ class CashWay extends PaymentModule
 				$output .= $this->displayConfirmation($this->l('API secret updated.'));
 			}
 
-			$notification_url = $this->context->link->getModuleLink($this->name, 'notification');
-
-			$cashway = self::getCashWayAPI();
-
-			$cashway->updateAccount(array(
-				'notification_url' => $notification_url,
-				'shared_secret' => Configuration::get('CASHWAY_SHARED_SECRET')
-			));
+			$this->updateNotificationParameters();
 
 			Configuration::updateValue('CASHWAY_PAYMENT_TEMPLATE', Tools::getValue('CASHWAY_PAYMENT_TEMPLATE'));
 			Configuration::updateValue('CASHWAY_SEND_EMAIL', Tools::getValue('CASHWAY_SEND_EMAIL'));
@@ -227,13 +220,7 @@ class CashWay extends PaymentModule
 				{
 					Configuration::updateValue('CASHWAY_API_KEY', $res['api_key']);
 					Configuration::updateValue('CASHWAY_API_SECRET', $res['api_secret']);
-					$notification_url = $this->context->link->getModuleLink($this->name, 'notification');
-
-					$cashway = self::getCashWayAPI();
-					$cashway->updateAccount(array(
-						'notification_url' => $notification_url,
-						'shared_secret' => Configuration::get('CASHWAY_SHARED_SECRET')
-					));
+					$this->updateNotificationParameters();
 
 					$output .= $this->displayConfirmation($this->l('Register completed'));
 				}
@@ -785,5 +772,18 @@ class CashWay extends PaymentModule
 		$orders = array_combine($refs, array_values($orders['orders']));
 
 		return $orders;
+	}
+
+	/**
+	*/
+	public function updateNotificationParameters()
+	{
+		if (self::isConfiguredService())
+		{
+			self::getCashWayAPI()->updateAccount(array(
+				'notification_url' => $this->context->link->getModuleLink($this->name, 'notification'),
+				'shared_secret' => Configuration::get('CASHWAY_SHARED_SECRET')
+			));
+		}
 	}
 }
