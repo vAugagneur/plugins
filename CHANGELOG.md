@@ -1,13 +1,20 @@
 # Changelog for CashWay PrestaShop module
 
-## 7 August 2015 - 0.6.1, 0.6.2
+## 12 August 2015 - 0.7.1
+
+Fixes:
+
+ * missed notifications, requiring manual action
+ * notification total reporting
 
 Dev notes:
 
- * added usage markers
- * style fixes
+ * style fixes (quoting, escaping, PSR2 standard, headers)
+ * add usage markers
  * Makefile and tests updates
+ * update cashway_lib to 0.5 with more tests
  * add getallheaders() when missing
+ * refactor code
 
 ## 4 August 2015 - 0.6
 

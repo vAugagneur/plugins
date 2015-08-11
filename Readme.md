@@ -4,13 +4,8 @@
 
 Still in development. DO NOT INSTALL OR USE unless you know what you're doing.
 
-### Cron job
+Stable packages will be later available directly from https://www.cashway.fr/.
 
-Please call `modules/cashway/cron_cashway_check_for_transactions.php`
-at most every 30 minutes, ideally, every hour.
-
-You may use PrestaShop Cron Task Manager module for this
-or your own scheduling system.
 
 ### Dependencies
 
@@ -24,7 +19,8 @@ This module depends on APIs provided by [CashWay](https://www.cashway.fr/):
 
 Issues, PR and ideas are welcome.
 
-You may get in touch here through issues or on #cashway_fr Freenode IRC.
+ * API documentation: https://help.cashway.fr/shops
+ * Freenode IRC channel: #cashway_fr
 
 
 ## Licenses
@@ -37,7 +33,7 @@ You may get in touch here through issues or on #cashway_fr Freenode IRC.
 
 ### Apache License
 
-    Copyright 2015 Epayment Solution - CashWay
+    Copyright 2015 CashWay
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
