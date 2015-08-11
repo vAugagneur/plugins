@@ -2,13 +2,6 @@ machine:
   php:
     version: '5.6.5'
 
-dependencies:
-  cache_directories:
-    - './vendor'
-  override:
-    - if [[ ! -d ./vendor/PHP/CodeSniffer/Standards/Prestashop ]]; then
-      git clone https://github.com/PrestaShop/PrestaShop-norm-validator ./vendor/PHP/CodeSniffer/Standards/Prestashop; fi
-
 test:
   override:
-    - phpcs --standard=./vendor/PHP/CodeSniffer/Standards/Prestashop --colors --ignore=lib/,upgrade/,vendor/,tests/ .
+    - phpcs --encoding=utf-8 --standard=PSR2 --colors --ignore=lib/ .

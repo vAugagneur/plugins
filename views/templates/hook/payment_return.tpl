@@ -24,14 +24,14 @@
 
 {if $status == 'ok'}
 
-	<p>Pour régler les <span class="price">{$total_to_pay|escape} {$cart_fee|escape}</span> de votre commande,
+	<p>Pour régler les <span class="price">{$total_to_pay|escape:'htmlall':'UTF-8'} {$cart_fee|escape:'htmlall':'UTF-8'}</span> de votre commande,
 
 		vous pouvez maintenant vous rendre dans un des points de paiement
-		indiqués sur la carte ci-dessous, muni du code suivant : <code>{$barcode|escape:'htmlall'|substr:7:15|wordwrap:3:' ':true}</code>
-		(ce code n'est valide que jusqu'au {$expires|date_format:"%A %e %B"}
-		à {$expires|date_format:"%H"}h).
+		indiqués sur la carte ci-dessous, muni du code suivant : <code>{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
+		(ce code n'est valide que jusqu'au {$expires|date_format:"%A %e %B"|escape:'htmlall':'UTF-8'}
+		à {$expires|date_format:"%H"|escape:'htmlall':'UTF-8'}h).
 	</p>
-	<p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a>.</p>
+	<p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a>.</p>
 
 	<p>
 	{if !isset($reference)}
@@ -50,7 +50,7 @@
 	<input id="cashway-map-search"
 		   type="textbox"
 		   class="form-control ac_input"
-		   value="{$location.search|escape:'html'}" />
+		   value="{$location.search|escape:'htmlall':'UTF-8'}" />
 	<input id="cashway-map-search-btn"
 		   type="button"
 		   class="btn btn-info button button-small"
@@ -59,7 +59,7 @@
 	<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
 	<script src="https://maps.cashway.fr/js/cwm.min.js" defer async></script>
 
-	<br /><br />{l s='For any questions or for further information, please contact our' mod='cashway'} <a href="{$link->getPageLink('contact', true)|escape:'html'}">{l s='customer service department.' mod='cashway'}</a>.
+	<br /><br />{l s='For any questions or for further information, please contact our' mod='cashway'} <a href="{$link->getPageLink('contact', true)|escape:'htmlall':'UTF-8'}">{l s='customer service department.' mod='cashway'}</a>.
 
 	</p>
 {else}
@@ -70,7 +70,7 @@
 		<a href="/index.php?controller=order&step=3" class="exclusive_large">{l s='Choose an other payment method' mod='cashway'}</a>
 	{else}
 		{l s='We have noticed that there is a problem with your order. If you think this is an error, you can contact our' mod='cashway'}
-		<a href="{$link->getPageLink('contact', true)|escape:'html'}">{l s='customer service department.' mod='cashway'}</a>.
+		<a href="{$link->getPageLink('contact', true)|escape:'htmlall':'UTF-8'}">{l s='customer service department.' mod='cashway'}</a>.
 	{/if}
 	</p>
 {/if}

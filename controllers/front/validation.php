@@ -28,76 +28,85 @@
  */
 class CashwayValidationModuleFrontController extends ModuleFrontController
 {
-	public function postProcess()
-	{
-		$cart = $this->context->cart;
+    public function postProcess()
+    {
+        $cart = $this->context->cart;
 
-		if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0 || !$this->module->active)
-			Tools::redirect('index.php?controller=order&step=1');
+        if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 ||
+            $cart->id_address_invoice == 0 || !$this->module->active) {
+            Tools::redirect('index.php?controller=order&step=1');
+        }
 
-		// Check that this payment option is still available
-		// in case the customer changed his address
-		// just before the end of the checkout process
-		$authorized = false;
-		foreach (Module::getPaymentModules() as $module)
-			if ($module['name'] == 'cashway')
-			{
-				$authorized = true;
-				break;
-			}
+        // Check that this payment option is still available
+        // in case the customer changed his address
+        // just before the end of the checkout process
+        $authorized = false;
+        foreach (Module::getPaymentModules() as $module) {
+            if ($module['name'] == 'cashway') {
+                $authorized = true;
+                break;
+            }
+        }
 
-		if (!$authorized)
-			die($this->module->l('This payment method is not available.', 'validation'));
+        if (!$authorized) {
+            die($this->module->l('This payment method is not available.', 'validation'));
+        }
 
-		$customer = new Customer($cart->id_customer);
+        $customer = new Customer($cart->id_customer);
 
-		if (!Validate::isLoadedObject($customer))
-			Tools::redirect('index.php?controller=order&step=1');
+        if (!Validate::isLoadedObject($customer)) {
+            Tools::redirect('index.php?controller=order&step=1');
+        }
 
-		$currency = $this->context->currency;
-		$total = (float)$cart->getOrderTotal(true, Cart::BOTH);
+        $currency = $this->context->currency;
+        $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
 
-		$cw_currency = $this->module->getCurrency((int)$this->context->cart->id_currency);
-		$cashway = CashWay::getCashWayAPI();
-		$cashway->setOrder('prestashop',
-			null,
-			$this->context->cart,
-			$this->context->customer,
-			$this->context->language->iso_code,
-			$cw_currency[0]['iso_code']);
+        $cw_currency = $this->module->getCurrency((int)$this->context->cart->id_currency);
+        $cashway = CashWay::getCashWayAPI();
+        $cashway->setOrder(
+            'prestashop',
+            null,
+            $this->context->cart,
+            $this->context->customer,
+            $this->context->language->iso_code,
+            $cw_currency[0]['iso_code']
+        );
 
-		$cw_res = $cashway->openTransaction();
+        $cw_res = $cashway->openTransaction();
 
-		$available = array(true, '');
-		if (array_key_exists('errors', $cw_res))
-		{
-			$available = array(false, $cw_res['errors'][0]['code']);
-			$cw_barcode = '-failed-';
-		}
-		else
-			$cw_barcode = $cw_res['barcode'];
+        if (array_key_exists('errors', $cw_res)) {
+        // error message is in $cw_res['errors'][0]['code']);
+            $cw_barcode = '-failed-';
+        } else {
+            $cw_barcode = $cw_res['barcode'];
+        }
 
-		$mail_vars = array(
-			'{barcode}' => $cw_barcode,
-		);
+        $mail_vars = array(
+            '{barcode}' => $cw_barcode,
+        );
 
-		if ($cw_barcode != '-failed-')
-			$this->module->validateOrder((int)$cart->id,
-											Configuration::get('PS_OS_CASHWAY'),
-											$total,
-											$this->module->displayName,
-											null,
-											$mail_vars,
-											(int)$currency->id,
-											false,
-											$customer->secure_key);
+        if ($cw_barcode != '-failed-') {
+            $this->module->validateOrder(
+                (int)$cart->id,
+                Configuration::get('PS_OS_CASHWAY'),
+                $total,
+                $this->module->displayName,
+                null,
+                $mail_vars,
+                (int)$currency->id,
+                false,
+                $customer->secure_key
+            );
+        }
 
-		Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id
-			.'&id_module='.(int)$this->module->id
-			// @codingStandardsIgnoreStart
-			.'&id_order='.$this->module->currentOrder
-			// @codingStandardsIgnoreStop
-			.'&cw_barcode='.$cw_barcode
-			.'&key='.$customer->secure_key);
+        Tools::redirect(
+            'index.php?controller=order-confirmation&id_cart='.(int)$cart->id
+            .'&id_module='.(int)$this->module->id
+            // @codingStandardsIgnoreStart
+            .'&id_order='.$this->module->currentOrder
+            // @codingStandardsIgnoreStop
+            .'&cw_barcode='.$cw_barcode
+            .'&key='.$customer->secure_key
+        );
 	}
 }
