@@ -57,6 +57,13 @@ function checkDependencies()
 
 /**
 */
+function getRandomString($length = 24)
+{
+    return bin2hex(openssl_random_pseudo_bytes($length));
+}
+
+/**
+*/
 class Log
 {
     public static function echolog($s)
