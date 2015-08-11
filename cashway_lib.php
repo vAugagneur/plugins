@@ -34,6 +34,28 @@ function isPHPVersionSupported()
 }
 
 /**
+ * Check required dependencies for this lib to work.
+ * If all are met, returns an empty array.
+ * Else, returns an array with a descriptive message for each missing dep.
+ *
+ * @return array
+*/
+function checkDependencies()
+{
+    $ret = array();
+
+    if (false === function_exists('curl_init')) {
+        $ret[] = 'cURL PHP extension is needed for this library to access CashWay API.';
+    }
+
+    if (count($ret) > 0) {
+        $ret[] = 'Please ask your web hosting provider for assistance.';
+    }
+
+    return $ret;
+}
+
+/**
 */
 class Log
 {
