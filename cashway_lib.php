@@ -125,6 +125,61 @@ class API
     }
 
     /**
+     * Validate input payload:
+     * - if it comes with a signature, validate signature,
+     * - parse it (JSON)
+     *
+     * This may be used as a helper for your plugin:
+     *
+     * <code>
+     * $res = \CashWay\API::receiveNotification('php://input', 'SECRET');
+     * if ($res[0]) {
+     *     // use $res[1] as the notification body.
+     * } else {
+     *     http_response_code(400);
+     *     header('Content-Type: application/json; charset=utf-8');
+     *     echo json_encode(array(
+     *         'status'  => $codes[$code][1] ? 'ok' : 'error',
+     *         'message' => $message
+     *     ));
+     *     die;
+     * }
+     * </code>
+     *
+     * @param string $in_body payload
+     * @param array  $in_headers payload HTTP headers
+     * @param string $in_secret known shared secret with CashWay
+     *
+     * @return Array [true, event, data] if success, or [false, msg]
+    */
+    public static function receiveNotification($in_body, $in_headers, $in_secret)
+    {
+        $headers = array_change_key_case($in_headers, CASE_LOWER);
+        $hkey    = 'x-cashway-signature';
+
+        if (!array_key_exists($hkey, $headers)) {
+            return array(false, 'A signature header is required.');
+        }
+
+        $signature = trim($headers[$hkey]);
+
+        if (substr($signature, 0, 4) == 'none' || $signature == '') {
+            return array(false, 'A real signature is required.');
+        }
+
+        if (!self::isDataValid($in_body, $in_secret, $signature)) {
+            return array(false, 'Payload signature does not match.');
+        }
+
+        $out_data = json_decode($in_body);
+        if (null === $out_data) {
+            return array(false, 'Could not parse JSON payload.');
+        }
+
+        return array(true, trim($headers['x-cashway-event']), $out_data);
+    }
+
+    /**
      * @api
     */
     public function __construct($conf)

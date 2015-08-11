@@ -20,6 +20,14 @@ class APITest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider notificationsProvider
+    */
+    public function testReceiveNotification($body, $headers, $secret, $expected)
+    {
+        $this->assertEquals($expected, \CashWay\API::receiveNotification($body, $headers, $secret));
+    }
+
+    /**
      * @dataProvider uaConfigProvider
     */
     public function testUserAgent($conf, $expected)
@@ -161,7 +169,7 @@ puts 'signature=' + signature
 R;
             $ruby = str_replace('#1', $body, $ruby);
             $ruby = str_replace('#2', $secret, $ruby);
-            $ruby = str_replace('#3', 'sha512', $ruby);
+            $ruby = str_replace('#3', 'sha256', $ruby);
 
             return $ruby;
         }
@@ -182,7 +190,7 @@ R;
 
         $test_values = array(
             array('body1', 'secret1'),
-            array(json_encode(array('key' => 'value', 'key2' => 2)), 'howdy!'),
+            array(json_encode(array('key' => 'value')), 'howdy!'),
             array(bin2hex(openssl_random_pseudo_bytes(128)), bin2hex(openssl_random_pseudo_bytes(32)))
         );
 
@@ -199,6 +207,63 @@ R;
         }
 
         return $test_values;
+    }
+
+    function notificationsProvider()
+    {
+        return array(
+            array(
+                '{"key":"value"}',
+                array(
+                    "X-CashWay-Event" => "testing_code",
+                    "X-CashWay-Signature" => "sha256=4777d4fcfb3cf1db660f88162ac35571e60baf1309d70666675604aad4df99c1"
+                ),
+                'howdy!',
+                array(true, 'testing_code', json_decode('{"key":"value"}'))
+            ),
+            array(
+                '{"key":"value"}',
+                array(),
+                'howdy!',
+                array(false, 'A signature header is required.')
+            ),
+            array(
+                '{"key":"value"}',
+                array(
+                    "X-CashWay-Event" => "testing_code",
+                    "X-CashWay-Signature" => "sha256=4777d4fcfb3cf1db660f88162ac355"
+                ),
+                'howdy!',
+                array(false, 'Payload signature does not match.')
+            ),
+            array(
+                '{"key":"value"}',
+                array(
+                    "X-CashWay-Event" => "testing_code",
+                    "X-CashWay-Signature" => "none="
+                ),
+                'howdy!',
+                array(false, 'A real signature is required.')
+            ),
+            array(
+                '{"key":"value"}',
+                array(
+                    "X-CashWay-Event" => "testing_code",
+                    "X-CashWay-Signature" => ""
+                ),
+                'howdy!',
+                array(false, 'A real signature is required.')
+            ),
+            array(
+                '{"key":"value"}',
+                array(
+                    "X-CashWay-Event" => "testing_code",
+                    "X-CashWay-Signature" => "any=test"
+                ),
+                'howdy!',
+                array(false, 'Payload signature does not match.')
+            )
+        );
     }
 
     function uaConfigProvider()
