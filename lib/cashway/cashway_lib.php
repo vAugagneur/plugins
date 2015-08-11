@@ -12,7 +12,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.4.5';
+const VERSION = '0.5.0';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -31,6 +31,35 @@ const PHP_MIN_VERSION = '5.4';
 function isPHPVersionSupported()
 {
     return (version_compare(phpversion(), PHP_MIN_VERSION) >= 0);
+}
+
+/**
+ * Check required dependencies for this lib to work.
+ * If all are met, returns an empty array.
+ * Else, returns an array with a descriptive message for each missing dep.
+ *
+ * @return array
+*/
+function checkDependencies()
+{
+    $ret = array();
+
+    if (false === function_exists('curl_init')) {
+        $ret[] = 'cURL PHP extension is needed for this library to access CashWay API.';
+    }
+
+    if (count($ret) > 0) {
+        $ret[] = 'Please ask your web hosting provider for assistance.';
+    }
+
+    return $ret;
+}
+
+/**
+*/
+function getRandomString($length = 24)
+{
+    return bin2hex(openssl_random_pseudo_bytes($length));
 }
 
 /**
@@ -116,7 +145,67 @@ class API
     {
         $signature = explode('=', $signature);
 
+        $supported_signatures = array('sha256', 'sha384', 'sha512');
+        if (!in_array($signature[0], $supported_signatures)) {
+            return false;
+        }
+
         return hash_hmac($signature[0], $data, $secret, false) === $signature[1];
+    }
+
+    /**
+     * Validate input payload:
+     * - if it comes with a signature, validate signature,
+     * - parse it (JSON)
+     *
+     * This may be used as a helper for your plugin:
+     *
+     * <code>
+     * $res = \CashWay\API::receiveNotification('php://input', 'SECRET');
+     * if ($res[0]) {
+     *     // use $res[1] as the notification body.
+     * } else {
+     *     http_response_code(400);
+     *     header('Content-Type: application/json; charset=utf-8');
+     *     echo json_encode(array(
+     *         'status'  => $codes[$code][1] ? 'ok' : 'error',
+     *         'message' => $message
+     *     ));
+     *     die;
+     * }
+     * </code>
+     *
+     * @param string $in_body payload
+     * @param array  $in_headers payload HTTP headers
+     * @param string $in_secret known shared secret with CashWay
+     *
+     * @return Array [true, event, data] if success, or [false, msg]
+    */
+    public static function receiveNotification($in_body, $in_headers, $in_secret)
+    {
+        $headers = array_change_key_case($in_headers, CASE_LOWER);
+        $hkey    = 'x-cashway-signature';
+
+        if (!array_key_exists($hkey, $headers)) {
+            return array(false, 'A signature header is required.');
+        }
+
+        $signature = trim($headers[$hkey]);
+
+        if (substr($signature, 0, 4) == 'none' || $signature == '') {
+            return array(false, 'A real signature is required.');
+        }
+
+        if (!self::isDataValid($in_body, $in_secret, $signature)) {
+            return array(false, 'Payload signature does not match.');
+        }
+
+        $out_data = json_decode($in_body);
+        if (null === $out_data) {
+            return array(false, 'Could not parse JSON payload.');
+        }
+
+        return array(true, trim($headers['x-cashway-event']), $out_data);
     }
 
     /**
@@ -355,6 +444,8 @@ class API
 
     public function httpDo($verb, $path, $query)
     {
+        $this->last_http_code = null;
+
         if (!in_array($verb, array('GET', 'POST'))) {
             return array('errors' => array(array(
                 'code' => 'method_not_supported',
@@ -410,6 +501,7 @@ class API
                 'status' => $transfer['error']
             )));
         } else {
+            $this->last_http_code = $transfer['code'];
             $ret = json_decode($transfer['body'], true);
         }
 
@@ -565,8 +657,10 @@ class cURL
             && curl_setopt_array($ch, $options))
         ) {
             $error = 'curl (x): failed to set options.';
+            $code  = 0;
         } else {
             $body = curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
             if (false === $body) {
                 $error = sprintf(
@@ -580,6 +674,7 @@ class cURL
 
         return array(
             'body'  => $body,
+            'code'  => $code,
             'error' => $error
         );
     }
