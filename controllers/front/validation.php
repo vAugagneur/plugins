@@ -68,10 +68,9 @@ class CashwayValidationModuleFrontController extends ModuleFrontController
 
 		$cw_res = $cashway->openTransaction();
 
-		$available = array(true, '');
 		if (array_key_exists('errors', $cw_res))
 		{
-			$available = array(false, $cw_res['errors'][0]['code']);
+			// error message is in $cw_res['errors'][0]['code']);
 			$cw_barcode = '-failed-';
 		}
 		else
