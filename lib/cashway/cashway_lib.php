@@ -12,7 +12,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.4.4';
+const VERSION = '0.4.5';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -356,7 +356,10 @@ class API
     public function httpDo($verb, $path, $query)
     {
         if (!in_array($verb, array('GET', 'POST'))) {
-            return;
+            return array('errors' => array(array(
+                'code' => 'method_not_supported',
+                'status' => 0
+            )));
         }
 
         $ret  = null;
@@ -383,6 +386,9 @@ class API
                 );
                 break;
             case 'POST':
+                if (!is_string($query)) {
+                    $query = json_encode($query);
+                }
                 $headers = array(
                     'Content-Type: application/json',
                     'Accept: application/json',
@@ -472,6 +478,12 @@ class API
             )
         );
     }
+
+    // @codingStandardsIgnoreLine
+    private function setOrder_magento() {}
+
+    // @codingStandardsIgnoreLine
+    private function setOrder_woocommerce() {}
 }
 
 /**

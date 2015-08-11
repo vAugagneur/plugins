@@ -31,7 +31,7 @@ require dirname(__FILE__).'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-	const VERSION = '0.6.4';
+	const VERSION = '0.6.5';
 
 	/**
 	*/
@@ -40,7 +40,7 @@ class CashWay extends PaymentModule
 		$this->name             = 'cashway';
 		$this->tab              = 'payments_gateways';
 		// FIXME: should use self::VERSION here but https://validator.prestashop.com doesn't see to like it...
-		$this->version          = '0.6.4';
+		$this->version          = '0.6.5';
 		$this->author           = 'CashWay';
 		$this->need_instance    = 1;
 		$this->bootstrap        = true;
@@ -248,14 +248,6 @@ class CashWay extends PaymentModule
 		$default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
 
 		$cashway_register_url = 'https://www.cashway.fr';
-
-		$cron_url = $this->context->link->getModuleLink('cashway',
-			'status',
-			array('secure_key' => md5(_COOKIE_KEY_.Configuration::get('PS_SHOP_NAME'))),
-			true);
-
-		$cron_manager_url = Tools::getShopDomain(true, true).__PS_BASE_URI__.basename(_PS_ADMIN_DIR_)
-			.'/'.$this->context->link->getAdminLink('AdminModules', true).'&configure=cronjobs';
 
 		$fields_form_registration = array(
 		array(
@@ -504,7 +496,8 @@ class CashWay extends PaymentModule
 													0, ',', '&nbsp;')),
 			'this_path' => $this->_path,
 			'this_path_cashway' => $this->_path,
-			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
+			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
+			'cashway_api_base_url' => self::getCashWayAPI()->api_base_url
 		));
 
 		return $this->display(__FILE__, 'payment.tpl');
@@ -707,25 +700,15 @@ class CashWay extends PaymentModule
 					if ($open_orders[$ref]['total_paid_real'] >= $cw_orders[$ref]['order_total'])
 						\CashWay\Log::warn('I, It has already been updated: skipping.');
 					else
-					{
-						$order = new Order($open_orders[$ref]['id_order']);
-						$order->addOrderPayment($cw_orders[$ref]['order_total'],
-							'CashWay',
-							$cw_orders[$ref]['barcode']);
-						$order->setInvoice(true);
-
-						$history = new OrderHistory();
-						$history->id_order = $order->id;
-						$history->changeIdOrderState((int)Configuration::get('PS_OS_WS_PAYMENT'), $order, !$order->hasInvoice());
-					}
+						self::setOrderAs((int)Configuration::get('PS_OS_WS_PAYMENT'),
+										$open_orders[$ref]['id_order'],
+										$cw_orders[$ref]['order_total'],
+										$cw_orders[$ref]['barcode']);
 					break;
 
 				case 'expired':
 					\CashWay\Log::info(sprintf('I, found order %s expired. Updating local record.', $ref));
-					$order = new Order($open_orders[$ref]['id_order']);
-					$history = new OrderHistory();
-					$history->id_order = $order->id;
-					$history->changeIdOrderState((int)Configuration::get('PS_OS_CANCELED'), $order, !$order->hasInvoice());
+					self::setOrderAs((int)Configuration::get('PS_OS_CANCELED'), $open_orders[$ref]['id_order']);
 					break;
 
 				default:
@@ -736,6 +719,29 @@ class CashWay extends PaymentModule
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * @param integer $state
+	 * @param integer $order_id
+	 * @param float $order_total
+	 * @param string $barcode
+	 *
+	 * @return void
+	*/
+	private static function setOrderAs($state, $order_id, $order_total = null, $barcode = null)
+	{
+		$order = new Order((int)$order_id);
+		if (!is_null($order_total) && !is_null($barcode))
+		{
+			$order->addOrderPayment($order_total, 'CashWay', $barcode);
+			$order->setInvoice(true);
+		}
+
+		$history = new OrderHistory();
+		$history->id_order = (int)$order->id;
+		$history->changeIdOrderState((int)$state, $order);
+		$history->addWithEmail(true);
 	}
 
 	/**
