@@ -120,7 +120,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 	{
 		$this->headers = array_change_key_case(getallheaders(), CASE_LOWER);
 
-		$data = file_get_contents($file);
+		$data = Tools::file_get_contents($file);
 		$hkey = 'x-cashway-signature';
 
 		if (!array_key_exists($hkey, $this->headers))
@@ -134,7 +134,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 		if (!\CashWay\API::isDataValid($data, Configuration::get('CASHWAY_SHARED_SECRET'), $signature))
 			$this->terminateReply(400, 'Payload signature does not match.');
 
-		$this->data = json_decode($data);
+		$this->data = Tools::jsonDecode($data);
 		if (null === $this->data)
 			$this->terminateReply(400, 'Could not parse JSON payload.');
 
@@ -153,7 +153,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 		http_response_code($code);
 		header('Content-Type: application/json; charset=utf-8');
 
-		echo json_encode(array(
+		echo Tools::jsonEncode(array(
 			'status'  => $codes[$code][1] ? 'ok' : 'error',
 			'message' => $message
 		));
