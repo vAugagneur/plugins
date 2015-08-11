@@ -27,7 +27,7 @@ class HTTPTest extends PHPUnit_Framework_TestCase
 
     public function testHttpDo()
     {
-        $api = new \CashWay\API(array('API_URL' => 'http://nowhere'));
+        $api = new \CashWay\API(array('API_URL' => 'http://127.0.0.1:81'));
         $res = $api->httpDo('GET', '/path/to/test', array('query' => 'value'));
         $this->assertEquals('curl_error', $res['errors'][0]['code']);
 
