@@ -153,7 +153,7 @@ class APITest extends PHPUnit_Framework_TestCase
 
     public function signaturesProvider()
     {
-        function make_ruby_command($body, $secret)
+        function make_ruby_command($body, $secret, $algo)
         {
             $ruby = <<<'R'
 BODY='#1' SECRET='#2' ALGO='#3' ruby -e "
@@ -169,7 +169,7 @@ puts 'signature=' + signature
 R;
             $ruby = str_replace('#1', $body, $ruby);
             $ruby = str_replace('#2', $secret, $ruby);
-            $ruby = str_replace('#3', 'sha256', $ruby);
+            $ruby = str_replace('#3', $algo, $ruby);
 
             return $ruby;
         }
@@ -189,17 +189,18 @@ R;
         }
 
         $test_values = array(
-            array('body1', 'secret1'),
-            array(json_encode(array('key' => 'value')), 'howdy!'),
-            array(bin2hex(openssl_random_pseudo_bytes(128)), bin2hex(openssl_random_pseudo_bytes(32)))
+            array('body1', 'secret1', 'sha256'),
+            array(json_encode(array('key' => 'value')), 'howdy!', 'sha256'),
+            array(bin2hex(openssl_random_pseudo_bytes(128)), bin2hex(openssl_random_pseudo_bytes(32)), 'sha256'),
         );
 
         foreach ($test_values as $k => $run)
         {
             $body = $run[0];
             $secret = $run[1];
+            $algo = $run[2];
             $output = array();
-            $cmd = make_ruby_command($body, $secret);
+            $cmd = make_ruby_command($body, $secret, $algo);
             exec($cmd, $output);
             $vars = extract_vars($output);
 
@@ -261,7 +262,7 @@ R;
                     "X-CashWay-Signature" => "any=test"
                 ),
                 'howdy!',
-                array(false, 'Payload signature does not match.')
+                array(false, 'Unsupported signature algorithm.')
             )
         );
     }

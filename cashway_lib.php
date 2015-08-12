@@ -139,15 +139,15 @@ class API
      * @param string $secret shared secret between parties, used to sign $data
      * @param string $signature received signature of $data, in the form "algo=value"
      *
-     * @return boolean
+     * @return null if unsupported signature, or boolean
     */
     public static function isDataValid($data, $secret, $signature)
     {
         $signature = explode('=', $signature);
 
-        $supported_signatures = array('sha256', 'sha384', 'sha512');
+        $supported_signatures = array('sha1', 'sha256', 'sha384', 'sha512');
         if (!in_array($signature[0], $supported_signatures)) {
-            return false;
+            return null;
         }
 
         return hash_hmac($signature[0], $data, $secret, false) === $signature[1];
@@ -196,7 +196,12 @@ class API
             return array(false, 'A real signature is required.');
         }
 
-        if (!self::isDataValid($in_body, $in_secret, $signature)) {
+        $valid = self::isDataValid($in_body, $in_secret, $signature);
+        if (null === $valid) {
+            return array(false, 'Unsupported signature algorithm.');
+        }
+
+        if (!$valid) {
             return array(false, 'Payload signature does not match.');
         }
 
