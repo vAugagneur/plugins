@@ -599,21 +599,23 @@ class CashWay extends PaymentModule
 
     public function hookActionOrderStatusUpdate($params)
     {
-        $new_order_status = $params['newOrderStatus'];
+        if (self::isConfiguredService()) {
+            $new_order_status = $params['newOrderStatus'];
 
-        $order = new Order((int)$params['id_order']);
-        if (!Validate::isLoadedObject($order)) {
-            return;
-        }
+            $order = new Order((int)$params['id_order']);
+            if (!Validate::isLoadedObject($order)) {
+                return;
+            }
 
-        $customer = new Customer((int)$order->id_customer);
-        if (!Validate::isLoadedObject($customer)) {
-            return;
-        }
+            $customer = new Customer((int)$order->id_customer);
+            if (!Validate::isLoadedObject($customer)) {
+                return;
+            }
 
-        if ($new_order_status->id == Configuration::get('PS_OS_ERROR')) {
-            $cashway = self::getCashWayAPI();
-            $res = $cashway->reportFailedPayment($order->id, 0, $customer->id, $customer->email, $order->payment, '');
+            if ($new_order_status->id == Configuration::get('PS_OS_ERROR')) {
+                $cashway = self::getCashWayAPI();
+                $res = $cashway->reportFailedPayment($order->id, 0, $customer->id, $customer->email, $order->payment, '');
+            }
         }
     }
 
