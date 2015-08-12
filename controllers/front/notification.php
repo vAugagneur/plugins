@@ -1,6 +1,6 @@
 <?php
 /**
- * 2015 CashWay - Epayment Solution
+ * 2015 CashWay
  *
  * NOTICE OF LICENSE
  *
@@ -18,8 +18,8 @@
  * versions in the future. If you wish to customize PrestaShop for your
  * needs please refer to http://www.prestashop.com for more information.
  *
- *  @author    hupstream <mailbox@hupstream.com>
- *  @copyright 2015 Epayment Solution
+ *  @author    CashWay <contact@cashway.fr>
+ *  @copyright 2015 CashWay
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
