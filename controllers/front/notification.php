@@ -109,7 +109,8 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
         CashWay::checkForPayments();
         $this->terminateReply(200, array(
             'fn' => 'checkForPayments',
-            'log' => explode("\n", ob_get_clean())
+            'log' => explode("\n", ob_get_clean()),
+            'agent' => 'CashWayModule/'.Cashway::VERSION.' PrestaShop/'._PS_VERSION_.' PHP/'.PHP_VERSION.' '.PHP_OS
         ));
     }
 
