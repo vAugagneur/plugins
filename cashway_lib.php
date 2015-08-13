@@ -12,7 +12,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.5.1';
+const VERSION = '0.5.2';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -184,13 +184,18 @@ class API
     public static function receiveNotification($in_body, $in_headers, $in_secret)
     {
         $headers = array_change_key_case($in_headers, CASE_LOWER);
-        $hkey    = 'x-cashway-signature';
+        $signkey = 'x-cashway-signature';
+        $evkey   = 'x-cashway-event';
 
-        if (!array_key_exists($hkey, $headers)) {
+        if (!array_key_exists($signkey, $headers)) {
             return array(false, 'A signature header is required.');
         }
 
-        $signature = trim($headers[$hkey]);
+        if (!array_key_exists($evkey, $headers)) {
+            return array(false, 'An event header is required.');
+        }
+
+        $signature = trim($headers[$signkey]);
 
         if (substr($signature, 0, 4) == 'none' || $signature == '') {
             return array(false, 'A real signature is required.');
@@ -210,7 +215,7 @@ class API
             return array(false, 'Could not parse JSON payload.');
         }
 
-        return array(true, trim($headers['x-cashway-event']), $out_data);
+        return array(true, trim($headers[$evkey]), $out_data);
     }
 
     /**
