@@ -21,7 +21,7 @@ cs:
 	phpcs --encoding=utf-8 \
 		--standard=PSR2 \
 		--colors \
-		--ignore=lib/ \
+		--ignore=vendor/,coverage/ \
 		.
 
 reset_epayment:
@@ -36,7 +36,10 @@ test_install:
 test_user:
 	cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_spec.rb
 
-test: test_install test_user
+test:
+	phpunit .
+
+uxtest: test_install test_user
 
 copydeps:
 	wget -O lib/cashway/cashway_lib.php https://raw.githubusercontent.com/cshw/api-helpers/master/php/cashway_lib.php?${TS}
