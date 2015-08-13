@@ -27,8 +27,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require dirname(__FILE__).'/lib/cashway/cashway_lib.php';
-require dirname(__FILE__).'/lib/cashway/compat.php';
+require __DIR__.'/lib/cashway/cashway_lib.php';
+require __DIR__.'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
