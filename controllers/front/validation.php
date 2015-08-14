@@ -73,7 +73,10 @@ class CashwayValidationModuleFrontController extends ModuleFrontController
             $this->context->cart,
             $this->context->customer,
             $this->context->language->iso_code,
-            $cw_currency[0]['iso_code']
+            $cw_currency[0]['iso_code'],
+            array(
+                'button_type' => Tools::getValue('btn', '?')
+            )
         );
 
         $cw_res = $cashway->openTransaction();

@@ -84,7 +84,19 @@
                 </div>
             </div>
             <p class="cart_navigation" id="cart_navigation">
-                <input id="cashway-confirm-btn" type="image" src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}/views/img/cashway-confirm.png" alt="{l s='I confirm my order' mod='cashway'}"/>
+                {if (rand(1,100) > 50)}
+                <input type="hidden" name="btn" value="image"/>
+                <input id="cashway-confirm-btn"
+                    type="image"
+                    src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}/views/img/cashway-confirm.png"
+                    alt="{l s='I confirm my order' mod='cashway'}"/>
+                {else}
+                <input type="hidden" name="btn" value="button"/>
+                <input id="cashway-confirm-btn"
+                    type="submit"
+                    class="btn btn-primary button button-primary"
+                    value="{l s='I confirm my order' mod='cashway'}"/>
+                {/if}
             </p>
             <style>input[disabled] { opacity: 0.5; }</style>
             <script>
