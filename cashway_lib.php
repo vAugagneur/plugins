@@ -577,12 +577,23 @@ class API
             'details'     => $details
         );
 
+        $addr_delivery = new \AddressCore($cart->id_address_delivery);
+        $addr_invoice  = new \AddressCore($cart->id_address_invoice);
+
         $this->customer = array(
             // required
             'id'         => $customer->id,
             'name'       => $customer->firstname . ' ' . $customer->lastname,
             'email'      => $customer->email,
-            'phone'      => array($address->phone, $address->phone_mobile),
+            'phone'      => array($addr_invoice->phone, $addr_invoice->phone_mobile),
+            'city'       => $addr_invoice->city,
+            'zipcode'    => $addr_invoice->postcode,
+            'country'    => $addr_invoice->country,
+            'address'    => array(
+                'invoice' => $addr_invoice->getFields(),
+                'delivery' => $addr_delivery->getFields()
+            ),
+            'ip'         => self::getIPs(),
             // optional
             'company'    => $customer->company,
             'siret'      => $customer->siret,
