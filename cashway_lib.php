@@ -521,6 +521,19 @@ class API
         return $ret;
     }
 
+    public static function getIPs()
+    {
+        $keys = array('REMOTE_ADDR', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP');
+        $ret  = array();
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $_SERVER)) {
+                $ret[$key] = $_SERVER[$key];
+            }
+        }
+
+        return $ret;
+    }
+
     /**
      * Prestashop-specific setup.
      *
