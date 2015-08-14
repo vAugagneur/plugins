@@ -38,9 +38,68 @@ class APITest extends PHPUnit_Framework_TestCase
 
     public function testSetOrderPrestaShop()
     {
-        $a = new \CashWay\API(array());
+        $api = new \CashWay\API(get_conf());
+        $api->setOrder('prestashop', 1, new Cart(), new Customer(), 'FR', 'EUR');
+        $res = $api->openTransaction();
 
-        $res = $a->setOrder('prestashop', 1, new Cart(), new Customer(), 'FR', 'EUR');
+        $this->assertEquals('POST', $res['method']);
+        $this->assertEquals('/1/transactions/', $res['request']);
+
+        $expected_data = array(
+            'agent' => 'CashWay/0.5.2 PHP/5.5.22 Darwin',
+            'order' => array(
+                'id' => 1,
+                'at' => '2015-01-02T03:04:06Z',
+                'currency' => 'EUR',
+                'total' => '10.00',
+                'language' => 'FR',
+                'items_count' => 1
+            ),
+            'customer' => array(
+                'id' => 'customer-1',
+                'name' => 'Adam Homme',
+                'email' => 'adam@terre.eden',
+                'phone' => array('phone-1', 'phone-mobile-1'),
+                'city' => 'city-1',
+                'zipcode' => 'postcode-1',
+                'country' => 'country-1',
+                'address' => array(
+                    'invoice' => array(
+                        'id' => 'address-1',
+                        'address' => 'address-text',
+                        'address2' => 'address-text2',
+                        'phone' => 'phone-1',
+                        'phone_mobile' => 'phone-mobile-1',
+                        'city' => 'city-1',
+                        'country' => 'country-1',
+                        'postcode' => 'postcode-1'
+                    ),
+                    'delivery' => array(
+                        'id' => 'address-2',
+                        'address' => 'address-text',
+                        'address2' => 'address-text2',
+                        'phone' => 'phone-1',
+                        'phone_mobile' => 'phone-mobile-1',
+                        'city' => 'city-1',
+                        'country' => 'country-1',
+                        'postcode' => 'postcode-1'
+                    ),
+                ),
+                'ip' => array(),
+                'company' => 'Tout le monde',
+                'siret' => '0',
+                'ape' => '9001Z',
+                'risk' => 'risk-1',
+                'created_at' => '2015-01-02T03:04:05Z',
+                'geoloc' => array(
+                    'country' => 'FR',
+                    'state' => '44',
+                    'postcode' => '44100'
+                )
+            ),
+            'more' => null
+        );
+        $this->assertJsonStringEqualsJsonString(json_encode($expected_data), $res['body']);
     }
 
     /**
@@ -77,7 +136,8 @@ class APITest extends PHPUnit_Framework_TestCase
             'agent'    => $api->user_agent,
             'order'    => $api->order,
             'customer' => $api->customer,
-            'confirm'  => true
+            'confirm'  => true,
+            'more'     => array()
         );
 
         $res = $api->openTransaction(true);
@@ -287,8 +347,9 @@ class Cart {
 
     public function __construct()
     {
-        $this->date_add = date('c');
-        $this->id_address_delivery = 'address-1';
+        $this->date_add = '2015-01-02T03:04:06Z';
+        $this->id_address_invoice  = 'address-1';
+        $this->id_address_delivery = 'address-2';
     }
 
     public function nbProducts()
@@ -296,29 +357,28 @@ class Cart {
         return 1;
     }
 
-    public function getProducts()
-    {
-        return array(array(
-            'name' => '',
-            'cart_quantity' => 1,
-            'price' => '10.00',
-            'total' => '10.00',
-            'rate' => 0
-        ));
-    }
-
     public function getOrderTotal($with_taxes = true, $type = self::BOTH)
     {
-
+        return '10.00';
     }
 }
 
 class AddressCore {
-    public function __construct()
+    public function __construct($id)
     {
-        $this->id = 'address-1';
+        $this->id = $id;
+        $this->address = 'address-text';
+        $this->address2 = 'address-text2';
         $this->phone = 'phone-1';
         $this->phone_mobile = 'phone-mobile-1';
+        $this->city = 'city-1';
+        $this->country = 'country-1';
+        $this->postcode = 'postcode-1';
+    }
+
+    public function getFields()
+    {
+        return get_object_vars($this);
     }
 }
 
@@ -333,7 +393,7 @@ class Customer {
         $this->siret = '0';
         $this->ape = '9001Z';
         $this->id_risk = 'risk-1';
-        $this->date_add = date('c');
+        $this->date_add = '2015-01-02T03:04:05Z';
         $this->geoloc_id_country = 'FR';
         $this->geoloc_id_state = '44';
         $this->geoloc_postcode = '44100';
