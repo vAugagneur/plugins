@@ -1,7 +1,7 @@
 BRANCH=$(shell git symbolic-ref --short HEAD)
 TAG=$(shell git describe --tags)
 RELEASE_FILE=releases/cashway-${BRANCH}-${TAG}.zip
-TS=$(date +"%Y-%m-%dT%H:%M:%SZ")
+TS=$(shell date +"%Y-%m-%dT%H:%M:%SZ")
 
 usage:
 	@echo "Available targets:"
