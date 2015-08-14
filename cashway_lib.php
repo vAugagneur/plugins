@@ -550,20 +550,6 @@ class API
     // @codingStandardsIgnoreLine
     private function setOrder_prestashop($id, $cart, $customer, $language, $currency, $more = null)
     {
-        $address = new \AddressCore($cart->id_address_delivery);
-
-        $products = $cart->getProducts();
-        $details  = array();
-        foreach ($products as $prod) {
-            $details[] = array(
-                'name'     => $prod['name'],
-                'quantity' => $prod['cart_quantity'],
-                'price'    => $prod['price'],
-                'total'    => $prod['total'],
-                'rate'     => $prod['rate']
-            );
-        }
-
         $this->order =  array(
             // required
             // FIXME. This is the cart id, not the order id.
@@ -573,8 +559,6 @@ class API
             'total'       => $cart->getOrderTotal(true, \Cart::BOTH),
             'language'    => $language,
             'items_count' => $cart->nbProducts(),
-            // optional
-            'details'     => $details
         );
 
         $addr_delivery = new \AddressCore($cart->id_address_delivery);
