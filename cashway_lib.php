@@ -240,6 +240,7 @@ class API
 
         $this->order    = array();
         $this->customer = array();
+        $this->more     = array();
     }
 
     private function getUserAgent()
@@ -319,7 +320,8 @@ class API
             array(
             'agent'    => $this->user_agent,
             'order'    => $this->order,
-            'customer' => $this->customer
+            'customer' => $this->customer,
+            'more'     => $this->more
             )
         );
 
@@ -338,7 +340,8 @@ class API
         $payload = array(
             'agent'    => $this->user_agent,
             'order'    => $this->order,
-            'customer' => $this->customer
+            'customer' => $this->customer,
+            'more'     => $this->more
         );
 
         if ($force_confirm) {
@@ -532,7 +535,7 @@ class API
      * @return void
     */
     // @codingStandardsIgnoreLine
-    private function setOrder_prestashop($id, $cart, $customer, $language, $currency)
+    private function setOrder_prestashop($id, $cart, $customer, $language, $currency, $more = null)
     {
         $address = new \AddressCore($cart->id_address_delivery);
 
@@ -579,6 +582,8 @@ class API
                 'postcode' => $customer->geoloc_postcode
             )
         );
+
+        $this->more = $more;
     }
 
     // @codingStandardsIgnoreLine
