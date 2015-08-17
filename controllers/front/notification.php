@@ -1,6 +1,6 @@
 <?php
 /**
- * 2015 CashWay - Epayment Solution
+ * 2015 CashWay
  *
  * NOTICE OF LICENSE
  *
@@ -18,8 +18,8 @@
  * versions in the future. If you wish to customize PrestaShop for your
  * needs please refer to http://www.prestashop.com for more information.
  *
- *  @author    hupstream <mailbox@hupstream.com>
- *  @copyright 2015 Epayment Solution
+ *  @author    CashWay <contact@cashway.fr>
+ *  @copyright 2015 CashWay
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -27,8 +27,20 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
 {
     public function postProcess()
     {
-        $this->getValidPayload('php://input');
-        $handler = $this->snakeToCamel('on_'.$this->headers['x-cashway-event']);
+        $res = \CashWay\API::receiveNotification(
+            file_get_contents('php://input'),
+            getallheaders(),
+            Configuration::get('CASHWAY_SHARED_SECRET')
+        );
+
+        if ($res[0] === false) {
+            $this->terminateReply(400, $res[1]);
+        }
+
+        $event = $res[1];
+        $this->data = $res[2];
+
+        $handler = $this->snakeToCamel('on_'.$event);
 
         method_exists($this, $handler) ?
             $this->$handler() :
@@ -109,46 +121,9 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
         CashWay::checkForPayments();
         $this->terminateReply(200, array(
             'fn' => 'checkForPayments',
-            'log' => explode("\n", ob_get_clean())
+            'log' => explode("\n", ob_get_clean()),
+            'agent' => 'CashWayModule/'.Cashway::VERSION.' PrestaShop/'._PS_VERSION_.' PHP/'.PHP_VERSION.' '.PHP_OS
         ));
-    }
-
-    /**
-     * Validate input payload:
-     * - if it comes with a signature, validate signature,
-     * - parse it (JSON)
-     *
-     * @param $file payload source
-     *
-     * @return Array
-    */
-    private function getValidPayload($file)
-    {
-        $this->headers = array_change_key_case(getallheaders(), CASE_LOWER);
-
-        $data = Tools::file_get_contents($file);
-        $hkey = 'x-cashway-signature';
-
-        if (!array_key_exists($hkey, $this->headers)) {
-            $this->terminateReply(400, 'A signature header is required.');
-        }
-
-        $signature = trim($this->headers[$hkey]);
-
-        if ($signature == 'none' || $signature == '') {
-            $this->terminateReply(400, 'A real signature is required.');
-        }
-
-        if (!\CashWay\API::isDataValid($data, Configuration::get('CASHWAY_SHARED_SECRET'), $signature)) {
-            $this->terminateReply(400, 'Payload signature does not match.');
-        }
-
-        $this->data = Tools::jsonDecode($data);
-        if (null === $this->data) {
-            $this->terminateReply(400, 'Could not parse JSON payload.');
-        }
-
-        return $this->data;
     }
 
     private function terminateReply($code, $message)
@@ -163,7 +138,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
         http_response_code($code);
         header('Content-Type: application/json; charset=utf-8');
 
-        echo Tools::jsonEncode(array(
+        echo json_encode(array(
             'status'  => $codes[$code][1] ? 'ok' : 'error',
             'message' => $message
         ));

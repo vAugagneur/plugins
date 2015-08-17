@@ -12,7 +12,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.5.0';
+const VERSION = '0.6.1';
 
 const API_URL = 'https://api.cashway.fr';
 
@@ -139,15 +139,15 @@ class API
      * @param string $secret shared secret between parties, used to sign $data
      * @param string $signature received signature of $data, in the form "algo=value"
      *
-     * @return boolean
+     * @return null if unsupported signature, or boolean
     */
     public static function isDataValid($data, $secret, $signature)
     {
         $signature = explode('=', $signature);
 
-        $supported_signatures = array('sha256', 'sha384', 'sha512');
+        $supported_signatures = array('sha1', 'sha256', 'sha384', 'sha512');
         if (!in_array($signature[0], $supported_signatures)) {
-            return false;
+            return null;
         }
 
         return hash_hmac($signature[0], $data, $secret, false) === $signature[1];
@@ -184,19 +184,29 @@ class API
     public static function receiveNotification($in_body, $in_headers, $in_secret)
     {
         $headers = array_change_key_case($in_headers, CASE_LOWER);
-        $hkey    = 'x-cashway-signature';
+        $signkey = 'x-cashway-signature';
+        $evkey   = 'x-cashway-event';
 
-        if (!array_key_exists($hkey, $headers)) {
+        if (!array_key_exists($signkey, $headers)) {
             return array(false, 'A signature header is required.');
         }
 
-        $signature = trim($headers[$hkey]);
+        if (!array_key_exists($evkey, $headers)) {
+            return array(false, 'An event header is required.');
+        }
+
+        $signature = trim($headers[$signkey]);
 
         if (substr($signature, 0, 4) == 'none' || $signature == '') {
             return array(false, 'A real signature is required.');
         }
 
-        if (!self::isDataValid($in_body, $in_secret, $signature)) {
+        $valid = self::isDataValid($in_body, $in_secret, $signature);
+        if (null === $valid) {
+            return array(false, 'Unsupported signature algorithm.');
+        }
+
+        if (!$valid) {
             return array(false, 'Payload signature does not match.');
         }
 
@@ -205,7 +215,7 @@ class API
             return array(false, 'Could not parse JSON payload.');
         }
 
-        return array(true, trim($headers['x-cashway-event']), $out_data);
+        return array(true, trim($headers[$evkey]), $out_data);
     }
 
     /**
@@ -230,6 +240,7 @@ class API
 
         $this->order    = array();
         $this->customer = array();
+        $this->more     = array();
     }
 
     private function getUserAgent()
@@ -309,7 +320,8 @@ class API
             array(
             'agent'    => $this->user_agent,
             'order'    => $this->order,
-            'customer' => $this->customer
+            'customer' => $this->customer,
+            'more'     => $this->more
             )
         );
 
@@ -328,7 +340,8 @@ class API
         $payload = array(
             'agent'    => $this->user_agent,
             'order'    => $this->order,
-            'customer' => $this->customer
+            'customer' => $this->customer,
+            'more'     => $this->more
         );
 
         if ($force_confirm) {
@@ -508,6 +521,19 @@ class API
         return $ret;
     }
 
+    public static function getIPs()
+    {
+        $keys = array('REMOTE_ADDR', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP');
+        $ret  = array();
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $_SERVER)) {
+                $ret[$key] = $_SERVER[$key];
+            }
+        }
+
+        return $ret;
+    }
+
     /**
      * Prestashop-specific setup.
      *
@@ -522,22 +548,8 @@ class API
      * @return void
     */
     // @codingStandardsIgnoreLine
-    private function setOrder_prestashop($id, $cart, $customer, $language, $currency)
+    private function setOrder_prestashop($id, $cart, $customer, $language, $currency, $more = null)
     {
-        $address = new \AddressCore($cart->id_address_delivery);
-
-        $products = $cart->getProducts();
-        $details  = array();
-        foreach ($products as $prod) {
-            $details[] = array(
-                'name'     => $prod['name'],
-                'quantity' => $prod['cart_quantity'],
-                'price'    => $prod['price'],
-                'total'    => $prod['total'],
-                'rate'     => $prod['rate']
-            );
-        }
-
         $this->order =  array(
             // required
             // FIXME. This is the cart id, not the order id.
@@ -547,16 +559,25 @@ class API
             'total'       => $cart->getOrderTotal(true, \Cart::BOTH),
             'language'    => $language,
             'items_count' => $cart->nbProducts(),
-            // optional
-            'details'     => $details
         );
+
+        $addr_delivery = new \AddressCore($cart->id_address_delivery);
+        $addr_invoice  = new \AddressCore($cart->id_address_invoice);
 
         $this->customer = array(
             // required
             'id'         => $customer->id,
             'name'       => $customer->firstname . ' ' . $customer->lastname,
             'email'      => $customer->email,
-            'phone'      => array($address->phone, $address->phone_mobile),
+            'phone'      => array($addr_invoice->phone, $addr_invoice->phone_mobile),
+            'city'       => $addr_invoice->city,
+            'zipcode'    => $addr_invoice->postcode,
+            'country'    => $addr_invoice->country,
+            'address'    => array(
+                'invoice' => $addr_invoice->getFields(),
+                'delivery' => $addr_delivery->getFields()
+            ),
+            'ip'         => self::getIPs(),
             // optional
             'company'    => $customer->company,
             'siret'      => $customer->siret,
@@ -569,6 +590,8 @@ class API
                 'postcode' => $customer->geoloc_postcode
             )
         );
+
+        $this->more = $more;
     }
 
     // @codingStandardsIgnoreLine

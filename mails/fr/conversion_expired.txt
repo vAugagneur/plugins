@@ -1,0 +1,19 @@
+Bonjour {firstname} {lastname},
+
+Votre paiement sur {shop_name} n'a pas été validé
+(motifs possibles : erreur 3D Secure, plafond de carte bancaire dépassé, carte étrangère, etc.).
+
+Si vous le souhaitez, vous pouvez payer cette commande en espèces
+chez un buraliste près de chez vous en choisissant le mode de
+paiement "CashWay - Paiement en espèces sur internet" :
+
+    {reorder_url}
+
+Après paiement, votre commande sera validée et expédiée.
+
+--
+{shop_name}
+{shop_url}
+
+
+Réalisé avec PrestaShop

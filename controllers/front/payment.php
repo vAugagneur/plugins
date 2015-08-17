@@ -109,7 +109,8 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
             'this_path' => $this->module->getPathUri(),
             'this_path_cashway' => $this->module->getPathUri(),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->module->name.'/',
-            'cashway_api_base_url' => $cashway->api_base_url
+            'cashway_api_base_url' => $cashway->api_base_url,
+            'info_cgu' => Tools::getValue('cgu', false)
         ));
 
         // Nice but does not defer/async, so we inject this in the template for now

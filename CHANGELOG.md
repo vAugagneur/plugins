@@ -1,5 +1,12 @@
 # Changelog for CashWay PrestaShop module
 
+## 2015-08-17 - 0.8
+
+ * enforce CGU customer check
+ * improve conversion email message (post failed payment)
+ * update wrapper lib and refactor notification handlers
+ * host action buttons images in the plugin
+
 ## 12 August 2015 - 0.7.1
 
 Fixes:

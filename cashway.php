@@ -27,12 +27,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require dirname(__FILE__).'/lib/cashway/cashway_lib.php';
-require dirname(__FILE__).'/lib/cashway/compat.php';
+require __DIR__.'/lib/cashway/cashway_lib.php';
+require __DIR__.'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.7.2';
+    const VERSION = '0.8.0';
 
     /**
     */
@@ -599,21 +599,23 @@ class CashWay extends PaymentModule
 
     public function hookActionOrderStatusUpdate($params)
     {
-        $new_order_status = $params['newOrderStatus'];
+        if (self::isConfiguredService()) {
+            $new_order_status = $params['newOrderStatus'];
 
-        $order = new Order((int)$params['id_order']);
-        if (!Validate::isLoadedObject($order)) {
-            return;
-        }
+            $order = new Order((int)$params['id_order']);
+            if (!Validate::isLoadedObject($order)) {
+                return;
+            }
 
-        $customer = new Customer((int)$order->id_customer);
-        if (!Validate::isLoadedObject($customer)) {
-            return;
-        }
+            $customer = new Customer((int)$order->id_customer);
+            if (!Validate::isLoadedObject($customer)) {
+                return;
+            }
 
-        if ($new_order_status->id == Configuration::get('PS_OS_ERROR')) {
-            $cashway = self::getCashWayAPI();
-            $res = $cashway->reportFailedPayment($order->id, 0, $customer->id, $customer->email, $order->payment, '');
+            if ($new_order_status->id == Configuration::get('PS_OS_ERROR')) {
+                $cashway = self::getCashWayAPI();
+                $res = $cashway->reportFailedPayment($order->id, 0, $customer->id, $customer->email, $order->payment, '');
+            }
         }
     }
 
