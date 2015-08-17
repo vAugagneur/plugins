@@ -116,7 +116,7 @@
         <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?v=failed" alt="" />
 	{/if}
     <br>
-    <h4 id="cashway-map-l">Les distributeurs présents autour de votre adresse&nbsp;:</h4>
+    <h4 id="cashway-map-l">Les distributeurs proches de chez vous&nbsp;:</h4>
     <input id="cashway-map-search"
         type="textbox"
         class="form-control ac_input"

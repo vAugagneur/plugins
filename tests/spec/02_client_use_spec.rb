@@ -53,16 +53,15 @@ describe "Test d'une première commande sur " + ENV['TEST_SERVER'] do
 
 		expect(page).to have_content 'Total à payer au buraliste'
 		expect(page).to have_content 'Merci de confirmer votre commande en cliquant'
-		expect(page).to have_content 'Je confirme ma commande avec CashWay'
-		expect(page).to have_content 'Les points de paiement présents autour de votre adresse'
+		expect(page).to have_content 'J\'ai lu les conditions d’utilisation de CashWay et j’y adhère sans réserve'
+		expect(page).to have_content 'Les distributeurs proches de chez vous'
 
-		session.click_button 'Je confirme ma commande avec CashWay'
+		session.click_button 'Je confirme ma commande'
 	end
 
 	it "consulte la marche à suivre" do
-		expect(page).to have_content 'Confirmation de commande'
+		#expect(page).to have_content 'Confirmation de commande'
 		expect(page).to have_content 'vous pouvez maintenant vous rendre dans un des points de paiement indiqués sur la carte ci-dessous'
-		expect(page).to have_content 'Votre commande sera validée dès validation du paiement par le distributeur.'
 		expect(page).to have_content 'Veuillez bien noter et conserver la référence de la commande'
 
 		barcode = find('#cashway-barcode-label').text

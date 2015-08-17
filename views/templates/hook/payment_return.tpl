@@ -46,7 +46,7 @@
 		<br /><br /><strong>{l s='Your order will be sent as soon as we receive your payment.' mod='cashway'}</strong>
 	</p>
 
-	<h4 id="cashway-map-l">Les distributeurs présents autour de votre adresse&nbsp;:</h4>
+	<h4 id="cashway-map-l">Les distributeurs proches de chez vous&nbsp;:</h4>
 	<input id="cashway-map-search"
 		   type="textbox"
 		   class="form-control ac_input"
