@@ -44,7 +44,6 @@ class CashWay extends PaymentModule
         $this->author           = 'CashWay';
         $this->need_instance    = 1;
         $this->bootstrap        = true;
-        //$this->module_key       = '';
         $this->currencies       = true;
         $this->currencies_mode  = 'checkbox';
         $this->controllers      = array('payment', 'validation', 'notification');
