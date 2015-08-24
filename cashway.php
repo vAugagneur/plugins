@@ -57,6 +57,9 @@ class CashWay extends PaymentModule
         $this->description = $this->l('Now your customers can pay their orders with cash.');
         $this->confirmUninstall = $this->l('Are you sure you want to delete these details?');
 
+        $this->limited_countries = array('FR');
+        $this->limited_currencies = array('EUR');
+
         if (!Configuration::get('CASHWAY_API_KEY')) {
             $this->warning = $this->l('Missing API Key.');
         } else {
@@ -82,6 +85,13 @@ class CashWay extends PaymentModule
                 .' '
                 .$this->l('Please ask your web hosting provider for assistance.');
 
+            return false;
+        }
+
+        $iso_code = Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT'));
+        if (in_array($iso_code, $this->limited_countries) == false)
+        {
+            $this->_errors[] = $this->l('This module is not available in your country');
             return false;
         }
 
