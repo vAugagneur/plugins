@@ -614,7 +614,7 @@ class CashWay extends PaymentModule
 
             if ($new_order_status->id == Configuration::get('PS_OS_ERROR')) {
                 $cashway = self::getCashWayAPI();
-                $res = $cashway->reportFailedPayment(
+                $cashway->reportFailedPayment(
                     $order->id,
                     0,
                     $customer->id,
