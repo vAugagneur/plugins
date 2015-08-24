@@ -18,6 +18,7 @@ signrelease:
 	gpg --sign --armor ${RELEASE_FILE}.sha256
 
 cs:
+	phpcs --config-set show_warnings 0
 	phpcs --encoding=utf-8 \
 		--standard=PSR2 \
 		--colors \
