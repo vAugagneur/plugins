@@ -28,7 +28,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
     public function postProcess()
     {
         $res = \CashWay\API::receiveNotification(
-            file_get_contents('php://input'),
+            Tools::file_get_contents('php://input'),
             getallheaders(),
             Configuration::get('CASHWAY_SHARED_SECRET')
         );

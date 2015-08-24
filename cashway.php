@@ -131,8 +131,8 @@ class CashWay extends PaymentModule
         if ($order_state->add()) {
             Configuration::updateValue('PS_OS_CASHWAY', $order_state->id);
             if (!copy(
-                dirname(__FILE__).DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'logo.png',
-                _PS_ROOT_DIR_.DIRECTORY_SEPARATOR.'img'.DIRECTORY_SEPARATOR.'os'.DIRECTORY_SEPARATOR.$order_state->id.'.gif'
+                implode(DIRECTORY_SEPARATOR, array(dirname(__FILE__), 'img', 'logo.png')),
+                implode(DIRECTORY_SEPARATOR, array(_PS_ROOT_DIR_, 'img', 'os', $order_state->id.'.gif'))
             )) {
                 $this->_errors[] = $this->l('Failed to copy order state icon.');
             }
@@ -614,7 +614,14 @@ class CashWay extends PaymentModule
 
             if ($new_order_status->id == Configuration::get('PS_OS_ERROR')) {
                 $cashway = self::getCashWayAPI();
-                $res = $cashway->reportFailedPayment($order->id, 0, $customer->id, $customer->email, $order->payment, '');
+                $res = $cashway->reportFailedPayment(
+                    $order->id,
+                    0,
+                    $customer->id,
+                    $customer->email,
+                    $order->payment,
+                    ''
+                );
             }
         }
     }
