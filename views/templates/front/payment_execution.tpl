@@ -113,7 +113,7 @@
             <span>{$available.1|escape:'htmlall':'UTF-8'}</span></p>
         <p><a class="exclusive_large" href="/index.php?controller=order&step=3">Vous pouvez choisir une autre méthode</a></p>
         <br>
-        <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?v=failed" alt="" />
+        <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?v=failed&amp;r={$available.2|escape:'htmlall':'UTF-8'}" alt="" />
 	{/if}
     <br>
     <h4 id="cashway-map-l">Les distributeurs proches de chez vous&nbsp;:</h4>
