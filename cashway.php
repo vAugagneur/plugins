@@ -546,6 +546,7 @@ class CashWay extends PaymentModule
 
         $status = 'ok';
         $barcode = Tools::getValue('cw_barcode');
+        $cw_res = array();
         // maybe -failed- or something valid
         if ($barcode != '-failed-') {
             $cashway = self::getCashWayAPI();
@@ -574,7 +575,6 @@ class CashWay extends PaymentModule
         $location['search'] = implode(' ', $location);
 
         $this->smarty->assign(array(
-            // FIXME. Add cart fee here.
             'total_to_pay' => Tools::displayPrice(
                 $params['total_to_pay'],
                 $params['currencyObj'],
@@ -584,9 +584,12 @@ class CashWay extends PaymentModule
                 '+ %s €',
                 number_format(\CashWay\Fee::getCartFee($params['total_to_pay']), 0, ',', '&nbsp;')
             ),
-            'expires' => $cw_res['expires_at'],
+            'expires' => array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null,
+            'conditions' => array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null,
             'location' => $location,
             'cashway_api_url' => \CashWay\API_URL,
+            'kyc_upload_url' => \CashWay\KYC_URL,
+            'kyc_upload_mail' => \CashWay\KYC_MAIL,
             'barcode' => $barcode,
             'status' => $status,
             'env' => \CashWay\ENV,
