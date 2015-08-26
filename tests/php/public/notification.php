@@ -27,6 +27,14 @@ class Configuration
     }
 }
 
+class Tools
+{
+    public static function file_get_contents($file)
+    {
+        return file_get_contents($file);
+    }
+}
+
 class Cashway
 {
     const VERSION = '0.0.0';
