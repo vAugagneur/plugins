@@ -72,6 +72,7 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
                     $available[] = ''; //'<!-- CW debug: unknown -->';
                     break;
             }
+            $available[] = $cw_res['errors'][0]['code'];
         }
 
         // Limited to France for now
