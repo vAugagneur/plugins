@@ -46,7 +46,7 @@
             height="40"
             style="margin: 0px 10px 5px 0px;" /></h3>
 
-    {if $conditions.may_pay_this eq 'no'}
+    {if $kyc_conditions.may_pay_this eq 'no'}
         <p>Hélas, vous avez dépassé le montant maximum possible d'achats via CashWay ce mois-ci.
             Pour davantage d'informations...</p>
     {else}
@@ -75,19 +75,14 @@
                         <strong>Total à payer au buraliste&nbsp;:
                         <span id="amount" class="price">{displayPrice price=$total + $cart_fee}</span>.</strong>
                     </p></li>
-                    {if $conditions.may_pay_this eq 'req_kyc'}
+                    {if $kyc_conditions.may_pay_this eq 'req_kyc'}
                     <li><p>
                         <strong>Attention&nbsp;:</strong>
-                        pour que nous puissions encaisser ce montant de votre part,
-                        nous avons besoin&nbsp;:
-                        1) d&rsquo;une copie de votre carte d&rsquo;identité
-                        et 2) d&rsquo;un justificatif de domicile de moins de 3 mois.
-                        Sans cela, le code que vous recevrez ne sera pas actif.
-                    </p><p>
-                        Vous pouvez nous envoyer ces documents scannés
-                        <a href="mailto:{$kyc_upload_mail}?subject=Validation+{$barcode}">par email à validation@cashway.fr</a>
-                        ou via <a href="{$kyc_upload_url}">ce formulaire</a>
-                        (<a href="{$kyc_upload_url}">plus d&rsquo;informations).
+                        pour encaisser ce montant,
+                        la réglementation française nous impose de contrôler votre identité.
+                        Nous aurons ainsi besoin&nbsp;:
+                        1) d&rsquo;une copie recto/verso de votre carte d&rsquo;identité,
+                        2) d&rsquo;un justificatif de domicile de moins de 3 mois.
                     </p></li>
                     {/if}
                 </ul>

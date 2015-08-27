@@ -23,31 +23,6 @@
 *}
 
 {if $status == 'ok'}
-    {if $conditions.may_pay_this eq 'req_kyc'}
-    <li><p>
-        <strong>Attention&nbsp;:</strong>
-        pour que nous puissions encaisser ce montant de votre part,
-        nous avons besoin&nbsp;:
-        1) d&rsquo;une copie de votre carte d&rsquo;identité
-        et 2) d&rsquo;un justificatif de domicile de moins de 3 mois.
-        Sans cela, le code que vous recevrez ne sera pas actif.
-    </p><p>
-        Vous pouvez nous envoyer ces documents scannés
-        <a href="mailto:{$kyc_upload_mail}?subject=Validation+{$barcode}">par email à validation@cashway.fr</a>
-        ou via <a href="{$kyc_upload_url}">ce formulaire</a>
-        (<a href="{$kyc_upload_url}">plus d&rsquo;informations).
-    </p></li>
-    {/if}
-
-    <p>Pour régler les <span class="price">{$total_to_pay|escape:'htmlall':'UTF-8'} {$cart_fee|escape:'htmlall':'UTF-8'}</span> de votre commande,
-
-        vous pouvez maintenant vous rendre dans un des points de paiement
-        indiqués sur la carte ci-dessous, muni du code suivant : <code>{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
-        (ce code n'est valide que jusqu'au {$expires|date_format:"%A %e %B"|escape:'htmlall':'UTF-8'}
-        à {$expires|date_format:"%H"|escape:'htmlall':'UTF-8'}h).
-    </p>
-    <p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a>.</p>
-
     <p>
     {if !isset($reference)}
         {l s='Please note and keep your order number #%d.' sprintf=$id_order mod='cashway'}
@@ -55,6 +30,31 @@
         {l s='Please note and keep your order reference %s.' sprintf=$reference mod='cashway'}
     {/if}
     </p>
+    <p>
+      Pour régler les <span class="price">{$total_to_pay|escape:'htmlall':'UTF-8'}
+      {$cart_fee|escape:'htmlall':'UTF-8'}</span> de votre commande,
+      vous pouvez maintenant vous rendre dans un des points de paiement
+      indiqués sur la carte ci-dessous, muni du code suivant :
+      <code>{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
+      (ce code n'est valide que jusqu'au {$expires|date_format:"%A %e %B"|escape:'htmlall':'UTF-8'|strtolower}
+      à {$expires|date_format:"%H"|escape:'htmlall':'UTF-8'}h).
+    </p>
+    </p>
+    {if $kyc_conditions.may_pay_this eq 'req_kyc'}
+    <p>
+      <strong>Attention&nbsp;:</strong>
+      pour que nous puissions encaisser ce montant de votre part,
+      nous avons besoin&nbsp;:
+      1) d&rsquo;une copie de votre carte d&rsquo;identité
+      et 2) d&rsquo;un justificatif de domicile de moins de 3 mois.
+      <strong>Sans réception et validation de ces documents, votre code ne sera pas actif.</strong>
+      Vous pouvez nous envoyer ces documents scannés
+      <a href="mailto:{$kyc_upload_mail}?subject=Validation {$barcode}" class="button button-small">par email</a>
+      ou <a href="{$kyc_upload_url}" class="button button-small">par formulaire</a>
+      (<a href="{$kyc_upload_url}">plus d&rsquo;informations).
+    </p>
+    {/if}
+    <p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a>.</p>
 
     <p>
         {l s='An email and a text message have been sent to you with all this information.' mod='cashway'}
