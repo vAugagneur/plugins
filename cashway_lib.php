@@ -20,6 +20,10 @@ const API_URL_STAGING = 'https://api-staging.cashway.fr';
 
 const ENV = 'production';
 
+const KYC_PATH = '/1/kyc';
+
+const KYC_MAIL = 'validation@cashway.fr';
+
 const PHP_MIN_VERSION = '5.4';
 
 /**
