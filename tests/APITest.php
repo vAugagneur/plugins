@@ -46,7 +46,7 @@ class APITest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/1/transactions/', $res['request']);
 
         $expected_data = array(
-            'agent' => 'CashWay/0.5.2 PHP/5.5.22 Darwin',
+            'agent' => 'CashWay/' . (string)\CashWay\VERSION . ' PHP/' . (string)PHP_VERSION . ' Darwin',
             'order' => array(
                 'id' => 1,
                 'at' => '2015-01-02T03:04:06Z',
