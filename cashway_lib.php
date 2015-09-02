@@ -12,7 +12,7 @@
 
 namespace CashWay;
 
-const VERSION = '0.6.1';
+const VERSION = '0.6.2';
 
 const API_URL = 'https://api.cashway.fr';
 
