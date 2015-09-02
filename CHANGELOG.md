@@ -1,5 +1,11 @@
 # Changelog for CashWay PrestaShop module
 
+## 2015-09-02 - 0.9
+
+ * add KYC conditions on matching transactions
+ * force limits on country/currency
+ * code style fixes
+
 ## 2015-08-17 - 0.8
 
  * enforce CGU customer check

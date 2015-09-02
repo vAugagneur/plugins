@@ -77,7 +77,7 @@
     <p>
         {l s='For any questions or for further information, please contact our' mod='cashway'}
         <a href="{$link->getPageLink('contact', true)|escape:'htmlall':'UTF-8'}">{l s='customer service department.' mod='cashway'}</a>.
-        <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/returned?p=ps&amp;v=ok" alt="" />
+        <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/1/n/pu/returned?p=ps&amp;v=ok" alt="" />
     </p>
 {else}
     <p class="warning">
@@ -85,11 +85,11 @@
         {l s='The CashWay service is currently not available to register this order.' mod='cashway'}
         {l s='Your order is intact. If you will, you may use an other payment method.' mod='cashway'}
         <a href="/index.php?controller=order&step=3" class="exclusive_large">{l s='Choose an other payment method' mod='cashway'}</a>
-        <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/returned?p=ps&amp;v=barcode-failed" alt="" />
+        <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/1/n/pu/returned?p=ps&amp;v=barcode-failed" alt="" />
     {else}
         {l s='We have noticed that there is a problem with your order. If you think this is an error, you can contact our' mod='cashway'}
         <a href="{$link->getPageLink('contact', true)|escape:'htmlall':'UTF-8'}">{l s='customer service department.' mod='cashway'}</a>.
-        <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/returned?p=ps&amp;v=failed" alt="" />
+        <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/1/n/pu/returned?p=ps&amp;v=failed" alt="" />
     {/if}
     </p>
 {/if}
