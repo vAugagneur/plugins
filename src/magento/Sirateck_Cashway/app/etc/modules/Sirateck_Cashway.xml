@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<modules>
+		<Sirateck_Cashway>
+			<active>true</active>
+			<codePool>community</codePool>
+		</Sirateck_Cashway>
+	</modules>
+</config>
