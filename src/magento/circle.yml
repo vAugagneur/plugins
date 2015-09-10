@@ -5,3 +5,4 @@ machine:
 test:
   override:
     - make cs
+    - make test
