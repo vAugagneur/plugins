@@ -4,4 +4,5 @@ machine:
 
 test:
   override:
-    - phpcs --encoding=utf-8 --standard=PSR2 --colors --ignore=lib/ .
+    #- make cs
+    - make test

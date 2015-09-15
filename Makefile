@@ -22,7 +22,7 @@ cs:
 	phpcs --encoding=utf-8 \
 		--standard=PSR2 \
 		--colors \
-		--ignore=vendor/,coverage/ \
+		--ignore=lib/,vendor/,coverage/ \
 		.
 
 reset_epayment:
