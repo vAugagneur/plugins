@@ -1,5 +1,9 @@
 # Changelog for CashWay PrestaShop module
 
+## 2015-09-15 - 0.9.1
+
+ * add/rework tests
+
 ## 2015-09-02 - 0.9
 
  * add KYC conditions on matching transactions
