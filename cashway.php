@@ -857,10 +857,12 @@ class CashWay extends PaymentModule
     public function updateNotificationParameters()
     {
         if (self::isConfiguredService()) {
-            self::getCashWayAPI()->updateAccount(array(
+            return self::getCashWayAPI()->updateAccount(array(
                 'notification_url' => $this->context->link->getModuleLink($this->name, 'notification'),
                 'shared_secret' => Configuration::get('CASHWAY_SHARED_SECRET')
             ));
         }
+
+        return null;
     }
 }

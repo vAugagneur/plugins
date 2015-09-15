@@ -11,16 +11,28 @@ class ModuleFrontController
     }
 }
 
+class Link
+{
+    public function getModuleLink($name, $type)
+    {
+        return 'scheme://host.tld/'.$name.'/'.$type;
+    }
+}
+
 class PaymentModule
 {
     public function __construct()
     {
+        $this->context = new stdClass;
+        $this->context->link = new Link;
     }
 
     public function l($s)
     {
         return $s;
     }
+
+
 }
 
 class Configuration
