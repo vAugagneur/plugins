@@ -1,14 +1,13 @@
 <?php
+require_once __DIR__.'/../../lib/cashway/compat.php';
+require_once __DIR__.'/../../lib/cashway/cashway_lib.php';
 
-require __DIR__.'/../../lib/cashway/compat.php';
-require __DIR__.'/../../lib/cashway/cashway_lib.php';
-
-class ModuleTest extends PHPUnit_Framework_TestCase
+class CashWayControllerTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider providerTest
     */
-    public function testThis($url, $payload, $headers, $code, $status, $message)
+    public function testNotificationSignature($url, $payload, $headers, $code, $status, $message)
     {
         $res = \CashWay\cURL::POST($url, json_encode($payload), null, $headers, 'TEST-UA');
         $this->assertEquals(array(
@@ -20,7 +19,7 @@ class ModuleTest extends PHPUnit_Framework_TestCase
 
     public function providerTest()
     {
-        $url = sprintf('http://%s:%d/notification.php', WEB_SERVER_HOST, WEB_SERVER_PORT);
+        $url = sprintf('http://%s:%d/notification.php', TEST_SERVER_HOST, TEST_SERVER_PORT);
 
         return array(
             array($url, array(), array(), 400, 'error', 'A signature header is required.'),
@@ -57,11 +56,5 @@ class ModuleTest extends PHPUnit_Framework_TestCase
                 )
             )
         );
-    }
-
-    public function testHookActionOrderStatusUpdate()
-    {
-        $this->assertTrue(true);
-        /** TODO */
     }
 }
