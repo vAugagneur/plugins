@@ -15,9 +15,9 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
             'id_order' => 1
         );
         $res = $cwmod->hookActionOrderStatusUpdate($params);
-        $this->assertEquals($res['headers']['Authorization'], 'Basic '.base64_encode(TEST_KEY.':'.TEST_SECRET));
-        $this->assertEquals($res['method'], 'POST');
-        $this->assertEquals($res['request'], '/1/shops/me/events');
+        $this->assertEquals('POST', $res['method']);
+        $this->assertEquals('Basic '.base64_encode(TEST_KEY.':'.TEST_SECRET), $res['headers']['Authorization']);
+        $this->assertEquals('/1/shops/me/events', $res['request']);
 
         $body = json_decode($res['body'], true);
         $this->assertEquals($body['event'], 'payment_failed');

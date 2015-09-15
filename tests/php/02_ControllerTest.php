@@ -52,7 +52,7 @@ class CashWayControllerTest extends PHPUnit_Framework_TestCase
                 ), 200, 'ok', array(
                     'fn' => 'checkForPayments',
                     'log' => array('[LOG] Test.'),
-                    'agent' => 'CashWayModule/0.0.0 PrestaShop/1.1.1 PHP/5.5.22 Darwin'
+                    'agent' => 'CashWayModule/0.0.0 PrestaShop/1.1.1 PHP/'.PHP_VERSION.' '.PHP_OS
                 )
             )
         );
