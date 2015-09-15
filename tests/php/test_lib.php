@@ -31,8 +31,6 @@ class PaymentModule
     {
         return $s;
     }
-
-
 }
 
 class Configuration

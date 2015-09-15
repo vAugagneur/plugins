@@ -618,7 +618,6 @@ class CashWay extends PaymentModule
         $new_order_status = $params['newOrderStatus'];
         if ($new_order_status->id == Configuration::get('PS_OS_ERROR')) {
             if (self::isConfiguredService()) {
-
                 $order = new Order((int)$params['id_order']);
                 if (!Validate::isLoadedObject($order)) {
                     return;
