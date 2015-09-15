@@ -6,9 +6,12 @@
          verbose="false">
 
   <php>
-    <const name="WEB_SERVER_HOST" value="127.0.0.1" />
-    <const name="WEB_SERVER_PORT" value="9876" />
-    <const name="WEB_SERVER_DOCROOT" value="tests/php/public" />
+    <const name="TEST_SERVER_HOST" value="127.0.0.1" />
+    <const name="TEST_SERVER_PORT" value="9876" />
+    <const name="TEST_SERVER_DOCROOT" value="tests/php/public" />
+    <const name="TEST_KEY" value="test-key-K" />
+    <const name="TEST_SECRET" value="test-secret-S" />
+    <const name="CASHWAY_TEST_ENVIRONMENT" value="1" />
   </php>
 
   <testsuites>
