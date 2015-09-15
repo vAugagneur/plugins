@@ -9,14 +9,13 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
     {
         $cwmod = new CashWay();
         $os = new stdClass();
-        $os->id = 1;
+        $os->id = Configuration::get('PS_OS_ERROR');
         $params = array(
             'newOrderStatus' => $os,
             'id_order' => 1
         );
 
         $res = $cwmod->hookActionOrderStatusUpdate($params);
-        var_dump($res);
         $this->assertEquals('POST', $res['method']);
         $this->assertEquals('Basic '.base64_encode(TEST_KEY.':'.TEST_SECRET), $res['headers']['Authorization']);
         $this->assertEquals('/1/shops/me/events', $res['request']);
