@@ -608,24 +608,29 @@ class CashWay extends PaymentModule
         return $this->display(__FILE__, 'payment_return.tpl');
     }
 
+    /**
+     * Notify API of a failed payment, if service is configured.
+     *
+     *
+    */
     public function hookActionOrderStatusUpdate($params)
     {
-        if (self::isConfiguredService()) {
-            $new_order_status = $params['newOrderStatus'];
+        $new_order_status = $params['newOrderStatus'];
+        if ($new_order_status->id == Configuration::get('PS_OS_ERROR')) {
+            if (self::isConfiguredService()) {
 
-            $order = new Order((int)$params['id_order']);
-            if (!Validate::isLoadedObject($order)) {
-                return;
-            }
+                $order = new Order((int)$params['id_order']);
+                if (!Validate::isLoadedObject($order)) {
+                    return;
+                }
 
-            $customer = new Customer((int)$order->id_customer);
-            if (!Validate::isLoadedObject($customer)) {
-                return;
-            }
+                $customer = new Customer((int)$order->id_customer);
+                if (!Validate::isLoadedObject($customer)) {
+                    return;
+                }
 
-            if ($new_order_status->id == Configuration::get('PS_OS_ERROR')) {
                 $cashway = self::getCashWayAPI();
-                $cashway->reportFailedPayment(
+                return $cashway->reportFailedPayment(
                     $order->id,
                     0,
                     $customer->id,
@@ -635,6 +640,8 @@ class CashWay extends PaymentModule
                 );
             }
         }
+
+        return null;
     }
 
     public static function isConfiguredService()
