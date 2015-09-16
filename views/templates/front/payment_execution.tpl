@@ -47,8 +47,9 @@
             style="margin: 0px 10px 5px 0px;" /></h3>
 
     {if $kyc_conditions.may_pay_this eq 'no'}
-        <p>Hélas, vous avez dépassé le montant maximum possible d'achats via CashWay ce mois-ci.
-            Pour davantage d'informations...</p>
+        <p>Hélas, vous avez dépassé le montant maximum possible d'achats
+            via CashWay sur la période des 12 derniers mois
+            (<a href="https://help.cashway.fr/?q=depassement" id="cashway-link-more-info">plus d&rsquo;informations</a>).</p>
     {else}
         {if $available.0}
             <form action="{$link->getModuleLink('cashway', 'validation', [], true)|escape:'htmlall':'UTF-8'}"

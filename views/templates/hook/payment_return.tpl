@@ -35,7 +35,7 @@
       {$cart_fee|escape:'htmlall':'UTF-8'}</span> de votre commande,
       rendez-vous dans un des points de paiement
       indiqués sur <a href="#cashway-map-l">notre carte</a>, muni du code suivant&nbsp;:
-      <code>{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
+      <code id="cashway-barcode-label">{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
       (ce code n'est valide que jusqu'au {$expires|date_format:"%A %e %B"|escape:'htmlall':'UTF-8'|strtolower}
       à {$expires|date_format:"%H"|escape:'htmlall':'UTF-8'}h).
     </p>
@@ -49,12 +49,12 @@
       pour encaisser votre paiement.
       <strong>Sans réception et validation de ces documents, votre code ne sera pas actif.</strong>
       Vous pouvez nous envoyer ces documents scannés
-      <a href="mailto:{$kyc_upload_mail}?subject=Validation {$barcode}" class="button button-small">par email</a>
-      ou <a href="{$kyc_upload_url}?barcode={$barcode}" class="button button-small">par formulaire</a>
+      <a href="mailto:{$kyc_upload_mail}?subject=Validation {$barcode}" class="button button-small" id="cashway-kyc-email">par email</a>
+      ou <a href="{$kyc_upload_url}?barcode={$barcode}" class="button button-small" id="cashway-kyc-form">par formulaire</a>
       (<a href="{$kyc_upload_url}?barcode={$barcode}">plus d&rsquo;informations).
     </p>
     {/if}
-    <p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a>.</p>
+    <p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a></p>
 
     <p>
         {l s='An email and a text message have been sent to you with all this information.' mod='cashway'}
