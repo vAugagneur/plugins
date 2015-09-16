@@ -37,6 +37,18 @@ test_install:
 test_user:
 	cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_spec.rb
 
+add_products:
+	cd tests; cp .env.local .env; bundle exec rspec spec/03_add_products.rb
+
+test_user_250e:
+	cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_250e.rb
+
+test_user_2500e:
+		cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_2500e.rb
+
+test_google:
+	cd tests; cp .env.local .env; bundle exec rspec spec/test_scenario.rb
+
 test:
 	phpunit .
 
