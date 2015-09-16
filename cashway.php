@@ -587,7 +587,7 @@ class CashWay extends PaymentModule
             'kyc_conditions' => array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null,
             'location' => $location,
             'cashway_api_base_url' => \CashWay\API_URL,
-            'kyc_upload_url' => \CashWay\API_URL + \CashWay\KYC_PATH,
+            'kyc_upload_url' => \CashWay\API_URL.\CashWay\KYC_PATH,
             'kyc_upload_mail' => \CashWay\KYC_MAIL,
             'barcode' => $barcode,
             'status' => $status,
