@@ -50,17 +50,7 @@ describe "Test d'une commande > 2500 € sur " + ENV['TEST_SERVER'] do
 		find('a.' + ENV['MODULE_NAME'].downcase).click
 	end
 
-	it "confirme la commande avec CashWay" do
-		fail "Le service ne fonctionne pas..." if page.has_content? 'Hélas'
-		expect(page).to have_content 'Total à payer au buraliste'
-		expect(page).to have_content 'Merci de confirmer votre commande en cliquant'
-		expect(page).to have_content 'J\'ai lu les conditions d’utilisation de CashWay et j’y adhère sans réserve'
-		expect(page).to have_content 'Les distributeurs proches de chez vous'
-
-		# KYC nécessaires dans ce cas
-		expect(page).to have_content 'pour encaisser ce montant, la réglementation française nous impose de contrôler votre identité.'
-		#session.click_button 'Je confirme ma commande'
-		find('label[for=cgu-accept]').click
-		find('#cashway-confirm-btn').click
+	it "vérifie l'impossibilité de continuer" do
+		expect(page).to have_content 'Hélas, vous avez dépassé le montant maximum possible d\'achats via CashWay sur la période des 12 derniers mois (plus d’informations).'
 	end
 end
