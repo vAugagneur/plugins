@@ -7,13 +7,18 @@ usage:
 	@echo "Available targets:"
 	@cat Makefile | grep "^[A-z]" | awk '{print " - "$$1}' | sed "s/://g"
 
-prerelease:
-	#[[ ! -d "releases" ]] && mkdir "releases"
-	git archive --prefix=cashway/ --format zip --output ${RELEASE_FILE} ${TAG}
+install-build-deps:
+	git clone https://github.com/astorm/MagentoTarToConnect tools/mttc
 
-signrelease:
-	shasum -a 256 ${RELEASE_FILE} > ${RELEASE_FILE}.sha256
-	gpg --sign --armor ${RELEASE_FILE}.sha256
+update-build-deps:
+	cd tools/mttc && git pull
+
+package:
+	tar cf build/Sirateck_Cashway.tar Sirateck_Cashway
+	tools/mttc/magento-tar-to-connect.phar config.php
+
+clean:
+	rm -fr build/*
 
 cs:
 	phpcs --encoding=utf-8 --standard=PSR2 --colors .
