@@ -34,6 +34,9 @@ upgrade_epayment:
 test_install:
 	cd tests; cp .env.local .env; bundle exec rspec spec/01_install_module_spec.rb
 
+test_upgrade:
+	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
+
 test_user:
 	cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_spec.rb
 
