@@ -68,9 +68,15 @@ describe "Test d'une commande > 250 € sur " + ENV['TEST_SERVER'] do
 		#expect(page).to have_content 'Confirmation de commande'
 		expect(page).to have_content 'rendez-vous dans un des points de paiement indiqués sur notre carte, muni du code suivant'
 		expect(page).to have_content 'Veuillez bien noter et conserver la référence de la commande'
-		$stdin.gets
 		barcode = find('#cashway-barcode-label').text
-		expect(barcode[0..6]).to eq '3663538'
+		#expect(barcode[0..6]).to eq '3663538'
+
+		mail = URI.parse(page.find('a[id = "cashway-kyc-email"]')['href'])
+		expect(mail.to).to eq 'validation@cashway.fr'
+
+		form = URI.parse(page.find('a[id = "cashway-kyc-form"]')['href'])
+		expect(form.scheme).to eq 'https'
+		expect(form.host.end_with?('.cashway.fr')).to be true
 
 		# TODO, ajouter les expect() pour les liens vers mail & formulaire KYC
 		# TODO télécharger/imprimer ticket de paiement

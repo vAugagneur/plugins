@@ -21,6 +21,8 @@ require 'dotenv'
 require 'capybara'
 require 'selenium-webdriver'
 require 'awesome_print'
+require 'uri'
+
 
 include Capybara::DSL
 #include Capybara::RSpecMatchers
