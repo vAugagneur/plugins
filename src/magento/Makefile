@@ -14,7 +14,7 @@ update-build-deps:
 	cd tools/mttc && git pull
 
 package:
-	tar cf build/Sirateck_Cashway.tar Sirateck_Cashway
+	tar cf build/Sirateck_Cashway.tar app
 	tools/mttc/magento-tar-to-connect.phar config.php
 
 clean:
