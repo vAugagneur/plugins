@@ -37,10 +37,13 @@ test-install:
 test-upgrade:
 	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
 
-config-platform: config-base add-test-products
+config-platform: config-base remove-install-dir add-test-products
 
 config-base:
 	cd tests; cp .env.local .env; bundle exec rspec spec/config_platform.rb
+
+remove-install-dir:
+	cd ../../tests/box; vagrant ssh -c "sudo rm -fr /var/www/html/prestashop/install"
 
 add-test-products:
 	cd tests; cp .env.local .env; bundle exec rspec	spec/add_test_products.rb
