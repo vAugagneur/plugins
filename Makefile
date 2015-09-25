@@ -25,22 +25,41 @@ cs:
 		--ignore=lib/,vendor/,coverage/ \
 		.
 
-reset_epayment:
+reset-epayment:
 	cd tests; cp .env.epayment .env; bundle exec rspec spec/01_install_module_spec.rb
 
-upgrade_epayment:
+upgrade-epayment:
 	cd tests; cp .env.epayment .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
 
-test_install:
+test-install:
 	cd tests; cp .env.local .env; bundle exec rspec spec/01_install_module_spec.rb
 
-test_user:
-	cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_spec.rb
+test-upgrade:
+	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
+
+config-platform: config-base add-test-products
+
+config-base:
+	cd tests; cp .env.local .env; bundle exec rspec spec/config_platform.rb
+
+add-test-products:
+	cd tests; cp .env.local .env; bundle exec rspec	spec/add_test_products.rb
+
+test-user: client-ok client-250 client-2500
+
+client-ok:
+	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_spec.rb
+
+client-250:
+	cd tests; cp .env.local .env; bundle exec	rspec spec/client_use_250e.rb
+
+client-2500:
+	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_2500e.rb
 
 test:
 	phpunit .
 
-uxtest: test_install test_user
+uxtest: test-install test-user
 
 copydeps:
 	wget -O lib/cashway/cashway_lib.php https://raw.githubusercontent.com/cshw/api-helpers/master/php/cashway_lib.php?${TS}
