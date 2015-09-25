@@ -1,0 +1,114 @@
+---
+
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: Update apt cache
+      apt: update_cache=yes cache_valid_time=3600
+    - name: Install default packages
+      apt: name={{ item }} state=present
+      with_items:
+        - curl
+        - vim
+        - emacs
+        - tree
+        - git
+        - mysql-server
+        - mysql-client
+        - python-mysqldb
+        - apache2
+        - php5-common
+        - php5-cli
+        - php5-mysql
+        - libapache2-mod-php5
+        - phpmyadmin
+    - name: Upgrade packages
+      apt: upgrade=safe
+
+    - name: Create databases
+      mysql_db: name={{ item }} state=present
+      with_items:
+        - prestashop
+        - magento
+        - wordpress
+
+    - name: Utilisateur
+      mysql_user: name={{ item }} password={{ item }} priv={{ item }}.*:ALL host=localhost state=present
+      with_items:
+        - prestashop
+        - magento
+        - wordpress
+
+    - name: Creates directory
+      file: path=/var/www/html state=directory owner=vagrant group=vagrant mode=0755
+
+- hosts: all
+  tasks:
+    - name: download prestashop
+      get_url: >
+        url='https://www.prestashop.com/ajax/controller.php?method=download&type=releases&file=prestashop_1.6.1.1.zip&language=fr'
+        dest=/var/www/html/prestashop-latest.zip
+
+    - name: Copy sources
+      copy: src=magento-1.9.2.1-2015-08-03-06-33-36.zip dest=/var/www/html/magento-latest.zip mode=0644
+
+    - name: Unpack files
+      unarchive: src={{ item }} dest=/var/www/html setype=zip copy=no
+      with_items:
+        - /var/www/html/magento-latest.zip
+        - /var/www/html/prestashop-latest.zip
+
+    - name: Creates directory
+      file: path=/var/www/html/wordpress state=directory mode=0755
+
+    - name: check if WordPress is installed
+      command: >
+        chdir=/var/www/html/wordpress
+        wp core is-installed
+      register: command_result
+      ignore_errors: yes
+
+    - debug: msg="{{ command_result.rc }}"
+
+    - name: dowload wordpress cli
+      get_url: >
+        url='https://raw.github.com/wp-cli/builds/gh-pages/phar/wp-cli.phar'
+        dest=/var/www/html/wordpress
+      when: "command_result.rc != 0"
+
+    - name: set rights for wordpress cli
+      file: path=/var/www/html/wordpress/wp-cli.phar mode=0755
+      when: "command_result.rc != 0"
+
+    - name: Move wordpress cli to /bin
+      sudo: true
+      command: mv /var/www/html/wordpress/wp-cli.phar /bin/wp
+      when: "command_result.rc != 0"
+
+    - name: Download WordPress
+      command: >
+        chdir=/var/www/html/wordpress
+        wp core download
+      when: "command_result.rc != 0"
+
+    - name: Config WordPress DB
+      command: >
+        chdir=/var/www/html/wordpress
+        wp core config --dbname=prestashop --dbuser=prestashop --dbpass=prestashop
+      when: "command_result.rc != 0"
+
+    - name: Install WordPress
+      command: >
+        chdir=/var/www/html/wordpress
+        wp core install --url=http://localhost:8080/wordpress/ --admin_user=wp --admin_password=wp --admin_email=wpci@do.cshw.pl --title=testing_wordpress
+      when: "command_result.rc != 0"
+
+    - name: Restore /var/www/html ownership to www-data
+      sudo: true
+      command: chown -R www-data:www-data /var/www/html/
+
+    - name: Restart HTTP server
+      sudo: true
+      service: name=apache2 state=restarted
+
+# Done.
