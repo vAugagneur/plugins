@@ -1,5 +1,11 @@
 PS := prestashop
 
+test-deps:
+	which git
+	which make
+	which vagrant
+	which ansible
+
 test-all: test-setup test-checkout test-config test-run
 
 test-setup:
