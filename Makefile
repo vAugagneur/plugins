@@ -3,13 +3,13 @@ PS := prestashop
 test-all: test-setup test-checkout test-config test-run
 
 test-setup:
-	cd ci/box && vagrant up
+	cd tests/box && vagrant up
 
 test-halt:
-	cd ci/box && vagrant halt
+	cd tests/box && vagrant halt
 
 test-provision:
-	cd ci/box && vagrant provision
+	cd tests/box && vagrant provision
 
 test-checkout:
 	git clone https://github.com/cshw/cashway-prestashop src/prestashop
