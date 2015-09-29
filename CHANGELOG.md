@@ -1,5 +1,11 @@
 # Changelog for CashWay PrestaShop module
 
+## 2015-09-29 - 0.10
+
+ * improve test suites
+ * refactor notifications reception
+ * fix information links in payment page
+
 ## 2015-09-15 - 0.9.1
 
  * add/rework tests
