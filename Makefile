@@ -24,7 +24,7 @@ test-checkout:
 
 test-config: test-config-$(PS)
 
-test-run: test-$(PS)
+test-run: test-run-$(PS)
 
 test-config-$(PS):
 	cd src/$(PS); make config-platform
