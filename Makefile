@@ -37,13 +37,20 @@ test-install:
 test-upgrade:
 	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
 
-config-platform: config-base remove-install-dir add-test-products
+config-platform: config-base remove-install-dir catch-admin-url init-admin add-test-products
 
 config-base:
 	cd tests; cp .env.local .env; bundle exec rspec spec/config_platform.rb
 
+init-admin:
+	cd tests; cp .env.local .env; bundle exec rspec spec/init_admin.rb
+
 remove-install-dir:
 	cd ../../tests/box; vagrant ssh -c "sudo rm -fr /var/www/html/prestashop/install"
+
+catch-admin-url:
+	$(eval ADMIN_PATH := $(shell basename $(shell cd ../../tests/box/; vagrant ssh -c 'ls -d /var/www/html/prestashop/admin*')))
+	cd ../../src/prestashop/tests/ ; sed -i.bak "s|ADMIN_PATH=.*|ADMIN_PATH=/${ADMIN_PATH}|g" .env
 
 add-test-products:
 	cd tests; cp .env.local .env; bundle exec rspec	spec/add_test_products.rb
