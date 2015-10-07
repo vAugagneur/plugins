@@ -63,6 +63,9 @@ client-ok:
 client-250:
 	cd tests; cp .env.local .env; bundle exec	rspec spec/client_use_250e.rb
 
+add_new_account:
+	cd tests; cp .env.local .env; bundle exec rspec spec/add_new_account.rb
+
 client-2500:
 	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_2500e.rb
 
