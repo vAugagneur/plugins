@@ -4,23 +4,18 @@ describe "Test d'une commande > 2500 € sur " + ENV['TEST_SERVER'] do
 
 	it "ajoute un produit > 2500 € au panier" do
 		session.visit '/'
-		first('.product-container').click
-		click_link_or_button('Ajouter au panier')
-		sleep(1.5)
-		visit '/index.php?controller=order'
+    find(:xpath, '//a[@class="product-name" and @title="Test 2500"]/../..').click
+    click_link_or_button('Add to cart')
+    sleep(1.5)
+    visit '/index.php?controller=order'
 	end
 
 	it "passe commande" do
-		session.click_link_or_button 'Commander'
+		session.click_link_or_button 'Proceed to checkout'
 	end
 
 	it "s'identifie" do
-		assert_text 'Connexion'
-		expect(page).to have_selector('form#login_form')
-		expect(page).to have_selector('#email')
-		expect(page).to have_selector('#passwd')
-
-		find('#email').set ENV['CUSTOMER_EMAIL']
+    find('#email').set ENV['CUSTOMER_EMAIL']
 		find('#passwd').set ENV['CUSTOMER_PASSWD']
 		find_button('SubmitLogin').click
 		expect(page).to have_content ENV['CUSTOMER_NAME']
@@ -28,22 +23,22 @@ describe "Test d'une commande > 2500 € sur " + ENV['TEST_SERVER'] do
 
 	it "retourne au panier" do
 		visit '/index.php?controller=order'
-		find('a', text: 'Commander').click
+    find('a', text: 'Proceed to checkout').click
 	end
 
   it "passe les adresses" do
 		find("button[name=processAddress]").click
-		expect(page).to have_content('conditions générales')
+		expect(page).to have_content('terms of service')
 	end
 
 	it "valide les CGV et confirme" do
 		expect(page).to have_selector('#uniform-cgv')
 		find('label[for=cgv]').click
-		session.click_button 'Commander'
-		expect(page).to have_content 'Paiement'
+		session.click_button 'Proceed to checkout'
+		expect(page).to have_content 'Payment'
 		expect(page).to have_content ENV['MODULE_PAY_ACTION_TEXT']
-		expect(page).to have_content 'Continuer mes achats'
-		expect(page).to have_content 'CHOISISSEZ VOTRE MÉTHODE DE PAIEMENT'
+		expect(page).to have_content 'Continue shopping'
+		expect(page).to have_content 'CHOOSE YOUR PAYMENT METHOD'
 	end
 
 	it "choisit l'option " + ENV['MODULE_NAME'] do

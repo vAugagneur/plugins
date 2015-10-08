@@ -37,10 +37,13 @@ test-install:
 test-upgrade:
 	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
 
-config-platform: config-base remove-install-dir catch-admin-url init-admin add-test-products
+config-platform: config-base remove-install-dir init-admin catch-admin-url \
+	add-test-products \
+	add-new-account \
+	reset-epayment
 
 config-base:
-	cd tests; cp .env.local .env; bundle exec rspec spec/config_platform.rb
+	cd tests; cp .env.local .env; bundle exec rspec spec/config_base.rb
 
 remove-install-dir:
 	cd ../../tests/box; vagrant ssh -c "sudo rm -fr /var/www/html/prestashop/install"
@@ -48,6 +51,10 @@ remove-install-dir:
 catch-admin-url:
 	$(eval ADMIN_PATH := $(shell basename $(shell cd ../../tests/box/; vagrant ssh -c 'ls -d /var/www/html/prestashop/admin*')))
 	cd ../../src/prestashop/tests/ ; sed -i.bak "s|ADMIN_PATH=.*|ADMIN_PATH=/${ADMIN_PATH}|g" .env
+	@echo "ADMIN_PATH is ${ADMIN_PATH}"
+
+init-admin:
+	cd tests; cp .env.local .env; bundle exec rspec spec/init_admin.rb
 
 init-admin:
 	cd tests; cp .env.local .env; bundle exec rspec spec/init_admin.rb
@@ -63,10 +70,13 @@ test-user: test-client-ok test-client-250 test-client-2500
 test-client-ok:
 	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_spec.rb
 
-test-client-250:
-	cd tests; cp .env.local .env; bundle exec	rspec spec/client_use_250e.rb
+client-250:
+	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_250e.rb
 
-test-client-2500:
+add-new-account:
+	cd tests; cp .env.local .env; bundle exec rspec spec/add_new_account.rb
+
+client-2500:
 	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_2500e.rb
 
 test:

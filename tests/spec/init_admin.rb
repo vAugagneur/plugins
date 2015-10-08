@@ -1,16 +1,22 @@
 require 'spec_helper'
 
-describe "Installation de la page admin" do
+describe "Admin post configuration" do
 
-  it "charge la page d'admin" do
+  it "authenticates" do
     session.visit ENV['ADMIN_PATH']
     fill_in 'email', :with => ENV['ADMIN_EMAIL']
     fill_in 'passwd', :with => ENV['ADMIN_PASSWD']
     find(:xpath, '//button[@class="btn btn-primary btn-lg btn-block ladda-button"]').click
-    find('li#maintab-AdminParentLocalization').click
-    find(:xpath, '/html/body/div[1]/div[1]/nav/ul/li[9]/ul/li[4]/a').click
-    fill_in 'countryFilter_b!name', :with => ENV['SERVER_COUNTRY']
-    find(:xpath, '//button[@id="submitFilterButtoncountry"]').click
-    find(:xpath, '/html/body/div[1]/div[2]/div[5]/div/form[2]/div/div[2]/table/tbody/tr/td[7]/a/i[2]').click
+  end
+
+  it "goes to localization config page" do
+    find('li#maintab-AdminParentLocalization').find('a.title').click
+  end
+
+  it "sets default country to '#{ENV['SERVER_COUNTRY']}'" do
+    find('#PS_COUNTRY_DEFAULT_chosen').click
+    find('#PS_COUNTRY_DEFAULT_chosen .chosen-search input').set(ENV['SERVER_COUNTRY'])
+    find('#PS_COUNTRY_DEFAULT_chosen .chosen-results li:nth-child(1)').click
+    first('button', text: 'Save').click
   end
 end
