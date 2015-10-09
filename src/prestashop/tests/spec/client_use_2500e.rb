@@ -4,7 +4,7 @@ describe "Test d'une commande > 2500 € sur " + ENV['TEST_SERVER'] do
 
 	it "ajoute un produit > 2500 € au panier" do
 		session.visit '/'
-    find(:xpath, '//a[@class="product-name" and @title="Test 2500"]/../..').click
+    first(:xpath, '//a[@class="product-name" and @title="Test 2500"]/../..').click
     click_link_or_button('Add to cart')
     sleep(1.5)
     visit '/index.php?controller=order'
