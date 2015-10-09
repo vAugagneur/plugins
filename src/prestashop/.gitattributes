@@ -3,3 +3,5 @@ Makefile export-ignore
 tests export-ignore
 releases export-ignore
 .gitignore export-ignore
+circle.yml export-ignore
+phpunit.xml export-ignore
