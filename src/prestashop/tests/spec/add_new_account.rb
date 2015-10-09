@@ -18,7 +18,7 @@ describe "Add a new customer user" do
     find(:xpath, '//button[@name="submitAccount"]').click
   end
 
-  it "add an adresse" do
+  it "add an address" do
     find(:xpath, '//a[@title="Add my first address"]').click
     fill_in 'address1', :with => ENV['CUSTOMER_ADRESS']
     fill_in 'city', :with => ENV['CUSTOMER_CITY']

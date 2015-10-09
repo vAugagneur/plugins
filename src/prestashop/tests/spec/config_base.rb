@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Installation de la boutique PrestaShop " do
 
-  it "charge la page d'admin" do
+  it "loads installation page" do
     session.visit '/install'
     find('#btNext').click
   end
