@@ -11,8 +11,6 @@ prerelease:
 	#[[ ! -d "releases" ]] && mkdir "releases"
 	git archive --prefix=cashway/ --format zip --output ${RELEASE_FILE} ${TAG}
 	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env
-	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env.local
-	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env.epayment
 
 signrelease:
 	shasum -a 256 ${RELEASE_FILE} > ${RELEASE_FILE}.sha256
