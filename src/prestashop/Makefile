@@ -68,18 +68,18 @@ add-test-products:
 add_new_account:
 	cd tests; cp .env.local .env; bundle exec rspec spec/add_new_account.rb
 
-test-user: test-client-ok test-client-250 test-client-2500
+test-user: test-client-250 test-client-2500
 
 test-client-ok:
 	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_spec.rb
 
-client-250:
+test-client-250:
 	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_250e.rb
 
 add-new-account:
 	cd tests; cp .env.local .env; bundle exec rspec spec/add_new_account.rb
 
-client-2500:
+test-client-2500:
 	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_2500e.rb
 
 test:
