@@ -10,6 +10,7 @@ usage:
 prerelease:
 	#[[ ! -d "releases" ]] && mkdir "releases"
 	git archive --prefix=cashway/ --format zip --output ${RELEASE_FILE} ${TAG}
+	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env
 	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env.local
 	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env.epayment
 
@@ -37,10 +38,14 @@ test-install:
 test-upgrade:
 	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
 
-config-platform: config-base remove-install-dir init-admin catch-admin-url \
+config-platform: tests/.env prerelease \
+	config-base remove-install-dir init-admin catch-admin-url \
 	add-test-products \
 	add-new-account \
 	reset-epayment
+
+tests/.env:
+	ruby tests/build_env.rb > tests/.env
 
 config-base:
 	cd tests; cp .env.local .env; bundle exec rspec spec/config_base.rb
@@ -50,11 +55,8 @@ remove-install-dir:
 
 catch-admin-url:
 	$(eval ADMIN_PATH := $(shell basename $(shell cd ../../tests/box/; vagrant ssh -c 'ls -d /var/www/html/prestashop/admin*')))
-	cd ../../src/prestashop/tests/ ; sed -i.bak "s|ADMIN_PATH=.*|ADMIN_PATH=/${ADMIN_PATH}|g" .env
+	cd tests/ ; sed -i.bak "s|ADMIN_PATH=.*|ADMIN_PATH=/${ADMIN_PATH}|g" .env
 	@echo "ADMIN_PATH is ${ADMIN_PATH}"
-
-init-admin:
-	cd tests; cp .env.local .env; bundle exec rspec spec/init_admin.rb
 
 init-admin:
 	cd tests; cp .env.local .env; bundle exec rspec spec/init_admin.rb
