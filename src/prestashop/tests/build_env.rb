@@ -8,7 +8,7 @@ API_SERVER='https://api-staging.cashway.fr/1/shops'
 
 account = {
   firstname: 'Anne',
-  lastname: 'de Bretagne',
+  lastname: 'de Bretagne (' + SecureRandom.hex(3) + ')',
   email: 'test-%s@do.cshw.pl' % [SecureRandom.hex(8)],
   passwd: SecureRandom.hex(32),
   url: 'http://localhost:8080/prestashop/'
