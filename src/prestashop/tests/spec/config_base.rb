@@ -28,7 +28,7 @@ describe "Installation de la boutique PrestaShop " do
 
   it "succeeds installation" do
     #$stdin.gets
-    sleep 25
+    sleep 50
     find('#install_process_success', visible: true)
   end
 end
