@@ -59,6 +59,9 @@ catch-admin-url:
 init-admin:
 	cd tests; cp .env.local .env; bundle exec rspec spec/init_admin.rb
 
+reset-db:
+	cd ../../tests/box; vagrant ssh -c "mysql -uroot -e 'DROP DATABASE prestashop; CREATE DATABASE prestashop'"
+
 add-test-products:
 	cd tests; cp .env.local .env; bundle exec rspec	spec/add_test_products.rb
 
