@@ -21,6 +21,7 @@ describe "Adds test products (250/2500 €)" do
       sleep(3.5)
       find('button[name=submitAddproductAndStay]').click
       click_link_or_button('link-Quantities')
+      sleep(1)
       fill_in 'qty_0', :with => '10000'
     end
   end
