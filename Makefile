@@ -34,7 +34,7 @@ test-run-$(PS):
 	cd src/$(PS); make test-user
 
 test-clean:
-	rm -fr src/*
+	cd tests/box && vagrant halt && vagrant destroy --force
 
 test-download-magento:
 	@echo "TODO"
