@@ -8,7 +8,7 @@ API_SERVER='https://api-staging.cashway.fr/1/shops'
 
 account = {
   firstname: 'Anne',
-  lastname: 'de Bretagne (' + SecureRandom.hex(3) + ')',
+  lastname: 'de Bretagne ' + 6.times.map { [*'a'..'z'].sample }.join,
   email: 'test-%s@do.cshw.pl' % [SecureRandom.hex(8)],
   passwd: SecureRandom.hex(32),
   url: 'http://localhost:8080/prestashop/'
@@ -54,6 +54,8 @@ CUSTOMER_CITY=Nantes
 CUSTOMER_ADRESS=Château
 
 ADMIN_PATH=/admin
+ADMIN_FIRSTNAME=${CUSTOMER_FIRSTNAME}
+ADMIN_LASTNAME=${CUSTOMER_LASTNAME}
 ADMIN_NAME=${CUSTOMER_NAME}
 ADMIN_EMAIL=${CUSTOMER_EMAIL}
 ADMIN_PASSWD=${CUSTOMER_PASSWD}
