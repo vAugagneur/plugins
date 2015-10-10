@@ -46,7 +46,7 @@ tests/.env:
 	ruby tests/build_env.rb > tests/.env
 
 config-base:
-	cd tests; cp .env.local .env; bundle exec rspec spec/config_base.rb
+	cd tests; cp .env.local .env; bundle; bundle exec rspec spec/config_base.rb
 
 remove-install-dir:
 	cd ../../tests/box; vagrant ssh -c "sudo rm -fr /var/www/html/prestashop/install"
