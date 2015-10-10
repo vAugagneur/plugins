@@ -4,6 +4,8 @@ describe "Admin post configuration" do
 
   it "authenticates" do
     session.visit '/admin'
+    session.visit ENV['ADMIN_PATH'] if page.has_content?('Not Found')
+
     fill_in 'email', :with => ENV['ADMIN_EMAIL']
     fill_in 'passwd', :with => ENV['ADMIN_PASSWD']
     find(:xpath, '//button[@class="btn btn-primary btn-lg btn-block ladda-button"]').click
