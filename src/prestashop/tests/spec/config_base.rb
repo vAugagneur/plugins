@@ -1,9 +1,10 @@
 require 'spec_helper'
 
-describe "Installation de la boutique PrestaShop " do
+describe "PrestaShop basic setup" do
 
-  it "loads installation page" do
+  it "loads installation page & select English" do
     session.visit '/install'
+    find('#langList').find('option[value="en"]').click
     find('#btNext').click
   end
 
