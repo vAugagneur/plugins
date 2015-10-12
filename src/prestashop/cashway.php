@@ -32,7 +32,7 @@ require __DIR__.'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.10.0';
+    const VERSION = '0.11.0';
 
     /**
     */

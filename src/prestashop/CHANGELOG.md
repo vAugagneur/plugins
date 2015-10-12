@@ -1,5 +1,12 @@
 # Changelog for CashWay PrestaShop module
 
+## 2015-10-12 - 0.11
+
+ * add configurable paid order status
+ * refactor admin config forms & update translations
+ * lots of improvements in tests, new release process
+ * import into new plugins/ repository
+
 ## 2015-09-29 - 0.10
 
  * improve test suites
