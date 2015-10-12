@@ -32,7 +32,7 @@ require __DIR__.'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.10.0';
+    const VERSION = '0.11.0';
 
     /**
     */
@@ -361,7 +361,7 @@ class CashWay extends PaymentModule
             $orderstate = new OrderState(Configuration::get($psos));
             $ps_os_options[] = array(
                 'key' => $psos,
-                'name' => $orderstate->name[2].' ('.$psos.')'
+                'name' => $orderstate->name[$this->context->language->id].' ('.$psos.')'
             );
         }
 
