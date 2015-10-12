@@ -8,6 +8,7 @@ usage:
 	@cat Makefile | grep "^[A-z]" | awk '{print " - "$$1}' | sed "s/://g"
 
 release:
+	mkdir -p releases
 	mkdir -p rel.tmp/cashway/lib/cashway
 	git archive --prefix=cashway/ --format zip --output rel.tmp/cashway.zip ${TAG}
 	cd ../ && git archive --prefix=cashway/lib/cashway/ --format zip --output prestashop/rel.tmp/lib.zip HEAD php/{cashway_lib,compat}.php
