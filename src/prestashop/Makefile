@@ -7,27 +7,23 @@ usage:
 	@echo "Available targets:"
 	@cat Makefile | grep "^[A-z]" | awk '{print " - "$$1}' | sed "s/://g"
 
-# TODO, move this process in top Makefile
 release:
-	mkdir -p tmp/cashway/lib/cashway
-	# archive tip of this subtree
-	git archive --prefix=cashway/ --format zip --output tmp/cashway.zip ${TAG}
-	# archive deps subtree
-	cd ../ && git archive --prefix=cashway/lib/cashway/ --format zip --output prestashop/tmp/lib.zip HEAD php/{cashway_lib,compat}.php
-	# merge them
-	cd tmp && zip cashway.zip lib.zip
-	# release
-	mv tmp/cashway.zip releases/
-	rm -fr tmp
-
-prerelease:
-	#[[ ! -d "releases" ]] && mkdir "releases"
-	git archive --prefix=cashway/ --format zip --output ${RELEASE_FILE} ${TAG}
+	mkdir -p rel.tmp/cashway/lib/cashway
+	git archive --prefix=cashway/ --format zip --output rel.tmp/cashway.zip ${TAG}
+	cd ../ && git archive --prefix=cashway/lib/cashway/ --format zip --output prestashop/rel.tmp/lib.zip HEAD php/{cashway_lib,compat}.php
+	cd rel.tmp && zip cashway.zip lib.zip && rm lib.zip
+	mv rel.tmp/cashway.zip ${RELEASE_FILE}
+	rm -fr rel.tmp
 	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env
 
-signrelease:
+release-sign:
 	shasum -a 256 ${RELEASE_FILE} > ${RELEASE_FILE}.sha256
-	gpg --sign --armor ${RELEASE_FILE}.sha256
+	gpg --detach-sign --armor ${RELEASE_FILE}.sha256
+
+release-verify:
+	cat ${RELEASE_FILE}.sha256
+	gpg --verify ${RELEASE_FILE}.sha256.asc
+	shasum -c ${RELEASE_FILE}.sha256
 
 cs:
 	phpcs --config-set show_warnings 0
