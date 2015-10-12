@@ -164,7 +164,7 @@ class CashWay extends PaymentModule
     public function getContent()
     {
         $output = null;
-        if (Tools::isSubmit('submit'.$this->name)) {
+        if (Tools::isSubmit('submitApiKey')) {
             $key    = (string)Tools::getValue('CASHWAY_API_KEY');
             $secret = (string)Tools::getValue('CASHWAY_API_SECRET');
 
@@ -183,7 +183,9 @@ class CashWay extends PaymentModule
             }
 
             $this->updateNotificationParameters();
+        }
 
+        if (Tools::isSubmit('submitSettings')) {
             Configuration::updateValue('CASHWAY_PAYMENT_TEMPLATE', Tools::getValue('CASHWAY_PAYMENT_TEMPLATE'));
             Configuration::updateValue('CASHWAY_SEND_EMAIL', Tools::getValue('CASHWAY_SEND_EMAIL'));
             Configuration::updateValue('CASHWAY_USE_STAGING', Tools::getValue('CASHWAY_USE_STAGING'));
@@ -197,12 +199,7 @@ class CashWay extends PaymentModule
             $params['phone'] = Tools::getValue('phone');
             $params['country'] = Tools::getValue('country');
             $params['company'] = Tools::getValue('company');
-            $params['siren'] = Tools::getValue('siren');
             $params['url'] = $this->context->shop->getBaseURL();
-
-            if (!$params['siren'] || empty($params['siren'])) {
-                $params['siren'] = str_pad('', 9, '0');
-            }
 
             if (!$params['name'] || empty($params['name']) || !Validate::isGenericName($params['name'])) {
                 $output .= $this->displayError($this->l('Missing name.'));
@@ -244,21 +241,21 @@ class CashWay extends PaymentModule
         $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
 
         $cashway_register_url = 'https://www.cashway.fr';
+        $is_configured = self::isConfiguredService();
 
         $fields_form_registration = array(
         array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->l('Registration'),
+                    'title' => $this->l('Register Your CashWay Shop Account'),
                     'icon' => 'icon-user',
                 ),
                 'input' => array(
                     array(
                         'type' => 'text',
-                        'label' => $this->l('Name'),
+                        'label' => $this->l('Shop Name'),
                         'name' => 'name',
                         'class' =>  'fixed-width-xxl',
-                        // 'size' => 64,
                         'required' => true,
                     ),
                     array(
@@ -276,16 +273,13 @@ class CashWay extends PaymentModule
                         'required' => true,
                     ),
                     array(
-                        'type' => 'text',
-                        'label' => $this->l('Phone'),
-                        'name' => 'phone',
-                        'class' =>  'fixed-width-xxl',
-                        'required' => true,
-                    ),
-                    array(
                         'type' => 'select',
                         'label' => $this->l('Country'),
                         'name' => 'country',
+                        'desc' => $this->l('CashWay is only available to shops operating in France for the time being.')
+                            .'<br>'
+                            .sprintf($this->l('Feel free to %scontact us%s if you would like to see support in your country!'),
+                                    '<a href="https://www.cashway.fr/contact/">', '</a>'),
                         'required' => true,
                         'options' => array(
                             'query' => Country::getCountries($this->context->language->id),
@@ -302,10 +296,10 @@ class CashWay extends PaymentModule
                     ),
                     array(
                         'type' => 'text',
-                        'label' => $this->l('Siren'),
-                        'name' => 'siren',
+                        'label' => $this->l('Phone'),
+                        'name' => 'phone',
                         'class' =>  'fixed-width-xxl',
-                        // 'required' => true,
+                        'required' => false,
                     )
                 ),
                 'submit' => array(
@@ -316,11 +310,11 @@ class CashWay extends PaymentModule
             )
         ));
 
-        $fields_form = array(
+        $fields_form_api = array(
         array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->l('Settings'),
+                    'title' => $this->l('API Authentication'),
                     'icon' => 'icon-cog'
                 ),
                 'input' => array(
@@ -342,10 +336,37 @@ class CashWay extends PaymentModule
                         'required' => true,
                         'placeholder' => '62ba359fa6b58bea641314e7a4635cf6'
                     ),
+                ),
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                    'name' => 'submitApiKey',
+                ),
+                'description' => $is_configured
+                    ? ''
+                    : '<p>'.sprintf(
+                        $this->l('Please get your CashWay API credentials by registering below or contact us to activate your account on %s.'),
+                        sprintf('<a href="%s" target="blank">www.cashway.fr</a>', $cashway_register_url)
+                    ).'</p>',
+                'warning' =>
+                    $is_configured
+                        ? $this->l('Please keep these safe in a private location; do not share them; do not send them to anyone.')
+                        : ''
+            )
+        ));
+
+        $fields_form_settings = array(
+        array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->l('Settings'),
+                    'icon' => 'icon-cog'
+                ),
+                'input' => array(
                     array(
                         'type' => 'select',
                         'label' => $this->l('Payment template'),
                         'name' => 'CASHWAY_PAYMENT_TEMPLATE',
+                        'desc' => $this->l('Choose between a light CashWay payment button or a normal CashWay orange button.'),
                         'required' => true,
                         'options' => array(
                             'query' => array(
@@ -358,7 +379,14 @@ class CashWay extends PaymentModule
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => $this->l('Send email'),
+                        'label' => $this->l('Failed payment recovery'),
+                        'desc' => $this->l('Try to recover a failed payment from another payment provider.')
+                            .'<br>'
+                            .$this->l('This will send a recovery email from your shop to your customer, about 2 minutes after the other method failed.')
+                            .'<br>'
+                            .sprintf($this->l('Feel free to %sask us%s if you would like to know more about how this works.'),
+                                '<a href="https://www.cashway.fr/contact/">', '</a>'
+                                ),
                         'name' => 'CASHWAY_SEND_EMAIL',
                         'is_bool' => true,
                         'values' => array(
@@ -373,40 +401,12 @@ class CashWay extends PaymentModule
                                         'label' => $this->l('Disabled')
                                     )
                                 ),
-                    ),
-                    array(
-                        'type' => 'switch',
-                        'label' => $this->l('Use staging'),
-                        'name' => 'CASHWAY_USE_STAGING',
-                        'is_bool' => true,
-                        'values' => array(
-                                    array(
-                                        'id' => 'active_on',
-                                        'value' => 1,
-                                        'label' => $this->l('Enabled')
-                                    ),
-                                    array(
-                                        'id' => 'active_off',
-                                        'value' => 0,
-                                        'label' => $this->l('Disabled')
-                                    )
-                                ),
-                        ),
+                    )
                 ),
                 'submit' => array(
                     'title' => $this->l('Save'),
-                    'name' => 'submit'.$this->name,
+                    'name' => 'submitSettings',
                 )
-            )
-        ),
-        array(
-            'form' => array(
-                'description' =>
-                    '<p>'.sprintf(
-                        $this->l('Get your CashWay API credentials by registering on %s.'),
-                        sprintf('<a href="%s" target="blank">%s</a>', $cashway_register_url, $cashway_register_url)
-                    )
-                    .'</p>'
             )
         ));
 
@@ -438,13 +438,16 @@ class CashWay extends PaymentModule
 
         $helper->fields_value = $this->getFormFieldsValue();
 
-        if (self::isConfiguredService()) {
-            return $helper->generateForm($fields_form);
+        if ($is_configured) {
+            $output = $helper->generateForm($fields_form_api);
+            $output .= $helper->generateForm($fields_form_settings);
         } else {
-            $output = $helper->generateForm($fields_form_registration);
-            $output .= $helper->generateForm($fields_form);
-            return $output;
+            $output = $helper->generateForm($fields_form_api);
+            $output .= $helper->generateForm($fields_form_registration);
+            $output .= $helper->generateForm($fields_form_settings);
         }
+
+        return $output;
     }
 
     protected function getFormFieldsValue()
@@ -480,8 +483,7 @@ class CashWay extends PaymentModule
             'email' => Tools::getValue('email', $email),
             'phone' => Tools::getValue('phone', $phone),
             'country' => Tools::getValue('country', $country),
-            'company' => Tools::getValue('company', $company),
-            'siren' => Tools::getValue('siren'),
+            'company' => Tools::getValue('company', $company)
         );
     }
 
