@@ -53,7 +53,7 @@ config-platform: tests/.env prerelease \
 	reset-epayment
 
 tests/.env:
-	ruby tests/build_env.rb > tests/.env
+	cd tests && bundle && bundle exec ruby build_env.rb > .env
 
 config-base:
 	cd tests; cp .env.local .env; bundle; bundle exec rspec spec/config_base.rb
