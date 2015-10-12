@@ -7,6 +7,19 @@ usage:
 	@echo "Available targets:"
 	@cat Makefile | grep "^[A-z]" | awk '{print " - "$$1}' | sed "s/://g"
 
+# TODO, move this process in top Makefile
+release:
+	mkdir -p tmp/cashway/lib/cashway
+	# archive tip of this subtree
+	git archive --prefix=cashway/ --format zip --output tmp/cashway.zip ${TAG}
+	# archive deps subtree
+	cd ../ && git archive --prefix=cashway/lib/cashway/ --format zip --output prestashop/tmp/lib.zip HEAD php/{cashway_lib,compat}.php
+	# merge them
+	cd tmp && zip cashway.zip lib.zip
+	# release
+	mv tmp/cashway.zip releases/
+	rm -fr tmp
+
 prerelease:
 	#[[ ! -d "releases" ]] && mkdir "releases"
 	git archive --prefix=cashway/ --format zip --output ${RELEASE_FILE} ${TAG}
@@ -86,7 +99,3 @@ test:
 	phpunit .
 
 uxtest: test-install test-user
-
-copydeps:
-	wget -O lib/cashway/cashway_lib.php https://raw.githubusercontent.com/cshw/api-helpers/master/php/cashway_lib.php?${TS}
-	wget -O lib/cashway/compat.php https://raw.githubusercontent.com/cshw/api-helpers/master/php/compat.php?${TS}
