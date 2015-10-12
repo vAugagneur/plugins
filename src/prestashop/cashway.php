@@ -105,6 +105,7 @@ class CashWay extends PaymentModule
     public function installDefaultValues()
     {
         Configuration::updateValue('CASHWAY_SHARED_SECRET', bin2hex(openssl_random_pseudo_bytes(24)));
+        Configuration::updateValue('CASHWAY_OS_PAYMENT', 'PS_OS_WS_PAYMENT');
 
         return true;
     }
@@ -186,6 +187,7 @@ class CashWay extends PaymentModule
         }
 
         if (Tools::isSubmit('submitSettings')) {
+            Configuration::updateValue('CASHWAY_OS_PAYMENT', Tools::getValue('CASHWAY_OS_PAYMENT'));
             Configuration::updateValue('CASHWAY_PAYMENT_TEMPLATE', Tools::getValue('CASHWAY_PAYMENT_TEMPLATE'));
             Configuration::updateValue('CASHWAY_SEND_EMAIL', Tools::getValue('CASHWAY_SEND_EMAIL'));
             Configuration::updateValue('CASHWAY_USE_STAGING', Tools::getValue('CASHWAY_USE_STAGING'));
@@ -354,6 +356,15 @@ class CashWay extends PaymentModule
             )
         ));
 
+        $ps_os_options = array();
+        foreach (array('PS_OS_WS_PAYMENT', 'PS_OS_PAYMENT') as $psos) {
+            $orderstate = new OrderState(Configuration::get($psos));
+            $ps_os_options[] = array(
+                'key' => $psos,
+                'name' => $orderstate->name[2].' ('.$psos.')'
+            );
+        }
+
         $fields_form_settings = array(
         array(
             'form' => array(
@@ -401,7 +412,21 @@ class CashWay extends PaymentModule
                                         'label' => $this->l('Disabled')
                                     )
                                 ),
-                    )
+                    ),
+                    array(
+                        'type' => 'select',
+                        'label' => $this->l('Paid Order Status'),
+                        'name' => 'CASHWAY_OS_PAYMENT',
+                        'desc' => $this->l('Define specific paid status effectively applied to CashWay-paid orders.')
+                            .'<br>'
+                            .$this->l('Note: changing this will not retroactively apply to past paid orders.'),
+                        'required' => true,
+                        'options' => array(
+                            'query' => $ps_os_options,
+                            'name' => 'name',
+                            'id' => 'key'
+                        )
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->l('Save'),
@@ -475,9 +500,9 @@ class CashWay extends PaymentModule
                 'CASHWAY_SEND_EMAIL',
                 Configuration::get('CASHWAY_SEND_EMAIL')
             ),
-            'CASHWAY_USE_STAGING' => Tools::getValue(
-                'CASHWAY_USE_STAGING',
-                Configuration::get('CASHWAY_USE_STAGING')
+            'CASHWAY_OS_PAYMENT' => Tools::getValue(
+                'CASHWAY_OS_PAYMENT',
+                Configuration::get('CASHWAY_OS_PAYMENT')
             ),
             'name' => Tools::getValue('name', $name),
             'email' => Tools::getValue('email', $email),
@@ -754,7 +779,7 @@ class CashWay extends PaymentModule
                         \CashWay\Log::warn('I, It has already been updated: skipping.');
                     } else {
                         self::setOrderAs(
-                            (int)Configuration::get('PS_OS_WS_PAYMENT'),
+                            (int)Configuration::get('CASHWAY_OS_PAYMENT'),
                             $open_orders[$ref]['id_order'],
                             $cw_orders[$ref]['order_total'],
                             $cw_orders[$ref]['barcode']
