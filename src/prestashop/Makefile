@@ -46,7 +46,7 @@ test-install:
 test-upgrade:
 	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
 
-config-platform: tests/.env prerelease \
+config-platform: tests/.env release \
 	config-base remove-install-dir init-admin catch-admin-url \
 	add-test-products \
 	add-new-account \
