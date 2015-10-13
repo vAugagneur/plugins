@@ -382,7 +382,7 @@ class CashWay extends PaymentModule
                         'options' => array(
                             'query' => array(
                                 array('key' => 'light', 'name' => $this->l('Light template')),
-                                array('key' => 'normal', 'name' => $this->l('Normal template')),
+                                array('key' => 'normal', 'name' => $this->l('CashWay Stand Out Template')),
                             ),
                             'name' => 'name',
                             'id' => 'key'
