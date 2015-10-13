@@ -1,5 +1,9 @@
 PS := prestashop
 
+build-all:
+	cd src/prestashop && make build
+	mv src/prestashop/build/* build/
+
 test-deps:
 	which git
 	which make
