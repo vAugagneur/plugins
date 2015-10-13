@@ -1,27 +1,38 @@
 BRANCH=$(shell git symbolic-ref --short HEAD)
 TAG=$(shell git describe --tags)
-RELEASE_FILE=releases/cashway-${BRANCH}-${TAG}.zip
+BUILD_DIR=build
+BUILD_TMP=${BUILD_DIR}/tmp
+RELEASE_FILE=${BUILD_DIR}/cashway-prestashop-${BRANCH}-${TAG}.zip
 TS=$(shell date +"%Y-%m-%dT%H:%M:%SZ")
 
 usage:
 	@echo "Available targets:"
 	@cat Makefile | grep "^[A-z]" | awk '{print " - "$$1}' | sed "s/://g"
 
-release:
-	mkdir -p releases
-	mkdir -p rel.tmp/cashway/lib/cashway
-	git archive --prefix=cashway/ --format zip --output rel.tmp/cashway.zip ${TAG}
-	cd ../ && git archive --prefix=cashway/lib/cashway/ --format zip --output prestashop/rel.tmp/lib.zip HEAD php/{cashway_lib,compat}.php
-	cd rel.tmp && zip cashway.zip lib.zip && rm lib.zip
-	mv rel.tmp/cashway.zip ${RELEASE_FILE}
-	rm -fr rel.tmp
+build: release release-sign
+
+release-file:
+ifeq ($(RELEASE), 1)
+	$(eval VAR := $(shell bash -c 'read -e -p "Set build tag: " -i "${BRANCH}-${TAG}" VAR; echo $$VAR'))
+	$(eval RELEASE_FILE := '${BUILD_DIR}/cashway-prestashop-${VAR}.zip')
+	echo ${RELEASE_FILE}
+endif
+
+release: release-file
+	mkdir -p ${BUILD_DIR}
+	mkdir -p ${BUILD_TMP}/cashway/lib/cashway
+	git archive --prefix=cashway/ --format zip --output ${BUILD_TMP}/cashway.zip ${TAG}
+	cd ../ && git archive --prefix=cashway/lib/cashway/ --format zip --output prestashop/${BUILD_TMP}/lib.zip HEAD php/{cashway_lib,compat}.php
+	cd ${BUILD_TMP} && zip cashway.zip lib.zip && rm lib.zip
+	mv ${BUILD_TMP}/cashway.zip ${RELEASE_FILE}
+	rm -fr ${BUILD_TMP}
 	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env
 
-release-sign:
+release-sign: release-file
 	shasum -a 256 ${RELEASE_FILE} > ${RELEASE_FILE}.sha256
 	gpg --detach-sign --armor ${RELEASE_FILE}.sha256
 
-release-verify:
+release-verify: release-file
 	cat ${RELEASE_FILE}.sha256
 	gpg --verify ${RELEASE_FILE}.sha256.asc
 	shasum -c ${RELEASE_FILE}.sha256
