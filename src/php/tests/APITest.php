@@ -53,7 +53,12 @@ class APITest extends PHPUnit_Framework_TestCase
                 'currency' => 'EUR',
                 'total' => '10.00',
                 'language' => 'FR',
-                'items_count' => 1
+                'items_count' => 1,
+                'details' => array(array(
+                    'name' => 'product-1',
+                    'price' => 1.00,
+                    'quantity' => 1
+                ))
             ),
             'customer' => array(
                 'id' => 'customer-1',
@@ -350,6 +355,15 @@ class Cart {
         $this->date_add = '2015-01-02T03:04:06Z';
         $this->id_address_invoice  = 'address-1';
         $this->id_address_delivery = 'address-2';
+    }
+
+    public function getProducts()
+    {
+        return array(array(
+            'name' => 'product-1',
+            'price' => 1.00,
+            'cart_quantity' => 1
+        ));
     }
 
     public function nbProducts()
