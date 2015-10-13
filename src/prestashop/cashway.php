@@ -690,7 +690,7 @@ class CashWay extends PaymentModule
             $options['API_SECRET'] = Configuration::get('CASHWAY_API_SECRET');
 
             if (defined('CASHWAY_TEST_ENVIRONMENT') && CASHWAY_TEST_ENVIRONMENT == 1) {
-                $options['API_URL'] = 'http://'.TEST_SERVER_HOST.':'.TEST_SERVER_PORT;
+                $options['API_URL'] = TEST_SERVER_SCHEME.'://'.TEST_SERVER_HOST.':'.TEST_SERVER_PORT;
             }
         }
 

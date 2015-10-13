@@ -6,6 +6,7 @@
          verbose="false">
 
   <php>
+    <const name="TEST_SERVER_SCHEME" value="http" />
     <const name="TEST_SERVER_HOST" value="127.0.0.1" />
     <const name="TEST_SERVER_PORT" value="9876" />
     <const name="TEST_SERVER_DOCROOT" value="tests/php/public" />
