@@ -1,0 +1,16 @@
+---
+- name: Restore /var/www/html ownership to www-data
+  sudo: true
+  command: chown -R www-data:www-data /var/www/html/
+
+- name: Set htaccess
+  sudo: true
+  copy: >
+    src=htaccess
+    dest=/var/www/html/.htaccess
+    group=www-data
+    owner=www-data
+
+- name: Restart HTTP server
+  sudo: true
+  service: name=apache2 state=restarted

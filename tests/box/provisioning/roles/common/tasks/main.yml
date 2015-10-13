@@ -1,0 +1,27 @@
+
+- name: Update apt cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: Install default packages
+  apt: name={{ item }} state=present
+  with_items:
+    - curl
+    - vim
+    - tree
+    - git
+    - mysql-server
+    - mysql-client
+    - python-mysqldb
+    - apache2
+    - php5-common
+    - php5-cli
+    - php5-mysql
+    - php5-curl
+    - libapache2-mod-php5
+    - phpmyadmin
+
+- name: Upgrade packages
+  apt: upgrade=safe
+
+- name: Creates base directory
+  file: path=/var/www/html state=directory owner=vagrant group=vagrant mode=0755

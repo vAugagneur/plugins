@@ -1,0 +1,6 @@
+---
+- name: Create DB for {{ name }}
+  mysql_db: name={{ name }} state=present
+
+- name: Create DB user for {{ name }}
+  mysql_user: name={{ name }} password={{ name}} priv={{ name }}.*:ALL host=localhost state=present

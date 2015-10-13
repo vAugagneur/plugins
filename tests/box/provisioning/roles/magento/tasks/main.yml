@@ -1,0 +1,13 @@
+- name: Download Magento
+  get_url: >
+    url='https://www.prestashop.com/ajax/controller.php?method=download&type=releases&file=prestashop_1.6.1.1.zip&language=fr'
+    dest=/var/www/html/prestashop-latest.zip
+
+#- name: Copy sources
+#  copy: src=magento-1.9.2.1-2015-08-03-06-33-36.zip dest=/var/www/html/magento-latest.zip mode=0644
+
+- name: Unpack files
+  unarchive: src={{ item }} dest=/var/www/html setype=zip copy=no
+  with_items:
+    - /var/www/html/magento-latest.zip
+    - /var/www/html/prestashop-latest.zip

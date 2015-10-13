@@ -1,0 +1,12 @@
+---
+- hosts: all
+  sudo: yes
+  roles:
+    - common
+    - { role: db, name: prestashop }
+    - { role: db, name: wordpress }
+    - { role: db, name: magento }
+    - wordpress
+    #- magento
+    - prestashop
+    - webserver
