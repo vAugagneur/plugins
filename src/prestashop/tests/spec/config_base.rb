@@ -29,7 +29,7 @@ describe "PrestaShop basic setup" do
 
   it "succeeds installation" do
     #$stdin.gets
-    sleep 50
+    sleep 70
     find('#install_process_success', visible: true)
   end
 end

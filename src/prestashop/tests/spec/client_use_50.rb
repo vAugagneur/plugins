@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe "Test d'une commande > 250 € sur " + ENV['TEST_SERVER'] do
+describe "Test d'une commande < 100 € sur " + ENV['TEST_SERVER'] do
 
-	it "ajoute un produit > 250 € au panier" do
+	it "ajoute un produit < 100 € au panier" do
 		session.visit '/'
-		first(:xpath, '//a[@class="product-name" and @title="Test 250"]/../..').click
+		first(:xpath, '//a[@class="product-name" and @title="Test 50"]/../..').click
 		click_link_or_button('Add to cart')
 		sleep(1.5)
 		visit '/index.php?controller=order'
@@ -50,8 +50,6 @@ describe "Test d'une commande > 250 € sur " + ENV['TEST_SERVER'] do
 		expect(page).to have_content 'Please confirm your order by clicking'
 		expect(page).to have_content 'J\'ai lu les conditions d’utilisation de CashWay et j’y adhère sans réserve'
 		expect(page).to have_content 'Les distributeurs proches de chez vous'
-		# KYC nécessaires dans ce cas
-		expect(page).to have_content 'pour encaisser ce montant, la réglementation française nous impose de contrôler votre identité.'
 		#session.click_button 'Je confirme ma commande'
 		find('label[for=cgu-accept]').click
 		find('#cashway-confirm-btn').click
@@ -64,12 +62,12 @@ describe "Test d'une commande > 250 € sur " + ENV['TEST_SERVER'] do
 		barcode = find('#cashway-barcode-label').text
 		#expect(barcode[0..6]).to eq '3663538'
 
-		mail = URI.parse(page.find('a[id = "cashway-kyc-email"]')['href'])
-		expect(mail.to).to eq 'validation@cashway.fr'
+		#mail = URI.parse(page.find('a[id = "cashway-kyc-email"]')['href'])
+		#expect(mail.to).to eq 'validation@cashway.fr'
 
-		form = URI.parse(page.find('a[id = "cashway-kyc-form"]')['href'])
-		expect(form.scheme).to eq 'https'
-		expect(form.host.end_with?('.cashway.fr')).to be true
+		#form = URI.parse(page.find('a[id = "cashway-kyc-form"]')['href'])
+		#expect(form.scheme).to eq 'https'
+		#expect(form.host.end_with?('.cashway.fr')).to be true
 
 		# TODO, ajouter les expect() pour les liens vers mail & formulaire KYC
 		# TODO télécharger/imprimer ticket de paiement

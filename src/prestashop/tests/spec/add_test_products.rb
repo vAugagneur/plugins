@@ -11,14 +11,14 @@ describe "Adds test products (250/2500 €)" do
     find('button[name=submitLogin]').click
   end
 
-  [250, 2500].each do |price|
+  [50, 250, 2500].each do |price|
     it "adds #{price} € product" do
       find('li#maintab-AdminCatalog').find('a.title').click
       click_link_or_button('desc-product-new')
       fill_in 'name_1', :with => 'Test ' + price.to_s
       click_link_or_button('link-Prices')
       fill_in 'priceTE', :with => price.to_s
-      sleep(3.5)
+      sleep(5)
       find('button[name=submitAddproductAndStay]').click
       click_link_or_button('link-Quantities')
       sleep(1)
