@@ -2,7 +2,7 @@ require 'spec_helper'
 
 MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 
-describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER'] do
+describe "Install CashWay module on WordPress: " + ENV['TEST_SERVER'] do
 
 	it "loads admin page" do
 		session.visit ENV['ADMIN_PATH']
@@ -15,11 +15,11 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
   end
 
 	it 'goes to modules list' do
-    session.visit 'http://localhost:8080/wordpress/wp-admin/plugin-install.php?tab=upload'
+    session.visit '/wp-admin/plugin-install.php?tab=upload'
 		page.all('input[id="pluginzip"]').first.set File.absolute_path(ENV['MODULE_ARCHIVE'])
     click_button 'install-plugin-submit'
     first(:xpath, '//a[@target="_parent"]').click
-    session.visit 'http://localhost:8080/wordpress/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_cashway'
+    session.visit '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_cashway'
 	end
 
 	it 'configures module' do

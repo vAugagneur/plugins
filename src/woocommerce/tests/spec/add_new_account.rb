@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Adds test products (250/2500 €)" do
+describe "Adds new customer account" do
   it "loads admin page" do
 		session.visit ENV['ADMIN_PATH']
 	 end
@@ -12,7 +12,7 @@ describe "Adds test products (250/2500 €)" do
     end
 
 it "create new user" do
-  session.visit 'http://localhost:8080/wordpress/wp-admin/user-new.php'
+  session.visit '/wp-admin/user-new.php'
   fill_in 'user_login', :with => ENV['CUSTOMER_FIRSTNAME']
   fill_in 'email', :with => 'testapacaud@gmail.com'
   find(:xpath, '//button[@class="button button-secondary wp-generate-pw hide-if-no-js"]').click

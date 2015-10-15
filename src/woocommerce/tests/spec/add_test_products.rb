@@ -13,7 +13,7 @@ describe "Adds test products (250/2500 €)" do
 
   [50, 250, 2500].each do |price|
     it "adds #{price} € product" do
-      session.visit 'http://localhost:8080/wordpress/wp-admin/post-new.php?post_type=product'
+      session.visit '/wp-admin/post-new.php?post_type=product'
       fill_in 'title', :with => 'Test ' + price.to_s
       fill_in '_regular_price', :with => price.to_s
       find(:xpath, '//input[@id="_virtual"]').click

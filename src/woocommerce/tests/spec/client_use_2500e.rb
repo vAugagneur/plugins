@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Test d'une commande > 2500 € sur " + ENV['TEST_SERVER'] do
 
 	it "ajoute un produit > 2500 € au panier" do
-    session.visit 'http://localhost:8080/wordpress/?s=50'
+    session.visit '/?s=50'
     first(:xpath, '//a[text()="Test 2500"]').click
     first(:xpath, '//button[@class="single_add_to_cart_button button alt"]').click
     find(:xpath, '//a[text()="View Cart"]').click

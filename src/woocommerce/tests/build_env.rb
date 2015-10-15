@@ -11,7 +11,7 @@ account = {
   lastname: 'de Bretagne (' + SecureRandom.hex(3) + ')',
   email: 'test-%s@do.cshw.pl' % [SecureRandom.hex(8)],
   passwd: SecureRandom.hex(32),
-  url: 'http://localhost:8080/prestashop/'
+  url: 'http://localhost:8080/wordpress/'
 }
 
 def register_shop_account(acc)
