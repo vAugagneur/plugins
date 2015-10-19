@@ -19,13 +19,17 @@ ifeq ($(RELEASE), 1)
 endif
 
 release: release-file
-	mkdir -p ${BUILD_DIR}
-	mkdir -p ${BUILD_TMP}/cashway/lib/cashway
+	mkdir -p ${BUILD_TMP}
+	# Export archives from src/prestashop...
 	git archive --prefix=cashway/ --format zip --output ${BUILD_TMP}/cashway.zip ${TAG}
-	cd ../ && git archive --prefix=cashway/lib/cashway/ --format zip --output prestashop/${BUILD_TMP}/lib.zip HEAD php/{cashway_lib,compat}.php
-	cd ${BUILD_TMP} && zip cashway.zip lib.zip && rm lib.zip
+	# ...and src/php
+	cd ../php/ && git archive --prefix=cashway/lib/cashway/ --format zip --output ../prestashop/${BUILD_TMP}/lib.zip HEAD {cashway_lib,compat}.php
+	# Unzip lib.zip and rezip its content into main zip
+	cd ${BUILD_TMP} && unzip lib.zip && zip -r cashway.zip cashway && rm lib.zip
+	# Move into release dir, cleanup tmp
 	mv ${BUILD_TMP}/cashway.zip ${RELEASE_FILE}
 	rm -fr ${BUILD_TMP}
+	# Update .env
 	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env
 
 release-sign: release-file
