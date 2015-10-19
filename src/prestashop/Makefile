@@ -108,6 +108,9 @@ test-client-2500:
 	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_2500e.rb
 
 test:
+	cd ../php/ && git archive --prefix=cashway/ --format zip --output ../prestashop/lib/cashway.zip HEAD {cashway_lib,compat}.php
+	cd lib && unzip cashway.zip
 	phpunit .
+	rm -fr lib/cashway/{cashway_lib,compat}.php lib/cashway.zip
 
 uxtest: test-install test-user
