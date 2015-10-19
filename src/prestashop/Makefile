@@ -4,6 +4,7 @@ BUILD_DIR=build
 BUILD_TMP=${BUILD_DIR}/tmp
 RELEASE_FILE=${BUILD_DIR}/cashway-prestashop-${BRANCH}-${TAG}.zip
 TS=$(shell date +"%Y-%m-%dT%H:%M:%SZ")
+TEST_RUN=cd tests && bundle exec rspec
 
 usage:
 	@echo "Available targets:"
@@ -49,32 +50,30 @@ cs:
 		--ignore=lib/,vendor/,coverage/ \
 		.
 
-reset-epayment:
-	cd tests; cp .env.epayment .env; bundle exec rspec spec/01_install_module_spec.rb
+reset-module:
+	${TEST_RUN} spec/01_install_module_spec.rb
 
-upgrade-epayment:
-	cd tests; cp .env.epayment .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
-
-test-install:
-	cd tests; cp .env.local .env; bundle exec rspec spec/01_install_module_spec.rb
-
-test-upgrade:
-	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
+upgrade-module:
+	${TEST_RUN} spec/01b_upgrade_module_spec.rb
 
 config-platform: tests/.env release \
 	config-base remove-install-dir init-admin catch-admin-url \
 	add-test-products \
 	add-new-account \
-	reset-epayment
+	reset-module
 
 tests/.env:
-	cd tests && bundle && bundle exec ruby build_env.rb > .env
+	cd tests && bundle
+	cd tests && bundle exec ruby build_env.rb > .env
 
 config-base:
-	cd tests; cp .env.local .env; bundle; bundle exec rspec spec/config_base.rb
+	${TEST_RUN} spec/config_base.rb
 
 remove-install-dir:
 	cd ../../tests/box; vagrant ssh -c "sudo rm -fr /var/www/html/prestashop/install"
+
+remove-module:
+	cd ../../tests/box; vagrant ssh -c "sudo rm -fr /var/www/html/prestashop/modules/cashway"
 
 catch-admin-url:
 	$(eval ADMIN_PATH := $(shell basename $(shell cd ../../tests/box/; vagrant ssh -c 'ls -d /var/www/html/prestashop/admin*')))
@@ -82,30 +81,30 @@ catch-admin-url:
 	@echo "ADMIN_PATH is ${ADMIN_PATH}"
 
 init-admin:
-	cd tests; cp .env.local .env; bundle exec rspec spec/init_admin.rb
+	${TEST_RUN} spec/init_admin.rb
 
 reset-db:
 	cd ../../tests/box; vagrant ssh -c "mysql -uroot -e 'DROP DATABASE prestashop; CREATE DATABASE prestashop'"
 
 add-test-products:
-	cd tests; cp .env.local .env; bundle exec rspec	spec/add_test_products.rb
+	${TEST_RUN}	spec/add_test_products.rb
 
 add_new_account:
-	cd tests; cp .env.local .env; bundle exec rspec spec/add_new_account.rb
+	${TEST_RUN} spec/add_new_account.rb
 
 test-user: test-client-50 test-client-250 test-client-2500
 
 test-client-50:
-	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_50.rb
+	${TEST_RUN} spec/client_use_50.rb
 
 test-client-250:
-	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_250e.rb
+	${TEST_RUN} spec/client_use_250e.rb
 
 add-new-account:
-	cd tests; cp .env.local .env; bundle exec rspec spec/add_new_account.rb
+	${TEST_RUN} spec/add_new_account.rb
 
 test-client-2500:
-	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_2500e.rb
+	${TEST_RUN} spec/client_use_2500e.rb
 
 test:
 	cd ../php/ && git archive --prefix=cashway/ --format zip --output ../prestashop/lib/cashway.zip HEAD {cashway_lib,compat}.php
