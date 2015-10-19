@@ -1,8 +1,15 @@
 PS := prestashop
 
+usage:
+	@echo "Available targets:"
+	@cat Makefile | grep "^[A-z]" | awk '{print " - "$$1}' | sed "s/://g"
+
 build-all:
 	cd src/prestashop && make build
 	mv src/prestashop/build/* build/
+
+push-builds:
+	rsync -avz --delete -e ssh build-official/ deploy@help.cashway.fr:/var/www/apps/releases
 
 test-deps:
 	which git
