@@ -28,7 +28,7 @@ Issues, PR and ideas are welcome.
  * The Magento-specific code of this module is licensed under the
    [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
  * Zend library Http code is licensed under the
-   New BSD License (http://framework.zend.com/license/new-bsd)
+   [New BSD License](http://framework.zend.com/license/new-bsd)
    (`app/code/community/Sirateck/Cashway/Model/Api/Http/Client/Adapter/Curl.php`, `app/code/community/Sirateck/Cashway/Model/Api/Http/Client/Adapter/Stream.php`)
 
 ### Apache License
