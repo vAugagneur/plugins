@@ -1,3 +1,7 @@
 build/*
 tools/*
 archives
+.DS_Store
+.buildpath
+.settings
+.project

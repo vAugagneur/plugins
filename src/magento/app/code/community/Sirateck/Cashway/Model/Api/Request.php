@@ -1,4 +1,33 @@
 <?php
+/**
+ *  CASHWAY
+ *
+ *  Copyright 2015 CashWay
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ * @category   Sirateck
+ * @package    Sirateck_Cashway
+ * @copyright  Copyright 2015 CashWay
+ * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
+ */
+
+
+/**
+ * Request Object
+ *
+ * @author Kassim Belghait <kassim@sirateck.com>
+ */
 class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 {
 	
@@ -96,7 +125,7 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	}
 	
 	/**
-	 * Get client HTTP
+	 * Get Zend client HTTP
 	 * @return Zend_Http_Client
 	 */
 	public function getClient()
@@ -119,11 +148,16 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	
 				$this->_client = new Zend_Http_Client();
 				$this->_client->setConfig($config);
+				//Set headers for JSON
 				$this->_client->setHeaders(array('Content-Type'=> 'application/json',
 												'Accept'=>'application/json'));
+				
+				//Set authentication
 				$this->_client->setAuth($this->getApiKey($this->getStoreId()),
 						$this->getApiSecret($this->getStoreId()),
 						Zend_Http_Client::AUTH_BASIC);
+				
+				//Set Curl adapter to http client
 				$this->_client->setAdapter($adapter);
 	
 	
@@ -135,18 +169,27 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 		return $this->_client;
 	}
 	
+	/**
+	 * Construct and send request to cashway API
+	 * 
+	 * @param string $uri
+	 * @param array $params
+	 * @param string $method
+	 * @param mixed $storeId
+	 */
 	protected function _request($uri,$params=array(),$method=Zend_Http_Client::POST,$storeId=null)
 	{
-	
+
 		if(count($params)>0)
 		{
-			
+			//If http method is POST we set params in RawBody
 			if($method == Zend_Http_Client::POST)
 				$this->getClient()->setRawData(json_encode($params));
-			else
+			else // Else in get parameters
 				$this->getClient()->setParameterGet($params);
 		}
-	
+		
+		//Set the uri endpoint
 		$this->getClient()->setUri($uri);
 	
 		/* @var $response Zend_Http_Response */
@@ -154,7 +197,6 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	
 		if($response->isSuccessful())
 		{
-			//$this->getClient()->getAdapter()->close();
 			return json_decode($response->getBody(),true);
 		}
 		else
@@ -171,14 +213,18 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 				if(trim($error->getCode()) != "")
 					$messageError .= ". Code: " . $error->getCode();
 			}
-			
-			
+	
 			Mage::throwException($messageError);
 		}
 			
 	
 	}
 	
+	/**
+	 * Return the method of an action
+	 * @param string $action
+	 * @return string Http method
+	 */
 	public function getMethodHttp($action)
 	{
 		$actionsPost = array(self::ACTION_SAVE_ORDER,
@@ -193,7 +239,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	}
 	
 	/**
-	 *
+	 * @param mixed storeId
+	 * @return string $orderApiEndpoint
 	 */
 	protected function getOrderApiEndpoint($storeId=null) {
 	
@@ -202,7 +249,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	}
 	
 	/**
-	 *
+	 * @param mixed storeId
+	 * @return string $accountUpdateApiEndpoint
 	 */
 	protected function getAccountUpdateApiEndpoint($storeId=null) {
 	
@@ -211,7 +259,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	}
 	
 	/**
-	 *
+	 * @param mixed storeId
+	 * @return string $confirmOrderApiEndpoint
 	 */
 	protected function getConfirmOrderApiEndpoint($storeId=null) {
 	
@@ -219,6 +268,10 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	
 	}
 	
+	/**
+	 * @param mixed storeId
+	 * @return string $evaluateTransactionApiEndpoint
+	 */
 	protected function getEvaluateTransactionApiEndpoint($storeId=null) {
 	
 		return $this->getConfig()->getEvaluateTransactionApiEndpoint($storeId);
@@ -228,7 +281,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	
 	
 	/**
-	 *
+	 * Construct and send confirmOrder request to cashway API
+	 * 
 	 * @param string $action
 	 * @param array $params
 	 * @param int $storeId
@@ -246,7 +300,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	}
 	
 	/**
-	 *
+	 * Construct and send order (transaction) request to cashway API
+	 * 
 	 * @param string $action
 	 * @param array $params
 	 * @param int $storeId
@@ -264,7 +319,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	}
 	
 	/**
-	 *
+	 * Construct and send updateOrGetAccount request to cashway API
+	 * 
 	 * @param string $action
 	 * @param array $params
 	 * @param int $storeId
@@ -281,7 +337,14 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 		return $response;
 	}
 	
-	
+	/**
+	 * Construct and send evaluateTransaction request to cashway API
+	 * 
+	 * @param string $action
+	 * @param array $params
+	 * @param int $storeId
+	 * @return Sirateck_Cashway_Model_Response_Order
+	 */
 	public function evaluateTransaction($action,$params,$storeId=null)
 	{
 		$this->setStoreId($storeId);
