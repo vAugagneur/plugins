@@ -105,7 +105,7 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
      */
     public function getAddressOneLine()
     {
-    	$addrParts = explode(",", $this->getQuote()->getShippingAddress()->format('oneline'));
+    	$addrParts = explode(",", $this->getQuote()->getBillingAddress()->format('oneline'));
     	array_shift($addrParts);
     	return implode(",", $addrParts);
     }
