@@ -23,7 +23,7 @@
 <config>
 	<sections>
 		<cashway translate="label" module="cashway">
-			<label>Cashway</label>
+			<label>Cashway payment</label>
             <tab>sales</tab>
             <frontend_type>text</frontend_type>
             <sort_order>400</sort_order>
@@ -31,7 +31,7 @@
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
             <groups>
-   				<cashway_api>
+   				<cashway_api translate="label">
    					<label>Cashway account configuration</label>
    					<frontend_type>text</frontend_type>
 					<comment></comment>
@@ -99,14 +99,14 @@
 		<payment>
             <groups>
             	<cashway translate="label" module="cashway">
-            		<label>Cashway payment</label>
+            		<label>Cashway payment method</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>200</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-	                    <active translate="label">
+	                    <active translate="label" module="payment">
 	                        <label>Enabled</label>
 	                        <frontend_type>select</frontend_type>
 	                        <source_model>adminhtml/system_config_source_yesno</source_model>
@@ -115,7 +115,7 @@
 	                        <show_in_website>1</show_in_website>
 	                        <show_in_store>1</show_in_store>
 	                    </active>
-	                    <title translate="label">
+	                    <title translate="label" module="payment">
 	                        <label>Title</label>
 	                        <frontend_type>text</frontend_type>
 	                        <sort_order>20</sort_order>
@@ -123,8 +123,8 @@
 	                        <show_in_website>1</show_in_website>
 	                        <show_in_store>1</show_in_store>
 	                     </title>                     
-                         <allowspecific translate="label">
-                            <label>Payment from applicable countries</label>
+                         <allowspecific translate="label" module="payment">
+                            <label>Payment from Applicable Countries</label>
                             <frontend_type>allowspecific</frontend_type>
                             <sort_order>100</sort_order>
                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
@@ -132,8 +132,8 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </allowspecific>
-                        <specificcountry translate="label">
-                            <label>Payment from Specific countries</label>
+                        <specificcountry translate="label" module="payment">
+                            <label>Payment from Specific Countries</label>
                             <frontend_type>multiselect</frontend_type>
                             <sort_order>110</sort_order>
                             <source_model>adminhtml/system_config_source_country</source_model>
@@ -141,7 +141,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </specificcountry>
-                        <min_order_total translate="label">
+                        <min_order_total translate="label" module="payment">
                             <label>Minimum Order Total</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>120</sort_order>
@@ -149,7 +149,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </min_order_total>
-                        <max_order_total translate="label">
+                        <max_order_total translate="label" module="payment">
                             <label>Maximum Order Total</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>121</sort_order>
@@ -157,7 +157,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </max_order_total>
-                        <sort_order translate="label">
+                        <sort_order translate="label" module="payment">
                             <label>Sort Order</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>130</sort_order>
@@ -165,25 +165,25 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </sort_order>
-                        <debug>
+                        <debug translate="label comment">
                         	<label>Enable debug log</label>
-                        	<comment></comment>
+                        	<comment>Log all queries to and from cashway API</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>150</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                         </debug>
 	                      <is_test_mode translate="label comment">
                         	<label>Enable test mode</label>
-                        	<comment></comment>
+                        	<comment>Call requests in test API Endpoint</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                         </is_test_mode>
                       </fields> 
              	</cashway>
