@@ -122,7 +122,27 @@
 	                        <show_in_default>1</show_in_default>
 	                        <show_in_website>1</show_in_website>
 	                        <show_in_store>1</show_in_store>
-	                     </title>                     
+	                     </title>
+	                     <allowredirect translate="label comment" >
+                            <label>Redirect from Applicable Methods</label>
+                            <comment>Redirect to cashway if payment failed with other payment method</comment>
+                            <frontend_type>select</frontend_type>
+                            <frontend_model>cashway/adminhtml_system_config_form_field_allowredirectmethod</frontend_model>
+                            <source_model>cashway/system_config_source_allspecificredirectmethod</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allowredirect>
+                        <redirectmethod translate="label" >
+                            <label>Redirect from Specific Methods</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>40</sort_order>
+                            <source_model>cashway/system_config_source_allowedmethods</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </redirectmethod>                     
                          <allowspecific translate="label" module="payment">
                             <label>Payment from Applicable Countries</label>
                             <frontend_type>allowspecific</frontend_type>
