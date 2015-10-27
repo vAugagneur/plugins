@@ -22,23 +22,11 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
  */
  -->
- <?php 
-$_code=$this->getMethodCode();
+  <?php 
+$_code=$this->getMethod()->getCode();
 ?>
-<?php if(!$this->canWork()):?>
-<p><?php echo $this->__("Cashway is actually not available.")?><p>
-<script type="text/javascript">
- 	//<![CDATA[
- 		
- 		$('p_method_cashway').disable();
- 		
- 	//]]>
- </script>
-<?php else:?>
-
-<div id="payment_form_<?php echo $_code ?>" style="display:none;">
-	<h4>Les points de paiement présents autour de votre point de livraison&nbsp;:</h4>
-	<ul class="form-list">
+<p><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></p>
+<ul class="form-list">
 		<li class="control">
 			<div class="input-box">
 				<input id="cashway-map-search" type="text" class="input-text" value="<?php echo $this->getAddressOneLine() ?>" />
@@ -46,13 +34,10 @@ $_code=$this->getMethodCode();
 			</div>
 		</li>
 		<li class="wide">
-			<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
+			<div id="cashway-map-canvas" style="width: 100%; height: 300px;"></div>
 		</li>
 	</ul>
-
-	
-	
-	<script type="text/javascript">
+<script type="text/javascript">
 	<!--
 
 	function preventKeyEnter(e){
@@ -66,27 +51,18 @@ $_code=$this->getMethodCode();
 	}
 	//Prevent from from submit
     Event.observe("cashway-map-search","keypress",preventKeyEnter);
+
+	if(document.scripts.namedItem('cashway-map-script') === null){ //Check if not already displayed
+
+		var scriptCshw = document.createElement("script");
+		scriptCshw.id = "cashway-map-script"
+		scriptCshw.type = "text/javascript";
+		scriptCshw.async = true;
+		scriptCshw.src = "https://maps.cashway.fr/js/cashway_map.js";
+		document.body.appendChild(scriptCshw); //add script to body
+	}
+
 	
-	//Observe event dispatched from method selection
-	$('payment_form_<?php echo $_code ?>').observe("payment-method:switched", function(ev){
+//-->
+</script>
 
-		if(ev.memo.method_code == "<?php echo $_code ?>"){ //If it's our code add map script
-
-			if(document.scripts.namedItem('cashway-map-script') === null){ //Check if not already displayed
-
-				var scriptCshw = document.createElement("script");
-				scriptCshw.id = "cashway-map-script"
-				scriptCshw.type = "text/javascript";
-				scriptCshw.async = true;
-				scriptCshw.src = "https://maps.cashway.fr/js/cashway_map.js";
-				document.body.appendChild(scriptCshw); //add script to body
-			}
-
-		}
-	});
-	
-	
-	//-->
-	</script>
-</div>
-<?php endif;?>

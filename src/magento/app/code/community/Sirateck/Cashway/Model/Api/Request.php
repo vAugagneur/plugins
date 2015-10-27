@@ -53,6 +53,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	
 	const ACTION_EVALUATE_TRANSACTION = 'evaluate_transaction';
 	
+	const ACTION_SEND_EVENTS = 'send_events';
+	
 	public function __construct( $methodInstance = array())
 	{
 		if(count($methodInstance) > 0)
@@ -231,6 +233,7 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 							self::ACTION_CONFIRM_ORDER,
 							self::ACTION_EVALUATE_TRANSACTION,
 							self::ACTION_UPDATE_ACCOUNT,
+							self::ACTION_SEND_EVENTS
 		);
 		if(in_array($action, $actionsPost))
 			return Zend_Http_Client::POST;
@@ -245,6 +248,16 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 	protected function getOrderApiEndpoint($storeId=null) {
 	
 		return $this->getConfig()->getOrderApiEndpoint($storeId);
+	
+	}
+	
+	/**
+	 * @param mixed storeId
+	 * @return string $EventsApiEndpoint
+	 */
+	protected function getEventsApiEndpoint($storeId=null) {
+	
+		return $this->getConfig()->getEventsApiEndpoint($storeId);
 	
 	}
 	
@@ -318,6 +331,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 		return $response;
 	}
 	
+	
+	
 	/**
 	 * Construct and send updateOrGetAccount request to cashway API
 	 * 
@@ -355,6 +370,25 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 		
 		return $response;
 		
+	}
+	
+	/**
+	 * Send an event
+	 *
+	 * @param string $action
+	 * @param array $params
+	 * @param int $storeId
+	 * @return Sirateck_Cashway_Model_Response_Order
+	 */
+	public function sendEventRequest($action,$params,$storeId=null)
+	{
+		$this->setStoreId($storeId);
+		$uri = $this->getEventsApiEndpoint($storeId);
+	
+		/* @var $response Sirateck_Cashway_Model_Response_Order */
+		$response = Mage::getSingleton('cashway/api_response_order', $this->_request($uri,$params,$this->getMethodHttp($action),$storeId));
+	
+		return $response;
 	}
 	
 	public function setStoreId($storeId)
