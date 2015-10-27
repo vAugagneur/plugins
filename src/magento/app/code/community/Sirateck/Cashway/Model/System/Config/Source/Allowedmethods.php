@@ -30,10 +30,6 @@
 class Sirateck_Cashway_Model_System_Config_Source_Allowedmethods
     extends Mage_Adminhtml_Model_System_Config_Source_Payment_Allmethods
 {
-    protected function _getPaymentMethods()
-    {
-        return Mage::getSingleton('payment/config')->getActiveMethods();
-    }
     
     public function toOptionArray()
     {

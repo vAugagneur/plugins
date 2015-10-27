@@ -63,7 +63,7 @@ class Sirateck_Cashway_Block_Adminhtml_System_Config_Form_Field_Allowredirectmet
 
     protected function _getRedirectMethodElementId($element)
     {
-        return substr($element->getId(), 0, strrpos($element->getId(), 'allowredirect')) . 'redirectmethod';
+        return substr($element->getId(), 0, strrpos($element->getId(), 'redirectspecific')) . 'redirectmethod';
     }
 
 }

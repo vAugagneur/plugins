@@ -36,5 +36,34 @@ class Sirateck_Cashway_Block_Info_Cashway extends Mage_Payment_Block_Info
         parent::_construct();
         $this->setTemplate('cashway/info/cashway.phtml');
     }
+    
+    /**
+     * Retrieve formated address one line
+     * @return string
+     */
+    public function getAddressOneLine()
+    {
+    	$addrParts = explode(",", $this->getQuote()->getBillingAddress()->format('oneline'));
+    	array_shift($addrParts);
+    	return implode(",", $addrParts);
+    }
+    
+    /**
+     *
+     * @return Mage_Checkout_Model_Session
+     */
+    public function getCheckout()
+    {
+    	return Mage::getSingleton('checkout/session');
+    }
+    
+    /**
+     *
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getQuote()
+    {
+    	return $this->getCheckout()->getQuote();
+    }
 
 }

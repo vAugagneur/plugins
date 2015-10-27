@@ -23,7 +23,7 @@
 <config>
 	<modules>
 		<Sirateck_Cashway>
-			<version>0.1.0</version>
+			<version>0.2.0</version>
 		</Sirateck_Cashway>
 	</modules>
 	<global>
@@ -54,6 +54,11 @@
                 </setup>
             </sirateck_cashway_setup>
         </resources>
+        <payment>
+          	<groups>
+              <offline>Offline Payment Methods</offline>
+           </groups>
+        </payment>
 	</global>
 	<frontend>
 	    <routers>
@@ -74,6 +79,23 @@
                 </Sirateck_Cashway>
             </modules>
         </translate>
+        <layout>
+			<updates>
+				<cashway>
+					<file>cashway.xml</file>
+				</cashway>
+			</updates>
+		</layout>
+         <events>
+	        <controller_action_predispatch_checkout_onepage_failure>
+	              <observers>
+	                  <cashway_redirect_method>
+	                      <class>Sirateck_Cashway_Model_Observer</class>
+	                      <method>redirectToCashway</method>
+	                  </cashway_redirect_method>
+	              </observers>
+	        </controller_action_predispatch_checkout_onepage_failure>
+        </events>
 	</frontend>
 	<adminhtml>
 		 <translate>
@@ -136,13 +158,17 @@
 				<order_api_endpoint>/transactions</order_api_endpoint>
 				<confirm_order_api_endpoint>/transactions/$ID/confirm</confirm_order_api_endpoint>
 				<evaluate_transaction_api_endpoint>/transactions/hint</evaluate_transaction_api_endpoint>
+				<events_api_endpoint>/shops/me/events</events_api_endpoint>
 			</cashway_api>
 		</cashway>
 		<payment>
 			<cashway>
 				<active>0</active>
 				<title>Cashway payment</title>
-				<payment_action>authorize_capture</payment_action>
+				<payment_action>initialize</payment_action>
+				<allowredirect>1</allowredirect>
+				<redirectspecific>0</redirectspecific>
+				<allowspecific>0</allowspecific>
 				<is_test_mode>0</is_test_mode>
 				<debug>0</debug>
 				<model>cashway/method_cashway</model>		

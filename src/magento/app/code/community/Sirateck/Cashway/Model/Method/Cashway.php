@@ -102,6 +102,55 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
 	}
 	
 	/**
+	 * Send event payment failed
+	 *
+	 * @param Mage_Sales_Model_Order $lastOrder
+	 */
+	public function sendEventPaymentFailed($lastOrder)
+	{
+		$params = $this->getEventPaymentFailedParams($lastOrder);
+		$request = Mage::getModel('cashway/api_request',array($this));
+		/* @var $request Sirateck_Cashway_Model_Api_Request */
+		$response = $request->sendEventRequest(Sirateck_Cashway_Model_Api_Request::ACTION_SEND_EVENTS, $params,$lastOrder->getStoreId());
+		$this->_debug($response->debug());
+		
+		return $response;
+		
+	}
+	
+	/**
+	 * Format event payment failed datas before are sended to the API
+	 * @param Mage_Sales_Model_Order $order
+	 * array $params
+	 */
+	public function getEventPaymentFailedParams($order)
+	{
+		$params = array();
+		$params["event"] = "payment_failed";
+	
+		$orderDate = Mage::app()->getLocale()->storeDate(
+				$order->getStore(),
+				Varien_Date::toTimestamp($order->getCreatedAt()),
+				true
+				);
+		$params['created_at'] = $orderDate->toString("c");
+		$params['provider'] = $order->getPayment()->getMethodInstance()->getCode();
+		$params['reason'] = ""; //@TODO maybe send the last history item
+		
+		$params['order'] =array();
+		$params['order']['id'] = $order->getIncrementId();
+		$params['order']['total'] = $order->getBaseGrandTotal();
+		
+		$params['customer'] = array();
+		$params['customer']['id'] = $order->getCustomerId();
+		$params['customer']['email'] = $order->getCustomerEmail();
+	
+		$this->_debug($params);
+	
+		return $params;
+	}
+	
+	/**
 	 * Format order datas before are sended to the API
 	 * @param Mage_Sales_Model_Order_Payment $payment
 	 * array $params

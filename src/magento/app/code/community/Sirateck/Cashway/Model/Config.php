@@ -58,6 +58,8 @@ class Sirateck_Cashway_Model_Config extends Varien_Object
 	
 	const API_EVALUATE_TRANSACTION_ENDPOINT = 'evaluate_transaction_api_endpoint';
 	
+	const API_EVENTS_ENDPOINT = 'events_api_endpoint';
+	
 	/**
 	 *  Return config var
 	 *
@@ -152,6 +154,12 @@ class Sirateck_Cashway_Model_Config extends Varien_Object
 	public function getOrderApiEndpoint($storeId = null)
 	{
 		$uri = $this->getApiBaseUri().$this->getConfigData(self::API_ORDER_ENDPOINT,$storeId);
+		return $uri;
+	}
+	
+	public function getEventsApiEndpoint($storeId = null)
+	{
+		$uri = $this->getApiBaseUri().$this->getConfigData(self::API_EVENTS_ENDPOINT,$storeId);
 		return $uri;
 	}
 	

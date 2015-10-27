@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+
+	<default>
+		<reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+	</default>
+	
+	<cashway_reorder_index>
+		 <label>Cashway Reorder Page</label>
+         <reference name="content">
+            <block type="cashway/reorder" name="checkout_overview" template="cashway/reorder.phtml">
+                <action method="addItemRender"><type>default</type><block>checkout/cart_item_renderer</block><template>checkout/onepage/review/item.phtml</template></action>
+            	<action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>checkout/onepage/review/item.phtml</template></action>
+            	<action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>checkout/onepage/review/item.phtml</template></action>
+                <block type="checkout/onepage_payment_info" name="payment_info">
+                    <action method="setInfoTemplate"><method>cashway</method><template>cashway/info/map.phtml</template></action>
+                </block>
+                 <block type="checkout/agreements" name="checkout.onepage.agreements" as="agreements" template="checkout/onepage/agreements.phtml"/>
+                <block type="checkout/cart_totals" name="totals" />
+                <block type="core/text_list" name="cashway.overview.items.after" as="cashway_items_after" translate="label">
+                    <label>Overview Items After</label>
+                </block>
+            </block>
+        </reference>
+	</cashway_reorder_index>
+
+</layout>
