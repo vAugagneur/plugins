@@ -4,6 +4,7 @@ BUILD_DIR=build
 BUILD_TMP=${BUILD_DIR}/tmp
 RELEASE_FILE=${BUILD_DIR}/cashway-woocommerce-${BRANCH}-${TAG}.zip
 TS=$(shell date +"%Y-%m-%dT%H:%M:%SZ")
+TEST_RUN=cd tests && bundle exec rspec
 
 usage:
 	@echo "Available targets:"
@@ -37,10 +38,10 @@ cs:
 		.
 
 config-base:
-	cd tests; bundle exec rspec spec/install_woocommerce.rb
+	${TEST_RUN} spec/install_woocommerce.rb
 
 module-install:
-	cd tests; bundle exec rspec spec/install_module.rb
+	${TEST_RUN} spec/install_module.rb
 
 config-platform: tests/.env release \
 	config-base \
@@ -52,30 +53,30 @@ tests/.env:
 	ruby tests/build_env.rb > tests/.env
 
 init-admin:
-	cd tests; bundle exec rspec spec/init_admin.rb
+	${TEST_RUN} spec/init_admin.rb
 
 reset-db:
 	cd ../../tests/box; vagrant ssh -c "mysql -uroot -e 'DROP DATABASE prestashop; CREATE DATABASE prestashop'"
 
 add-test-products:
-	cd tests; bundle exec rspec spec/add_test_products.rb
+	${TEST_RUN} spec/add_test_products.rb
 
 add_new_account:
-	cd tests; bundle exec rspec spec/add_new_account.rb
+	${TEST_RUN} spec/add_new_account.rb
 
 test-user: test-client-50 test-client-250 test-client-2500
 
 test-client-50:
-	cd tests; bundle exec rspec spec/client_use_50.rb
+	${TEST_RUN} spec/client_use_50.rb
 
 test-client-250:
-	cd tests; bundle exec rspec spec/client_use_250e.rb
+	${TEST_RUN} spec/client_use_250e.rb
 
 add-new-account:
-	cd tests; bundle exec rspec spec/add_new_account.rb
+	${TEST_RUN} spec/add_new_account.rb
 
 test-client-2500:
-	cd tests; bundle exec rspec spec/client_use_2500e.rb
+	${TEST_RUN} spec/client_use_2500e.rb
 
 test:
 	phpunit .
