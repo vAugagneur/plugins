@@ -14,6 +14,16 @@ describe "Install CashWay module on WordPress: " + ENV['TEST_SERVER'] do
     find('#wp-submit').click
   end
 
+  it 'check if Cashway is already installed' do
+      session.visit '/wp-admin/plugins.php'
+      if page.first('#woocommerce-cashway')
+
+        find(:xpath, '//a[@aria-label="Deactivate WooCommerce CashWay"]').click
+        find(:xpath, '//a[@aria-label="Delete WooCommerce CashWay"]').click
+        first(:xpath, '//input[@id="submit"]').click
+      end
+  end
+
 	it 'goes to modules list' do
     session.visit '/wp-admin/plugin-install.php?tab=upload'
 		page.all('input[id="pluginzip"]').first.set File.absolute_path(ENV['MODULE_ARCHIVE'])
