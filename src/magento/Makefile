@@ -2,6 +2,7 @@ BRANCH=$(shell git symbolic-ref --short HEAD)
 TAG=$(shell git describe --tags)
 RELEASE_FILE=releases/cashway-magento-${BRANCH}-${TAG}.zip
 TS=$(shell date +"%Y-%m-%dT%H:%M:%SZ")
+TEST_RUN=cd tests; bundle exec rspec
 
 usage:
 	@echo "Available targets:"
@@ -30,25 +31,25 @@ test:
 	phpunit .
 
 install-cashway:
-	cd tests; bundle exec rspec spec/install-cashway.rb
+	${TEST_RUN} spec/install-cashway.rb
 
 add-new-account:
-	cd tests; bundle exec rspec spec/add_new_account.rb
+	${TEST_RUN} spec/add_new_account.rb
 
 test-user:
-	cd tests; bundle exec rspec spec/02_client_use_spec.rb
+	${TEST_RUN} spec/02_client_use_spec.rb
 
 add-products:
-	cd tests; bundle exec rspec spec/admin_add_products.rb
+	${TEST_RUN} spec/admin_add_products.rb
 
 test-user-250e:
-	cd tests; bundle exec rspec spec/02_client_use_250e.rb
+	${TEST_RUN} spec/02_client_use_250e.rb
 
 test-user-2500e:
-	cd tests; bundle exec rspec spec/02_client_use_2500e.rb
+	${TEST_RUN} spec/02_client_use_2500e.rb
 
 config-shipping:
-	cd tests; bundle exec rspec spec/set-shipping-price.rb
+	${TEST_RUN} spec/set-shipping-price.rb
 
 config-magento:
-	cd tests; bundle exec rspec spec/install_magento.rb
+	${TEST_RUN} spec/install_magento.rb
