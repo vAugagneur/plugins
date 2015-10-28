@@ -29,29 +29,26 @@ csfix:
 test:
 	phpunit .
 
-reset_epayment:
-	cd tests; cp .env.epayment .env; bundle exec rspec spec/01_install_module_spec.rb
+install-cashway:
+	cd tests; bundle exec rspec spec/install-cashway.rb
 
-upgrade_epayment:
-	cd tests; cp .env.epayment .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
+add-new-account:
+	cd tests; bundle exec rspec spec/add_new_account.rb
 
-test_install:
-	cd tests; cp .env.local .env; bundle exec rspec spec/01_install_module_spec.rb
+test-user:
+	cd tests; bundle exec rspec spec/02_client_use_spec.rb
 
-test_upgrade:
-	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
+add-products:
+	cd tests; bundle exec rspec spec/admin_add_products.rb
 
-test_user:
-	cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_spec.rb
+test-user-250e:
+	cd tests; bundle exec rspec spec/02_client_use_250e.rb
 
-add_products:
-	cd tests; cp .env.local .env; bundle exec rspec spec/03_add_products.rb
+test-user-2500e:
+	cd tests; bundle exec rspec spec/02_client_use_2500e.rb
 
-test_user_250e:
-	cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_250e.rb
+config-shipping:
+	cd tests; bundle exec rspec spec/set-shipping-price.rb
 
-test_user_2500e:
-		cd tests; cp .env.local .env; bundle exec rspec spec/02_client_use_2500e.rb
-
-test_google:
-	cd tests; cp .env.local .env; bundle exec rspec spec/test_scenario.rb
+config-magento:
+	cd tests; bundle exec rspec spec/install_magento.rb
