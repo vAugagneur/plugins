@@ -53,7 +53,8 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 	it 'configures module' do
 		find('#CASHWAY_API_KEY').set ENV['API_KEY']
 		find('#CASHWAY_API_SECRET').set ENV['API_SECRET']
-		click_button 'Save'
+    $stdin.gets
+		click_button 'configuration_form_submit_btn'
 		expect(page).to have_content 'API key updated.'
 		expect(page).to have_content 'API secret updated.'
 	end
