@@ -37,53 +37,45 @@ cs:
 		.
 
 config-base:
-	cd tests; bundle exec rspec spec/woocommerce-install.rb
-
-reset-epayment:
-	cd tests; cp .env.epayment .env; bundle exec rspec spec/01_install_module_spec.rb
-
-upgrade-epayment:
-	cd tests; cp .env.epayment .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
+	cd tests; bundle exec rspec spec/install_woocommerce.rb
 
 module-install:
-	cd tests; cp .env.local .env; bundle exec rspec spec/install_module.rb
-
-test-upgrade:
-	cd tests; cp .env.local .env; bundle exec rspec spec/01b_upgrade_module_spec.rb
+	cd tests; bundle exec rspec spec/install_module.rb
 
 config-platform: tests/.env release \
-	config-base module-install \
+	config-base \
 	add-test-products \
-	add-new-account
+	add-new-account \
+	module-install
 
 tests/.env:
 	ruby tests/build_env.rb > tests/.env
 
 init-admin:
-	cd tests; cp .env.local .env; bundle exec rspec spec/init_admin.rb
+	cd tests; bundle exec rspec spec/init_admin.rb
 
 reset-db:
 	cd ../../tests/box; vagrant ssh -c "mysql -uroot -e 'DROP DATABASE prestashop; CREATE DATABASE prestashop'"
 
 add-test-products:
-	cd tests; cp .env.local .env; bundle exec rspec	spec/add_test_products.rb
+	cd tests; bundle exec rspec spec/add_test_products.rb
 
 add_new_account:
-	cd tests; cp .env.local .env; bundle exec rspec spec/add_new_account.rb
+	cd tests; bundle exec rspec spec/add_new_account.rb
 
 test-user: test-client-50 test-client-250 test-client-2500
 
 test-client-50:
-	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_50.rb
+	cd tests; bundle exec rspec spec/client_use_50.rb
 
 test-client-250:
-	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_250e.rb
+	cd tests; bundle exec rspec spec/client_use_250e.rb
 
 add-new-account:
-	cd tests; cp .env.local .env; bundle exec rspec spec/add_new_account.rb
+	cd tests; bundle exec rspec spec/add_new_account.rb
 
 test-client-2500:
-	cd tests; cp .env.local .env; bundle exec rspec spec/client_use_2500e.rb
+	cd tests; bundle exec rspec spec/client_use_2500e.rb
 
 test:
 	phpunit .
