@@ -50,6 +50,13 @@ cs:
 		--ignore=lib/,vendor/,coverage/ \
 		.
 
+csfix:
+	phpcbf --encoding=utf-8 \
+		--standard=PSR2 \
+		--colors \
+		--ignore=lib/,vendor/,coverage/ \
+		.
+
 reset-module:
 	${TEST_RUN} spec/01_install_module_spec.rb
 

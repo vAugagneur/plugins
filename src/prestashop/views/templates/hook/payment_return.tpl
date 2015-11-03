@@ -49,9 +49,9 @@
       pour encaisser votre paiement.
       <strong>Sans réception et validation de ces documents, votre code ne sera pas actif.</strong>
       Vous pouvez nous envoyer ces documents scannés
-      <a href="mailto:{$kyc_upload_mail}?subject=Validation {$barcode}" class="button button-small" id="cashway-kyc-email">par email</a>
-      ou <a href="{$kyc_upload_url}?barcode={$barcode}" class="button button-small" id="cashway-kyc-form">par formulaire</a>
-      (<a href="{$kyc_upload_url}?barcode={$barcode}">plus d&rsquo;informations).
+      <a href="mailto:{$kyc_upload_mail|escape:'htmlall':'UTF-8'}?subject=Validation {$barcode|escape:'htmlall':'UTF-8'}" class="button button-small" id="cashway-kyc-email">par email</a>
+      ou <a href="{$kyc_upload_url|escape:'htmlall':'UTF-8'}?barcode={$barcode|escape:'htmlall':'UTF-8'}" class="button button-small" id="cashway-kyc-form">par formulaire</a>
+      (<a href="{$kyc_upload_url|escape:'htmlall':'UTF-8'}?barcode={$barcode|escape:'htmlall':'UTF-8'}">plus d&rsquo;informations).
     </p>
     {/if}
     <p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a></p>

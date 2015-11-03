@@ -32,7 +32,7 @@ require __DIR__.'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.11.1';
+    const VERSION = '0.11.2';
 
     /**
     */
@@ -105,7 +105,7 @@ class CashWay extends PaymentModule
     public function installDefaultValues()
     {
         Configuration::updateValue('CASHWAY_SHARED_SECRET', bin2hex(openssl_random_pseudo_bytes(24)));
-        Configuration::updateValue('CASHWAY_OS_PAYMENT', 'PS_OS_WS_PAYMENT');
+        Configuration::updateValue('CASHWAY_OS_PAYMENT', (int)Configuration::get('PS_OS_WS_PAYMENT'));
 
         return true;
     }
@@ -187,7 +187,7 @@ class CashWay extends PaymentModule
         }
 
         if (Tools::isSubmit('submitSettings')) {
-            Configuration::updateValue('CASHWAY_OS_PAYMENT', Tools::getValue('CASHWAY_OS_PAYMENT'));
+            Configuration::updateValue('CASHWAY_OS_PAYMENT', (int)Tools::getValue('CASHWAY_OS_PAYMENT'));
             Configuration::updateValue('CASHWAY_PAYMENT_TEMPLATE', Tools::getValue('CASHWAY_PAYMENT_TEMPLATE'));
             Configuration::updateValue('CASHWAY_SEND_EMAIL', Tools::getValue('CASHWAY_SEND_EMAIL'));
             Configuration::updateValue('CASHWAY_USE_STAGING', Tools::getValue('CASHWAY_USE_STAGING'));
@@ -280,8 +280,11 @@ class CashWay extends PaymentModule
                         'name' => 'country',
                         'desc' => $this->l('CashWay is only available to shops operating in France for the time being.')
                             .'<br>'
-                            .sprintf($this->l('Feel free to %scontact us%s if you would like to see support in your country!'),
-                                    '<a href="https://www.cashway.fr/contact/">', '</a>'),
+                            .sprintf(
+                                $this->l('Feel free to %scontact us%s if you would like to see support in your country!'),
+                                '<a href="https://www.cashway.fr/contact/">',
+                                '</a>'
+                            ),
                         'required' => true,
                         'options' => array(
                             'query' => Country::getCountries($this->context->language->id),
@@ -360,7 +363,7 @@ class CashWay extends PaymentModule
         foreach (array('PS_OS_WS_PAYMENT', 'PS_OS_PAYMENT') as $psos) {
             $orderstate = new OrderState(Configuration::get($psos));
             $ps_os_options[] = array(
-                'key' => $psos,
+                'key' => Configuration::get($psos),
                 'name' => $orderstate->name[$this->context->language->id].' ('.$psos.')'
             );
         }
@@ -395,9 +398,11 @@ class CashWay extends PaymentModule
                             .'<br>'
                             .$this->l('This will send a recovery email from your shop to your customer, about 2 minutes after the other method failed.')
                             .'<br>'
-                            .sprintf($this->l('Feel free to %sask us%s if you would like to know more about how this works.'),
-                                '<a href="https://www.cashway.fr/contact/">', '</a>'
-                                ),
+                            .sprintf(
+                                $this->l('Feel free to %sask us%s if you would like to know more about how this works.'),
+                                '<a href="https://www.cashway.fr/contact/">',
+                                '</a>'
+                            ),
                         'name' => 'CASHWAY_SEND_EMAIL',
                         'is_bool' => true,
                         'values' => array(
@@ -484,29 +489,15 @@ class CashWay extends PaymentModule
         $company = Configuration::get('PS_SHOP_NAME');
 
         return array(
-            'CASHWAY_API_KEY' => Tools::getValue(
-                'CASHWAY_API_KEY',
-                Configuration::get('CASHWAY_API_KEY')
-            ),
-            'CASHWAY_API_SECRET' => Tools::getValue(
-                'CASHWAY_API_SECRET',
-                Configuration::get('CASHWAY_API_SECRET')
-            ),
-            'CASHWAY_PAYMENT_TEMPLATE' => Tools::getValue(
-                'CASHWAY_PAYMENT_TEMPLATE',
-                Configuration::get('CASHWAY_PAYMENT_TEMPLATE')
-            ),
-            'CASHWAY_SEND_EMAIL' => Tools::getValue(
-                'CASHWAY_SEND_EMAIL',
-                Configuration::get('CASHWAY_SEND_EMAIL')
-            ),
-            'CASHWAY_OS_PAYMENT' => Tools::getValue(
-                'CASHWAY_OS_PAYMENT',
-                Configuration::get('CASHWAY_OS_PAYMENT')
-            ),
-            'name' => Tools::getValue('name', $name),
-            'email' => Tools::getValue('email', $email),
-            'phone' => Tools::getValue('phone', $phone),
+            'CASHWAY_API_KEY'          => Tools::getValue('CASHWAY_API_KEY', Configuration::get('CASHWAY_API_KEY')),
+            'CASHWAY_API_SECRET'       => Tools::getValue('CASHWAY_API_SECRET', Configuration::get('CASHWAY_API_SECRET')),
+            'CASHWAY_PAYMENT_TEMPLATE' => Tools::getValue('CASHWAY_PAYMENT_TEMPLATE', Configuration::get('CASHWAY_PAYMENT_TEMPLATE')),
+            'CASHWAY_SEND_EMAIL'       => Tools::getValue('CASHWAY_SEND_EMAIL', Configuration::get('CASHWAY_SEND_EMAIL')),
+            'CASHWAY_OS_PAYMENT'       => (int)Tools::getValue('CASHWAY_OS_PAYMENT', Configuration::get('CASHWAY_OS_PAYMENT')),
+
+            'name'    => Tools::getValue('name', $name),
+            'email'   => Tools::getValue('email', $email),
+            'phone'   => Tools::getValue('phone', $phone),
             'country' => Tools::getValue('country', $country),
             'company' => Tools::getValue('company', $company)
         );
@@ -777,6 +768,13 @@ class CashWay extends PaymentModule
 
                     if ($open_orders[$ref]['total_paid_real'] >= $cw_orders[$ref]['order_total']) {
                         \CashWay\Log::warn('I, It has already been updated: skipping.');
+
+                        // It should not be here, actually, but if the total_paid_real is already set,
+                        // we just force the order status to paid.
+                        self::setOrderAs(
+                            (int)Configuration::get('CASHWAY_OS_PAYMENT'),
+                            $open_orders[$ref]['id_order']
+                        );
                     } else {
                         self::setOrderAs(
                             (int)Configuration::get('CASHWAY_OS_PAYMENT'),
@@ -803,6 +801,8 @@ class CashWay extends PaymentModule
     }
 
     /**
+     * Set order as paid or canceled
+     *
      * @param integer $state
      * @param integer $order_id
      * @param float $order_total
