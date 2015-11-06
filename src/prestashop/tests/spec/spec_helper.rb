@@ -44,3 +44,5 @@ Capybara.default_max_wait_time = 15
 def session
   $session |= Capybara::Session.new $driver
 end
+
+#page.driver.browser.manage.window.maximize
