@@ -99,19 +99,8 @@ add-test-products:
 add_new_account:
 	${TEST_RUN} spec/add_new_account.rb
 
-test-user: test-client-50 test-client-250 test-client-2500
-
-test-client-50:
-	${TEST_RUN} spec/client_use_50.rb
-
-test-client-250:
-	${TEST_RUN} spec/client_use_250e.rb
-
-add-new-account:
-	${TEST_RUN} spec/add_new_account.rb
-
-test-client-2500:
-	${TEST_RUN} spec/client_use_2500e.rb
+test-user:
+	${TEST_RUN} spec/client_use.rb
 
 test:
 	cd ../php/ && git archive --prefix=cashway/ --format zip --output ../prestashop/lib/cashway.zip HEAD {cashway_lib,compat}.php
