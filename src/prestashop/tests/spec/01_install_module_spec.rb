@@ -13,7 +13,7 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 		find('#passwd').set ENV['ADMIN_PASSWD']
 		find('label[for=stay_logged_in]').click
 		find('button[name=submitLogin]').click
-		expect(page).to have_content ENV['ADMIN_NAME']
+		expect(page).to have_content 'Me' #ENV['ADMIN_NAME']
 	end
 
 	it 'goes to modules list' do
@@ -53,7 +53,6 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 	it 'configures module' do
 		find('#CASHWAY_API_KEY').set ENV['API_KEY']
 		find('#CASHWAY_API_SECRET').set ENV['API_SECRET']
-    $stdin.gets
 		click_button 'configuration_form_submit_btn'
 		expect(page).to have_content 'API key updated.'
 		expect(page).to have_content 'API secret updated.'
