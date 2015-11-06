@@ -20,10 +20,16 @@ describe "Admin post configuration" do
     find('#PS_COUNTRY_DEFAULT_chosen .chosen-search input').set(ENV['SERVER_COUNTRY'])
     find('#PS_COUNTRY_DEFAULT_chosen .chosen-results li:nth-child(1)').click
     first('button', text: 'Save').click
+  end
+
+  it "sets filter country" do
     find('li#maintab-AdminParentLocalization').click
     find(:xpath, '/html/body/div[1]/div[1]/nav/ul/li[9]/ul/li[4]/a').click
-    fill_in 'countryFilter_b!name', :with => 'France'
+    fill_in 'countryFilter_b!name', with: ENV['SERVER_COUNTRY']
     find(:xpath, '//button[@id="submitFilterButtoncountry"]').click
-    find(:xpath, '//a[@class="list-action-enable action-disabled"]').click
+
+    unless find(:xpath, '//a[@class="list-action-enable action-enabled"]')
+      find(:xpath, '//a[@class="list-action-enable action-disabled"]').click
+    end
   end
 end
