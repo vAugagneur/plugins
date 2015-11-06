@@ -23,16 +23,23 @@ require 'selenium-webdriver'
 require 'awesome_print'
 require 'uri'
 
-
 include Capybara::DSL
-#include Capybara::RSpecMatchers
 
 Dotenv.load
 
-Capybara.default_driver = :selenium
+Capybara.register_driver :selenium_en do |app|
+  profile = Selenium::WebDriver::Firefox::Profile.new app
+  profile["intl.accept_languages"] = "en"
+  args = []
+  Capybara::Selenium::Driver.new app, browser: :firefox, profile: profile
+end
+
+$driver = :selenium_en
+
+Capybara.default_driver = $driver
 Capybara.run_server = false
 Capybara.app_host = ENV['TEST_SERVER']
 
 def session
-  $session |= Capybara::Session.new :selenium
+  $session |= Capybara::Session.new $driver
 end
