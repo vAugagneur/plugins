@@ -5,9 +5,9 @@ date_default_timezone_set('Europe/Paris');
 // Command that starts the built-in web server
 $command = sprintf(
     'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
-    TEST_SERVER_HOST,
-    TEST_SERVER_PORT,
-    TEST_SERVER_DOCROOT
+    $_SERVER['TEST_SERVER_HOST'],
+    $_SERVER['TEST_SERVER_PORT'],
+    $_SERVER['TEST_SERVER_DOCROOT']
 );
 
 // Execute the command and store the process ID
@@ -19,8 +19,8 @@ $pid = (int) $output[0];
 echo sprintf(
     '%s - Web server started on %s:%d with PID %d',
     date('r'),
-    TEST_SERVER_HOST,
-    TEST_SERVER_PORT,
+    $_SERVER['TEST_SERVER_HOST'],
+    $_SERVER['TEST_SERVER_PORT'],
     $pid
 ) . PHP_EOL;
 

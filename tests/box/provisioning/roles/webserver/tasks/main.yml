@@ -6,10 +6,11 @@
 - name: Set htaccess
   sudo: true
   copy: >
-    src=htaccess
-    dest=/var/www/html/.htaccess
-    group=www-data
-    owner=www-data
+    src=000-default.conf
+    dest=/etc/apache2/sites-available/000-default.conf
+    group=root
+    owner=root
+    mode=0644
 
 - name: Restart HTTP server
   sudo: true

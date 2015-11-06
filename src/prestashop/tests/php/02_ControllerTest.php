@@ -19,7 +19,7 @@ class CashWayControllerTest extends PHPUnit_Framework_TestCase
 
     public function providerTest()
     {
-        $url = sprintf('http://%s:%d/notification.php', TEST_SERVER_HOST, TEST_SERVER_PORT);
+        $url = sprintf('http://%s:%d/notification.php', $_SERVER['TEST_SERVER_HOST'], $_SERVER['TEST_SERVER_PORT']);
 
         return array(
             array($url, array(), array(), 400, 'error', 'A signature header is required.'),

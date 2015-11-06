@@ -6,13 +6,13 @@
          verbose="false">
 
   <php>
-    <const name="TEST_SERVER_SCHEME" value="http" />
-    <const name="TEST_SERVER_HOST" value="127.0.0.1" />
-    <const name="TEST_SERVER_PORT" value="9876" />
-    <const name="TEST_SERVER_DOCROOT" value="tests/php/public" />
-    <const name="TEST_KEY" value="test-key-K" />
-    <const name="TEST_SECRET" value="test-secret-S" />
-    <const name="CASHWAY_TEST_ENVIRONMENT" value="1" />
+    <server name="TEST_SERVER_SCHEME" value="http" />
+    <server name="TEST_SERVER_HOST" value="127.0.0.1" />
+    <server name="TEST_SERVER_PORT" value="9876" />
+    <server name="TEST_SERVER_DOCROOT" value="tests/php/public" />
+    <server name="TEST_KEY" value="test-key-K" />
+    <server name="TEST_SECRET" value="test-secret-S" />
+    <server name="CASHWAY_TEST_ENVIRONMENT" value="1" />
   </php>
 
   <testsuites>

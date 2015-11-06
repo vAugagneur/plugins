@@ -5,6 +5,11 @@ require_once __DIR__.'/../../cashway.php';
 
 class CashWayModuleTest extends PHPUnit_Framework_TestCase
 {
+    public function expectedAuthHeader()
+    {
+        return 'Basic '.base64_encode($_SERVER['TEST_KEY'].':'.$_SERVER['TEST_SECRET']);
+    }
+
     public function testHookActionOrderStatusUpdate()
     {
         $cwmod = new CashWay();
@@ -17,7 +22,7 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
 
         $res = $cwmod->hookActionOrderStatusUpdate($params);
         $this->assertEquals('POST', $res['method']);
-        $this->assertEquals('Basic '.base64_encode(TEST_KEY.':'.TEST_SECRET), $res['headers']['Authorization']);
+        $this->assertEquals($this->expectedAuthHeader(), $res['headers']['Authorization']);
         $this->assertEquals('/1/shops/me/events', $res['request']);
 
         $body = json_decode($res['body']);
@@ -32,7 +37,7 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
         $cwmod = new CashWay();
         $res = $cwmod->updateNotificationParameters();
         $this->assertEquals('POST', $res['method']);
-        $this->assertEquals('Basic '.base64_encode(TEST_KEY.':'.TEST_SECRET), $res['headers']['Authorization']);
+        $this->assertEquals($this->expectedAuthHeader(), $res['headers']['Authorization']);
         $this->assertEquals('/1/shops/me', $res['request']);
 
         $body = json_decode($res['body']);
