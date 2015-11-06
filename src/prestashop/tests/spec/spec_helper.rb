@@ -39,6 +39,7 @@ $driver = :selenium_en
 Capybara.default_driver = $driver
 Capybara.run_server = false
 Capybara.app_host = ENV['TEST_SERVER']
+Capybara.default_max_wait_time = 15
 
 def session
   $session |= Capybara::Session.new $driver

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Adds test products (250/2500 €)" do
+describe "Adds test products (50/250/2500 €)" do
   it "goes to admin" do
     session.visit ENV['ADMIN_PATH']
   end
@@ -19,11 +19,19 @@ describe "Adds test products (250/2500 €)" do
       find(:xpath, '//input[@id="virtual_product"]').click
       click_link_or_button('link-Prices')
       fill_in 'priceTE', :with => price.to_s
-      sleep(5)
+
+      should have_xpath("//button[@name='submitAddproductAndStay' and not(@disabled='disabled')]")
       find('button[name=submitAddproductAndStay]').click
-      #click_link_or_button('link-Quantities')
-      #sleep(1)
-      #fill_in 'qty_0', :with => '10000'
+    end
+
+    it "adds quantities" do
+      click_link_or_button('link-Quantities')
+      should have_selector('td#qty_0')
+      fill_in 'qty_0', :with => '10000'
+
+      should have_xpath("//button[@name='submitAddproductAndStay' and not(@disabled='disabled')]")
+      find('button[name=submitAddproductAndStay]', match: :first).click
+      should have_content 'Successful update'
     end
   end
 
