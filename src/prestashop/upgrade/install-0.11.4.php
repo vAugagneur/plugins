@@ -27,7 +27,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_0_11_2($module)
+function upgrade_module_0_11_4($module)
 {
     // Fix misattribution of order status config value:
     // - if it stored the string label, we make it store the actual value associated with the label.
