@@ -361,9 +361,9 @@ class CashWay extends PaymentModule
 
         $ps_os_options = array();
         foreach (array('PS_OS_WS_PAYMENT', 'PS_OS_PAYMENT') as $psos) {
-            $orderstate = new OrderState(Configuration::get($psos));
+            $orderstate = new OrderState((int)Configuration::get($psos));
             $ps_os_options[] = array(
-                'key' => Configuration::get($psos),
+                'key' => (int)Configuration::get($psos),
                 'name' => $orderstate->name[$this->context->language->id].' ('.$psos.')'
             );
         }
