@@ -23,34 +23,30 @@
 *}
 
 {if $template_type == 'light'}
-
 <div class="row">
-    <div class="col-xs-12 col-md-12">
+    <div class="col-xs-12">
         <p class="payment_module">
-            <a class="cashway" style="padding: 15px 40px 17px 99px; background: url({$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/btns/cadenas-couleurs.png) 30px 19px no-repeat #fbfbfb;" href="{$link->getModuleLink('cashway', 'payment', [], true)|escape:'htmlall':'UTF-8'}" title="{l s='Paiement en espèces sur internet' mod='cashway'}">
-            <img width="700px" src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/btns/cashway-peesi-couleurs.png">
-            <span style="float:right;"><img src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/btns/coins.png" width="70px"></span>
-            <br>
-                <span>
-                {l s='Vous payez en espèces chez un buraliste près de chez vous, la commande sera automatiquement validée. (Frais de traitement : ' mod='cashway'}{$cart_fee|escape:'htmlall':'UTF-8'}&nbsp; )
-                </span>
+            <a class="cheque cashway"
+                style="background-image: url({$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/cashway-payment.png);"
+                href="{$link->getModuleLink('cashway', 'payment', [], true)|escape:'htmlall':'UTF-8'}"
+                title="{l s='Paiement en espèces sur internet' mod='cashway'}">
+                {l s='Payer en espèces avec CashWay, chez un buraliste près de chez vous'}
+                <span>(frais de traitement&nbsp;: {$cart_fee|escape:'htmlall':'UTF-8'})</span>
             </a>
         </p>
     </div>
 </div>
 <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/offered?p=ps&amp;v=col" alt="" />
 {elseif $template_type == 'normal'}
-
 <div class="row">
-    <div class="col-xs-12 col-md-12">
+    <div class="col-xs-12">
         <p class="payment_module">
-            <a class="cashway" style="padding: 15px 40px 17px 99px; color:#000; background: url({$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/btns/cadenas-blanc.png) 30px 19px no-repeat #ff8f02; " href="{$link->getModuleLink('cashway', 'payment', [], true)|escape:'htmlall':'UTF-8'}" title="{l s='Paiement en espèces sur internet' mod='cashway'}">
-            <img width="700px" src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/btns/cashway-peesi-blanc.png">
-            <span style="float:right;"><img src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/btns/coins.png" width="70px"></span>
-                <br>
-                <span style="color:#FFF;">
-                {l s='Vous payez en espèces chez un buraliste près de chez vous, la commande sera automatiquement validée. (Frais de traitement : ' mod='cashway'}{$cart_fee|escape:'htmlall':'UTF-8'}&nbsp; )
-                </span>
+            <a class="cheque cashway"
+                style="background-color: white; background-image: url({$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/cashway-payment-orange.png); border-color: orange;"
+                href="{$link->getModuleLink('cashway', 'payment', [], true)|escape:'htmlall':'UTF-8'}"
+                title="{l s='Paiement en espèces sur internet' mod='cashway'}">
+                {l s='Payer en espèces avec CashWay, chez un buraliste près de chez vous'}
+                <span>(frais de traitement&nbsp;: {$cart_fee|escape:'htmlall':'UTF-8'})</span>
             </a>
         </p>
     </div>
