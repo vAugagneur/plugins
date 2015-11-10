@@ -39,7 +39,7 @@
 {if isset($nbProducts) && $nbProducts <= 0}
     <p class="warning">{l s='Your shopping cart is empty.' mod='cashway'}</p>
 {else}
-    <h3>{l s='Paiement avec ' mod='cashway'}
+    <h3>{l s='Payer en espèces avec ' mod='cashway'}
         <img src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}/views/img/cashway-180x40.png"
             alt="{l s='CashWay' mod='cashway'}"
             width="180"
@@ -56,6 +56,14 @@
                 method="post">
                 <ul>
                     <li><p>
+                        Après confirmation de votre commande,
+                        vous recevrez par email et par SMS un code
+                        à présenter chez un des buralistes
+                        présents sur la carte ci-dessous&nbsp;;
+                        celui pourra ainsi encaisser et valider votre paiement.
+                        Votre commande sera alors immédiatement traitée par nos services.
+                    </p></li>
+                    <li><p>
                         Votre commande s&rsquo;élève à <span id="amount" class="price">{displayPrice price=$total}</span>
                         {if $use_taxes == 1}{l s='(taxes incluses)' mod='cashway'}{/if}.
                     </p></li>
@@ -64,14 +72,6 @@
                         Frais destinés à votre buraliste&nbsp;: {displayPrice price=$cart_fee}.
                     </p></li>
                     {/if}
-                    <li><p>
-                        Après confirmation de votre commande,
-                        vous recevrez par email et par SMS un code
-                        à présenter chez un des buralistes
-                        présents sur la carte ci-dessous&nbsp;;
-                        celui pourra ainsi encaisser et valider votre paiement.
-                        Votre commande sera alors immédiatement traitée par nos services.
-                    </p></li>
                     <li><p>
                         <strong>Total à payer au buraliste&nbsp;:
                         <span id="amount" class="price">{displayPrice price=$total + $cart_fee}</span>.</strong>
@@ -145,5 +145,10 @@
     <div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
     <script src="https://maps.cashway.fr/js/cwm.min.js" defer async></script>
 
-    <p style="margin-top: 2rem"><a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'htmlall':'UTF-8'}">{l s='Other payment methods' mod='cashway'}</a></p>
+    <p class="cart_navigation clearfix"
+        style="margin-top: 2rem">
+        <a class="button-exclusive btn btn-default"
+            title="Précédent"
+            href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'htmlall':'UTF-8'}">
+                <i class="icon-chevron-left"></i> {l s='Other payment methods' mod='cashway'}</a></p>
 {/if}
