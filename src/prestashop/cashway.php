@@ -32,7 +32,7 @@ require __DIR__.'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.11.5';
+    const VERSION = '0.11.6';
 
     /**
     */
@@ -526,7 +526,7 @@ class CashWay extends PaymentModule
         $this->context->smarty->assign(array(
             'template_type' => $template,
             'cart_fee' => sprintf(
-                '+ %s €',
+                '%d €',
                 number_format(
                     \CashWay\Fee::getCartFee($params['cart']->getOrderTotal()),
                     0,
@@ -539,6 +539,7 @@ class CashWay extends PaymentModule
             'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
             'cashway_api_base_url' => self::getCashWayAPI()->api_base_url
         ));
+        $this->context->controller->addCSS($this->_path.'views/css/cashway.css', 'all');
 
         return $this->display(__FILE__, 'payment.tpl');
     }

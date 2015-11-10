@@ -22,12 +22,10 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
-{if $template_type == 'light'}
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module">
-            <a class="cheque cashway"
-                style="background-image: url({$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/cashway-payment.png);"
+            <a class="cashway {if $template_type == 'normal'}cashway-hl{/if}"
                 href="{$link->getModuleLink('cashway', 'payment', [], true)|escape:'htmlall':'UTF-8'}"
                 title="{l s='Paiement en espèces sur internet' mod='cashway'}">
                 {l s='Payer en espèces avec CashWay, chez un buraliste près de chez vous'}
@@ -36,20 +34,4 @@
         </p>
     </div>
 </div>
-<img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/offered?p=ps&amp;v=col" alt="" />
-{elseif $template_type == 'normal'}
-<div class="row">
-    <div class="col-xs-12">
-        <p class="payment_module">
-            <a class="cheque cashway"
-                style="background-color: white; background-image: url({$this_path_cashway|escape:'urlpathinfo':'UTF-8'}views/img/cashway-payment-orange.png); border-color: orange;"
-                href="{$link->getModuleLink('cashway', 'payment', [], true)|escape:'htmlall':'UTF-8'}"
-                title="{l s='Paiement en espèces sur internet' mod='cashway'}">
-                {l s='Payer en espèces avec CashWay, chez un buraliste près de chez vous'}
-                <span>(frais de traitement&nbsp;: {$cart_fee|escape:'htmlall':'UTF-8'})</span>
-            </a>
-        </p>
-    </div>
-</div>
-<img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/offered?p=ps&amp;v=sim" alt="" />
-{/if}
+<img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/offered?p=ps&amp;v={if $template_type == 'normal'}col{else}sim{/if}" alt="" />
