@@ -111,7 +111,6 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
             'this_path_cashway' => $this->module->getPathUri(),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->module->name.'/',
             'cashway_api_base_url' => $cashway->api_base_url,
-            'info_cgu' => Tools::getValue('cgu', false),
             'kyc_conditions' => (array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null),
             'kyc_upload_url' => \CashWay\API_URL.\CashWay\KYC_PATH,
             'kyc_upload_mail' => \CashWay\KYC_MAIL

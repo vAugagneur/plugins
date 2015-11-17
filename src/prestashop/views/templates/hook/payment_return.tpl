@@ -56,8 +56,7 @@
     {/if}
     <p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Imprimer le ticket de paiement correspondant</a></p>
 
-    <p>
-        {l s='An email and a text message have been sent to you with all this information.' mod='cashway'}
+    <p>{l s='An email and a text message have been sent to you with all this information.' mod='cashway'}
         <br /><br /><strong>{l s='Your order will be sent as soon as we receive your payment.' mod='cashway'}</strong>
     </p>
 
@@ -79,6 +78,13 @@
         <a href="{$link->getPageLink('contact', true)|escape:'htmlall':'UTF-8'}">{l s='customer service department.' mod='cashway'}</a>.
         <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/1/n/pu/returned?p=ps&amp;v=ok" alt="" />
     </p>
+
+    <p>Vous pouvez consulter les
+      <a href="https://help.cashway.fr/cgu/"
+         target="blank"
+         rel="nofollow">conditions générales de CashWay</a>.</p>
+
+
 {else}
     <p class="warning">
     {if $barcode == '-failed-'}

@@ -88,16 +88,13 @@
                     {/if}
                 </ul>
                 <p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b></p>
-                {if $info_cgu}
-                <p>Merci de valider les conditions d'utilisation pour confirmer votre commande&nbsp;:</p>
-                {/if}
-                <div class="form-group form-group-sm" {if $info_cgu} style="padding: 0.1rem 0 0.1rem 1rem; background: #fda;" {/if}>
-                    <div class="checkbox control-label">
-                        <input type="checkbox" value="cgu-accept" id="cgu-accept" name="cgu-accept" />
-                        <label for="cgu-accept">J'ai lu les conditions d&rsquo;utilisation de CashWay
-                            et j&rsquo;y adhère sans réserve</label>
-                            (<a href="https://help.cashway.fr/cgu/" target="blank" rel="nofollow" style="color: orange;">lire les CGU CashWay</a>)
-                    </div>
+                <div class="form-group form-group-sm">
+                    <p>En confirmant votre commande, vous reconnaissez avoir lu et adhéré sans réserve
+                        aux <a href="https://help.cashway.fr/cgu/"
+                               target="blank"
+                               rel="nofollow"
+                               style="color: orange;">
+                        conditions générales de CashWay</a>.</p>
                 </div>
                 <p class="cart_navigation" id="cart_navigation">
                     {if (rand(1,100) > 50)}
@@ -115,12 +112,6 @@
                     {/if}
                 </p>
                 <style>input[disabled] { opacity: 0.5; }</style>
-                <script>
-                $('#cashway-confirm-btn').prop('disabled', !$('#cgu-accept').is(':checked'));
-                $('#cgu-accept').on('click', function (ev) {
-                    $('#cashway-confirm-btn').prop('disabled', !$(this).is(':checked'));
-                });
-                </script>
             </form>
             <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?p=ps&amp;v=ok" alt="" />
         {else}

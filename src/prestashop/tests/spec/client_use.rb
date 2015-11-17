@@ -58,14 +58,13 @@ end
 
         expect(page).to have_content 'Total à payer au buraliste'
         expect(page).to have_content 'Please confirm your order by clicking'
-        expect(page).to have_content 'J\'ai lu les conditions d’utilisation de CashWay et j’y adhère sans réserve'
+        expect(page).to have_content 'avoir lu et adhéré sans réserve aux conditions générales de CashWay'
         expect(page).to have_content 'Les distributeurs proches de chez vous'
 
         if 250 == price
           expect(page).to have_content 'pour encaisser ce montant, la réglementation française nous impose de contrôler votre identité.'
         end
 
-        find('label[for=cgu-accept]').click
         find('#cashway-confirm-btn').click
       end
 

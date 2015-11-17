@@ -58,10 +58,6 @@ class CashwayValidationModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php?controller=order&step=1');
         }
 
-        if (Tools::getValue('cgu-accept') === false) {
-            Tools::redirect('index.php?fc=module&module=cashway&controller=payment&cgu=1');
-        }
-
         $currency = $this->context->currency;
         $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
 
