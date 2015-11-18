@@ -1,5 +1,15 @@
 ---
-- name: Download Magento
+
+# name: Is it already installed?
+# sudo_user: vagrant
+# command: >
+#   chdir=/var/www/html/prestashop
+#
+#   wp core is-installed
+# register: command_result
+# ignore_errors: yes
+
+- name: Download PrestaShop
   get_url: >
     url='https://www.prestashop.com/ajax/controller.php?method=download&type=releases&file=prestashop_1.6.1.1.zip&language=fr'
     dest=/var/www/html/prestashop-latest.zip
@@ -11,7 +21,7 @@
 
 # TODO, use install/index_cli.php to install PrestaShop
 
-- name:
-  command: >
-    chdir=/var/www/html/prestashop
-    php install/index_cli.php --domain=localhost:8080 --db_create=1 --country=fr --email=ci+ps@do.cshw.pl --newletter=0 --send_email=0
+#- name:
+#  command: >
+#    chdir=/var/www/html/prestashop
+#    php install/index_cli.php --domain=localhost:8080 --db_create=1 --country=fr --email=ci+ps@do.cshw.pl --newletter=0 --send_email=0
