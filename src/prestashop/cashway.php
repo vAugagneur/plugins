@@ -630,7 +630,9 @@ class CashWay extends PaymentModule
     /**
      * Notify API of a failed payment, if service is configured.
      *
+     * @param array $params
      *
+     * @return Array
     */
     public function hookActionOrderStatusUpdate($params)
     {
@@ -639,12 +641,12 @@ class CashWay extends PaymentModule
             if (self::isConfiguredService()) {
                 $order = new Order((int)$params['id_order']);
                 if (!Validate::isLoadedObject($order)) {
-                    return;
+                    return null;
                 }
 
                 $customer = new Customer((int)$order->id_customer);
                 if (!Validate::isLoadedObject($customer)) {
-                    return;
+                    return null;
                 }
 
                 $cashway = self::getCashWayAPI();
