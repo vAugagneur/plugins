@@ -851,16 +851,26 @@ class CashWay extends PaymentModule
     */
     private static function setOrderAs($state, $order_id, $order_total = null, $barcode = null)
     {
-        $order = new Order((int)$order_id);
-        if (!is_null($order_total) && !is_null($barcode)) {
-            $order->addOrderPayment($order_total, 'CashWay', $barcode);
-            $order->setInvoice(true);
+        $return = false;
+
+        try {
+            $order = new Order((int)$order_id);
+            if (!is_null($order_total) && !is_null($barcode)) {
+                $order->addOrderPayment($order_total, 'CashWay', $barcode);
+                $order->setInvoice(true);
+            }
+
+            $history = new OrderHistory();
+            $history->id_order = (int)$order->id;
+            $history->changeIdOrderState((int)$state, $order);
+            $history->addWithEmail(true);
+
+            $return = true;
+        } catch (Exception $e) {
+            \CashWay\Log::error($e->getMessage());
         }
 
-        $history = new OrderHistory();
-        $history->id_order = (int)$order->id;
-        $history->changeIdOrderState((int)$state, $order);
-        $history->addWithEmail(true);
+        return $return;
     }
 
     /**
