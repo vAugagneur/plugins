@@ -62,6 +62,45 @@ class Order
         $this->id_customer = 1;
         $this->payment = 'test_payment_method';
     }
+
+    public function addOrderPayment($order_total, $reason, $reference)
+    {
+        echo sprintf(
+            "Adding payment of %.2f because of %s, %s for order %d\n",
+            $order_total,
+            $reason,
+            $reference,
+            $this->id
+        );
+    }
+
+    public function setInvoice($send)
+    {
+        echo sprintf("Setting invoice for order %d\n", $this->id);
+    }
+}
+
+class OrderHistory
+{
+    public function __construct()
+    {
+        $this->id_order = null;
+    }
+
+    public function changeIdOrderState($state, $order)
+    {
+        echo sprintf(
+            "Calling changeIdOrderState(%s, %d) for order %d\n",
+            $state,
+            $order->id,
+            $this->id_order
+        );
+    }
+
+    public function addWithEmail($bool)
+    {
+        //
+    }
 }
 
 class Customer
@@ -88,5 +127,6 @@ class Validate
         return is_object($obj);
     }
 }
+
 
 define('_PS_VERSION_', '1.1.1');
