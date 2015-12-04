@@ -712,29 +712,41 @@ class CashWay extends PaymentModule
      * If we have local orders pending for payment from CashWay,
      * ask CW API for recent transactions statuses, compare and act upon it.
      *
-     * This method is expected to be called by a cron task at least every hour.
-     * See cron_cashway_check_for_transactions.php
+     * This method is to be called by a cron task or by the notification
+     * front controller, itself triggered by a remote API call.
      *
      * @return boolean
     */
     public static function checkForPayments()
     {
         if (!self::isConfiguredService()) {
-            return;
+            return false;
         }
 
         \CashWay\Log::info('== Starting CashWay background check for orders updates ==');
         $open_orders = self::getLocalPendingOrders();
         if (count($open_orders) == 0) {
             \CashWay\Log::info('No order payment pending by CashWay.');
-            return true;
+            return false;
         }
 
         $cw_orders = self::getRemoteOrderStatus();
         if (false === $cw_orders) {
+            \CashWay\Log::info('No order info from remote service.');
             return false;
         }
 
+        return self::reviewKnownOrders($open_orders, $cw_orders);
+    }
+
+    /**
+     * @param Array $open_orders list of pending orders in this Shop
+     * @param Array $cw_orders list of orders known to CashWay API
+     *
+     * @return Array hash of order ids (key) with their review status (ok/not)
+    */
+    public static function reviewKnownOrders($open_orders, $cw_orders)
+    {
         $cw_refs = array_keys($cw_orders);
         $open_refs = array_keys($open_orders);
 
@@ -748,59 +760,82 @@ class CashWay extends PaymentModule
             ));
         }
 
+        $results = [];
         foreach ($common_refs as $ref) {
-            switch ($cw_orders[$ref]['status']) {
-                case 'paid':
-                    \CashWay\Log::info(sprintf('I, found order %s was paid. Updating local record.', $ref));
-                    if ($cw_orders[$ref]['order_total'] != $open_orders[$ref]['total_paid']) {
-                        \CashWay\Log::warn(sprintf(
-                            'W, Found order %s, CW.order_total (%.2f) does not match total_paid (%.2f).',
-                            $ref,
-                            $cw_orders[$ref]['order_total'],
-                            $open_orders[$ref]['total_paid']
-                        ));
-                    }
-
-                    if ($cw_orders[$ref]['paid_amount'] <= $open_orders[$ref]['total_paid']) {
-                        \CashWay\Log::warn(sprintf(
-                            'W, Found order %s but CW.paid_amount (%.2f) <= total_paid (%.2f).',
-                            $ref,
-                            $cw_orders[$ref]['paid_amount'],
-                            $open_orders[$ref]['total_paid']
-                        ));
-                    }
-
-                    if ($open_orders[$ref]['total_paid_real'] >= $cw_orders[$ref]['order_total']) {
-                        \CashWay\Log::warn('I, It has already been updated: skipping.');
-
-                        // It should not be here, actually, but if the total_paid_real is already set,
-                        // we just force the order status to paid.
-                        self::setOrderAs(
-                            (int)Configuration::get('CASHWAY_OS_PAYMENT'),
-                            $open_orders[$ref]['id_order']
-                        );
-                    } else {
-                        self::setOrderAs(
-                            (int)Configuration::get('CASHWAY_OS_PAYMENT'),
-                            $open_orders[$ref]['id_order'],
-                            $cw_orders[$ref]['order_total'],
-                            $cw_orders[$ref]['barcode']
-                        );
-                    }
-                    break;
-
-                case 'expired':
-                    \CashWay\Log::info(sprintf('I, found order %s expired. Updating local record.', $ref));
-                    self::setOrderAs((int)Configuration::get('PS_OS_CANCELED'), $open_orders[$ref]['id_order']);
-                    break;
-
-                default:
-                case 'confirmed':
-                case 'open':
-                    \CashWay\Log::info(sprintf('I, found order %s, still pending.', $ref));
-                    break;
-            }
+            $results[$ref] = self::reviewOrder($ref, $cw_orders[$ref], $open_orders[$ref]);
         }
+        \CashWay\Log::info('All done.');
+
+        return $results;
+    }
+
+    /**
+     * @param string $ref
+     * @param Array $remote remote CashWay API order info
+     * @param Array $local  local PrestaShop order info
+     *
+     * @return boolean
+    */
+    public static function reviewOrder($ref, $remote, $local)
+    {
+        switch ($remote['status']) {
+            case 'paid':
+                \CashWay\Log::info(sprintf('I, found order %s has been paid. Updating local record.', $ref));
+
+                $return = true;
+
+                if ($local['total_paid'] != $remote['order_total']) {
+                    \CashWay\Log::error(sprintf(
+                        'expected payments differ: %.2f vs. %.2f (remote/local)',
+                        $ref,
+                        $remote['order_total'],
+                        $local['total_paid']
+                    ));
+                    return false;
+                }
+
+                if ($local['total_paid'] > $remote['paid_amount']) {
+                    \CashWay\Log::error(sprintf(
+                        'payment is less than expected: %.2f instead of %.2f (remote/local)',
+                        $ref,
+                        $remote['paid_amount'],
+                        $local['total_paid']
+                    ));
+                    return false;
+                }
+
+                if ($local['total_paid_real'] >= $remote['order_total']) {
+                    \CashWay\Log::warn('I, it has already been updated: skipping.');
+
+                    // if the total_paid_real is already set,
+                    // we still force the order status to paid.
+                    return self::setOrderAs(
+                        (int)Configuration::get('CASHWAY_OS_PAYMENT'),
+                        $local['id_order']
+                    );
+                } else {
+                    return self::setOrderAs(
+                        (int)Configuration::get('CASHWAY_OS_PAYMENT'),
+                        $local['id_order'],
+                        $remote['order_total'],
+                        $remote['barcode']
+                    );
+                }
+                break;
+
+            case 'expired':
+                \CashWay\Log::info(sprintf('I, found order %s has expired. Updating local record.', $ref));
+                return self::setOrderAs((int)Configuration::get('PS_OS_CANCELED'), $local['id_order']);
+                break;
+
+            default:
+            case 'confirmed':
+            case 'open':
+            case 'blocked':
+                \CashWay\Log::info(sprintf('I, found order %s, still pending (%s).', $ref, $remote['status']));
+                break;
+        }
+
         return true;
     }
 
