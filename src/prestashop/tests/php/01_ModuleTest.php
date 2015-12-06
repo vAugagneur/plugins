@@ -96,12 +96,16 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
     }
 
     private static function buildOrder(
-        $reason, $result,
+        $reason,
+        $result,
         $id,
-        $remote_status, $remote_expected, $remote_paid,
-        $local_status, $local_expected, $local_paid
-    )
-    {
+        $remote_status,
+        $remote_expected,
+        $remote_paid,
+        $local_status,
+        $local_expected,
+        $local_paid
+    ) {
         return [
             'reason' => $reason,
             'result' => $result,
@@ -126,32 +130,113 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
     public function ordersProvider()
     {
         return [
-            self::buildOrder('blocked, unpaid order should be dismissed', true,
-                'OID-1', 'blocked',   10.0, 0.0, 0, 0.0, 0.0),
+            self::buildOrder(
+                'blocked, unpaid order should be dismissed',
+                true,
+                'OID-1',
+                'blocked',
+                10.0,
+                0.0,
+                0,
+                0.0,
+                0.0
+            ),
 
-            self::buildOrder('confirmed, unpaid order should be dismissed', true,
-                'OID-2', 'confirmed', 10.0, 0.0, 0, 0.0, 0.0),
+            self::buildOrder(
+                'confirmed, unpaid order should be dismissed',
+                true,
+                'OID-2',
+                'confirmed',
+                10.0,
+                0.0,
+                0,
+                0.0,
+                0.0
+            ),
 
-            self::buildOrder('open, unpaid order should be dismissed', true,
-                'OID-2b', 'open',     10.0, 0.0, 0, 0.0, 0.0),
+            self::buildOrder(
+                'open, unpaid order should be dismissed',
+                true,
+                'OID-2b',
+                'open',
+                10.0,
+                0.0,
+                0,
+                0.0,
+                0.0
+            ),
 
-            self::buildOrder('expired order should update local record', true,
-                'OID-3', 'expired',   10.0, 0.0, 0, 10.0, 0.0),
+            self::buildOrder(
+                'expired order should update local record',
+                true,
+                'OID-3',
+                'expired',
+                10.0,
+                0.0,
+                0,
+                10.0,
+                0.0
+            ),
 
-            self::buildOrder('expected paid order should update status', true,
-                'OID-4', 'paid', 10.0, 10.0, 0, 10.0,  0.0),
+            self::buildOrder(
+                'expected paid order should update status',
+                true,
+                'OID-4',
+                'paid',
+                10.0,
+                10.0,
+                0,
+                10.0,
+                0.0
+            ),
 
-            self::buildOrder('paid order, already set should update status', true,
-                'OID-5', 'paid', 10.0, 10.0, 1, 10.0, 10.0),
+            self::buildOrder(
+                'paid order, already set should update status',
+                true,
+                'OID-5',
+                'paid',
+                10.0,
+                10.0,
+                1,
+                10.0,
+                10.0
+            ),
 
-            self::buildOrder('paid order, less than expected, should be refused', false,
-                'OID-6', 'paid', 10.0,  9.0, 0, 10.0,  0.0),
+            self::buildOrder(
+                'paid order, less than expected, should be refused',
+                false,
+                'OID-6',
+                'paid',
+                10.0,
+                9.0,
+                0,
+                10.0,
+                0.0
+            ),
 
-            self::buildOrder('paid order, more than expected, should be refused', false,
-                'OID-7', 'paid', 10.0, 10.0, 0,  9.0,  0.0),
+            self::buildOrder(
+                'paid order, more than expected, should be refused',
+                false,
+                'OID-7',
+                'paid',
+                10.0,
+                10.0,
+                0,
+                9.0,
+                0.0
+            ),
 
-            self::buildOrder('paid order, unexpected, should be refused', false,
-                'OID-8', 'paid', 10.0,  0.0, 0,  0.0,  0.0)
+            self::buildOrder(
+                'paid order, unexpected, should be refused',
+                false,
+                'OID-8',
+                'paid',
+                10.0,
+                0.0,
+                0,
+                0.0,
+                0.0
+            )
         ];
     }
 }
