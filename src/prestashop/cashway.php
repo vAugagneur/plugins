@@ -771,8 +771,8 @@ class CashWay extends PaymentModule
 
     /**
      * @param string $ref
-     * @param Array $remote remote CashWay API order info
-     * @param Array $local  local PrestaShop order info
+     * @param Array  $remote remote CashWay API order info
+     * @param Array  $local  local PrestaShop order info
      *
      * @return boolean
     */
@@ -782,45 +782,7 @@ class CashWay extends PaymentModule
             case 'paid':
                 \CashWay\Log::info(sprintf('I, found order %s has been paid. Updating local record.', $ref));
 
-                $return = true;
-
-                if ($local['total_paid'] != $remote['order_total']) {
-                    \CashWay\Log::error(sprintf(
-                        'expected payments differ: %.2f vs. %.2f (remote/local)',
-                        $ref,
-                        $remote['order_total'],
-                        $local['total_paid']
-                    ));
-                    return false;
-                }
-
-                if ($local['total_paid'] > $remote['paid_amount']) {
-                    \CashWay\Log::error(sprintf(
-                        'payment is less than expected: %.2f instead of %.2f (remote/local)',
-                        $ref,
-                        $remote['paid_amount'],
-                        $local['total_paid']
-                    ));
-                    return false;
-                }
-
-                if ($local['total_paid_real'] >= $remote['order_total']) {
-                    \CashWay\Log::warn('I, it has already been updated: skipping.');
-
-                    // if the total_paid_real is already set,
-                    // we still force the order status to paid.
-                    return self::setOrderAs(
-                        (int)Configuration::get('CASHWAY_OS_PAYMENT'),
-                        $local['id_order']
-                    );
-                } else {
-                    return self::setOrderAs(
-                        (int)Configuration::get('CASHWAY_OS_PAYMENT'),
-                        $local['id_order'],
-                        $remote['order_total'],
-                        $remote['barcode']
-                    );
-                }
+                return self::verifyAndSetPaid($ref, $remote, $local);
                 break;
 
             case 'expired':
@@ -837,6 +799,56 @@ class CashWay extends PaymentModule
         }
 
         return true;
+    }
+
+    /**
+     * @param string $ref
+     * @param Array  $remote
+     * @param Array  $local
+     *
+     * @return boolean
+    */
+    public static function verifyAndSetPaid($ref, $remote, $local)
+    {
+        $return = true;
+
+        if ($local['total_paid'] != $remote['order_total']) {
+            \CashWay\Log::error(sprintf(
+                'expected payments differ: %.2f vs. %.2f (remote/local)',
+                $ref,
+                $remote['order_total'],
+                $local['total_paid']
+            ));
+            return false;
+        }
+
+        if ($local['total_paid'] > $remote['paid_amount']) {
+            \CashWay\Log::error(sprintf(
+                'payment is less than expected: %.2f instead of %.2f (remote/local)',
+                $ref,
+                $remote['paid_amount'],
+                $local['total_paid']
+            ));
+            return false;
+        }
+
+        if ($local['total_paid_real'] >= $remote['order_total']) {
+            \CashWay\Log::warn('I, it has already been updated: skipping.');
+
+            // if the total_paid_real is already set,
+            // we still force the order status to paid.
+            return self::setOrderAs(
+                (int)Configuration::get('CASHWAY_OS_PAYMENT'),
+                $local['id_order']
+            );
+        } else {
+            return self::setOrderAs(
+                (int)Configuration::get('CASHWAY_OS_PAYMENT'),
+                $local['id_order'],
+                $remote['order_total'],
+                $remote['barcode']
+            );
+        }
     }
 
     /**
