@@ -183,7 +183,7 @@ class API
      * @param array  $in_headers payload HTTP headers
      * @param string $in_secret known shared secret with CashWay
      *
-     * @return Array [true, event, data] if success, or [false, msg]
+     * @return Array [true, event, data] if success, or [false, msg, http_code]
     */
     public static function receiveNotification($in_body, $in_headers, $in_secret)
     {
@@ -192,31 +192,31 @@ class API
         $evkey   = 'x-cashway-event';
 
         if (!array_key_exists($signkey, $headers)) {
-            return array(false, 'A signature header is required.');
+            return array(false, 'A signature header is required.', 400);
         }
 
         if (!array_key_exists($evkey, $headers)) {
-            return array(false, 'An event header is required.');
+            return array(false, 'An event header is required.', 400);
         }
 
         $signature = trim($headers[$signkey]);
 
         if (substr($signature, 0, 4) == 'none' || $signature == '') {
-            return array(false, 'A real signature is required.');
+            return array(false, 'A real signature is required.', 403);
         }
 
         $valid = self::isDataValid($in_body, $in_secret, $signature);
         if (null === $valid) {
-            return array(false, 'Unsupported signature algorithm.');
+            return array(false, 'Unsupported signature algorithm.', 403);
         }
 
         if (!$valid) {
-            return array(false, 'Payload signature does not match.');
+            return array(false, 'Payload signature does not match.', 403);
         }
 
         $out_data = json_decode($in_body);
         if (null === $out_data) {
-            return array(false, 'Could not parse JSON payload.');
+            return array(false, 'Could not parse JSON payload.', 400);
         }
 
         return array(true, trim($headers[$evkey]), $out_data);

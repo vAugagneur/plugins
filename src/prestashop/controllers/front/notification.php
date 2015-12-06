@@ -34,7 +34,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
         );
 
         if ($res[0] === false) {
-            $this->terminateReply(400, $res[1]);
+            $this->terminateReply($res[2], $res[1]);
         }
 
         $event = $res[1];
@@ -119,28 +119,19 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
     {
         ob_start();
         CashWay::checkForPayments();
-        $this->terminateReply(200, array(
-            'fn' => 'checkForPayments',
-            'log' => explode("\n", ob_get_clean()),
-            'agent' => 'CashWayModule/'.Cashway::VERSION.' PrestaShop/'._PS_VERSION_.' PHP/'.PHP_VERSION.' '.PHP_OS
-        ));
+        $this->terminateReply(200, ob_get_clean());
     }
 
     private function terminateReply($code, $message)
     {
-        $codes = array(
-            200 => array('200 OK',          true),
-            201 => array('201 Created',     true),
-            202 => array('202 Accepted',    true),
-            400 => array('400 Bad Request', false)
-        );
-
         http_response_code($code);
         header('Content-Type: application/json; charset=utf-8');
+        header('CW-Agent: CashWayModule/'.Cashway::VERSION.' PrestaShop/'._PS_VERSION_.' PHP/'.PHP_VERSION.' '.PHP_OS);
 
         echo json_encode(array(
-            'status'  => $codes[$code][1] ? 'ok' : 'error',
-            'message' => $message
+             'status' => $code < 400 ? 'ok' : 'error',
+            'message' => $message,
+              'agent' => 'CashWayModule/'.Cashway::VERSION.' PrestaShop/'._PS_VERSION_.' PHP/'.PHP_VERSION.' '.PHP_OS
         ));
         exit;
     }
