@@ -676,10 +676,13 @@ class cURL
 
     public static function curlDo($url, $options)
     {
+        $code  = 0;
         $error = false;
         $body  = false;
+        $headers = [];
 
         $base_options = array(
+            CURLOPT_HEADER         => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT        => 5,
             CURLOPT_CONNECTTIMEOUT => 5,
@@ -694,25 +697,46 @@ class cURL
             && curl_setopt_array($ch, $options))
         ) {
             $error = 'curl (x): failed to set options.';
-            $code  = 0;
         } else {
-            $body = curl_exec($ch);
-            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-            if (false === $body) {
-                $error = sprintf(
-                    'curl (%d): %s',
-                    curl_errno($ch),
-                    curl_error($ch)
-                );
+            $response = curl_exec($ch);
+            if (curl_errno($ch) > 0) {
+                $error = sprintf('curl (%d): %s', curl_errno($ch), curl_error($ch));
+            } else {
+                list($headers, $body) = explode("\r\n\r\n", $response, 2);
+                $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $headers = self::parseHttpHeaders($headers);
             }
         }
         curl_close($ch);
 
-        return array(
-            'body'  => $body,
-            'code'  => $code,
-            'error' => $error
-        );
+        return [
+               'code' => $code,
+            'headers' => $headers,
+               'body' => $body,
+              'error' => $error
+        ];
+    }
+
+    /**
+     * Very naive, imperfect parser of HTTP headers.
+     *
+     * @param string $str
+     *
+     * @return array
+    */
+    public static function parseHttpHeaders($str)
+    {
+        $headers = [];
+        foreach (explode("\n", $str) as $line) {
+            if (strpos($line, 'HTTP/') === 0) {
+                continue;
+            }
+            $line = explode(':', $line);
+            $key  = trim(strtoupper(str_replace('-', '_', array_shift($line))));
+            $val  = implode(':', $line);
+            $headers[$key] = trim($val);
+        }
+
+        return $headers;
     }
 }
