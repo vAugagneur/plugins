@@ -47,7 +47,7 @@ cs:
 	phpcs --encoding=utf-8 \
 		--standard=PSR2 \
 		--colors \
-		--ignore=lib/,vendor/,coverage/ \
+		--ignore=lib/,vendor/,coverage/,tests/ \
 		.
 
 csfix:
