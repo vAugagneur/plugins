@@ -291,7 +291,7 @@ R;
                 '{"key":"value"}',
                 array(),
                 'howdy!',
-                array(false, 'A signature header is required.')
+                array(false, 'A signature header is required.', 400)
             ),
             array(
                 '{"key":"value"}',
@@ -300,7 +300,7 @@ R;
                     "X-CashWay-Signature" => "sha256=4777d4fcfb3cf1db660f88162ac355"
                 ),
                 'howdy!',
-                array(false, 'Payload signature does not match.')
+                array(false, 'Payload signature does not match.', 403)
             ),
             array(
                 '{"key":"value"}',
@@ -309,7 +309,7 @@ R;
                     "X-CashWay-Signature" => "none="
                 ),
                 'howdy!',
-                array(false, 'A real signature is required.')
+                array(false, 'A real signature is required.', 403)
             ),
             array(
                 '{"key":"value"}',
@@ -318,7 +318,7 @@ R;
                     "X-CashWay-Signature" => ""
                 ),
                 'howdy!',
-                array(false, 'A real signature is required.')
+                array(false, 'A real signature is required.', 403)
             ),
             array(
                 '{"key":"value"}',
@@ -327,7 +327,7 @@ R;
                     "X-CashWay-Signature" => "any=test"
                 ),
                 'howdy!',
-                array(false, 'Unsupported signature algorithm.')
+                array(false, 'Unsupported signature algorithm.', 403)
             )
         );
     }
