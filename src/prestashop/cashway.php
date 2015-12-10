@@ -912,6 +912,29 @@ class CashWay extends PaymentModule
     }
 
     /**
+     * Return a single PS order after its id_order or reference.
+     *
+     * @param mixed $id_or_ref
+     *
+     * @return array|null
+    */
+    public static function getLocalOrderByReference($id_or_ref)
+    {
+        if (is_integer($id_or_ref)) {
+            $sql = sprintf('SELECT * FROM %sorders WHERE id_order=%d', _DB_PREFIX_, (int)$id_or_ref);
+        } else {
+            $id_or_ref = filter_var((string)$id_or_ref, FILTER_SANITIZE_STRING);
+            $sql = sprintf('SELECT * FROM %sorders WHERE reference=%s', _DB_PREFIX_, $id_or_ref);
+        }
+
+        if ($order = Db::getInstance()->getRow($sql)) {
+            return $order;
+        }
+
+        return null;
+    }
+
+    /**
      * Fetch remote (CashWay-side) status for this account.
      * FIXME. This returns ALL transactions. We should limit this to those we want.
      *
@@ -940,6 +963,9 @@ class CashWay extends PaymentModule
     }
 
     /**
+     * Push current PS instance notification url & secret key.
+     *
+     * @return null
     */
     public function updateNotificationParameters()
     {
