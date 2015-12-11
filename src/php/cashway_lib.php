@@ -157,6 +157,11 @@ class API
         return hash_hmac($signature[0], $data, $secret, false) === $signature[1];
     }
 
+    public static function signData($data, $algo = 'sha256', $secret)
+    {
+        return hash_hmac($algo, $data, $secret, false);
+    }
+
     /**
      * Validate input payload:
      * - if it comes with a signature, validate signature,
