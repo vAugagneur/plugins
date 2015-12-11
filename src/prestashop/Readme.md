@@ -15,6 +15,12 @@ This module depends on APIs provided by [CashWay](https://www.cashway.fr/):
  * maps.cashway.fr
 
 
+### Tests
+
+ * Tests in `tests/php` are static tests to be run locally (`make test-CWD` or `make test-HEAD`).
+ * Tests in `tests/spec` are to be run against a live PrestaShop test instance.
+
+
 ## Contributing
 
 Issues, PR and ideas are welcome.

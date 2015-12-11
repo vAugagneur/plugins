@@ -102,10 +102,27 @@ add-new-account:
 test-user:
 	${TEST_RUN} spec/client_use.rb
 
+# Run tests against the whole current working tree status:
+# src/prestashop & src/php, be changes committed or not.
+# Useful while hacking the whole tree.
+test-CWD:
+	cp ../php/cashway_lib.php lib/cashway/
+	cp ../php/compat.php lib/cashway/
+	phpunit --color . ; \
+	status=$$? ; \
+	rm -fr lib/cashway/{cashway_lib,compat}.php ; \
+	exit $$status
+
+# Run tests against current working tree status for src/prestashop only.
+# src/php deps are taken at HEAD status.
+# Useful to pre-validate code.
+test-HEAD: test
 test:
 	cd ../php/ && git archive --prefix=cashway/ --format zip --output ../prestashop/lib/cashway.zip HEAD {cashway_lib,compat}.php
 	cd lib && unzip cashway.zip
-	phpunit .
-	rm -fr lib/cashway/{cashway_lib,compat}.php lib/cashway.zip
+	phpunit --color . ; \
+	status=$$? ; \
+	rm -fr lib/cashway/{cashway_lib,compat}.php lib/cashway.zip ; \
+	exit $$status
 
 uxtest: test-install test-user
