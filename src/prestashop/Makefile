@@ -126,3 +126,5 @@ test:
 	exit $$status
 
 uxtest: test-install test-user
+
+-include Makefile.local
