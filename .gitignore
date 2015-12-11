@@ -3,3 +3,4 @@ build/
 var/
 tests/box/.vagrant
 coverage
+build-official/cashway*
