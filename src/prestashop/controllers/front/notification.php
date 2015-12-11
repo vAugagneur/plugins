@@ -97,13 +97,12 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
     private function onTransactionPaid()
     {
         ob_start();
-        $ref = $this->data->order_id;
+        $ref    = $this->data->order_id;
         $remote = (array)$this->data;
-        $local = getLocalOrderByReference($ref);
-        $res = verifyAndSetPaid($ref, $remote, $local);
-        $log = ob_get_clean();
+        $local  = CashWay::getLocalOrderByReference($ref);
+        $res    = CashWay::verifyAndSetPaid($ref, $remote, $local);
 
-        $this->terminateReply(($res ? 200 : 412), $log);
+        $this->terminateReply(($res ? 200 : 412), ob_get_clean());
     }
 
     private function onTransactionExpired()
