@@ -2,3 +2,4 @@ coverage
 releases
 .env*
 build
+test.log

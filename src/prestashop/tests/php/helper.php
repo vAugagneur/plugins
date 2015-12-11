@@ -4,7 +4,7 @@ date_default_timezone_set('Europe/Paris');
 
 // Command that starts the built-in web server
 $command = sprintf(
-    'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
+    'php -S %s:%d -t %s >test.log 2>&1 & echo $!',
     $_SERVER['TEST_SERVER_HOST'],
     $_SERVER['TEST_SERVER_PORT'],
     $_SERVER['TEST_SERVER_DOCROOT']
