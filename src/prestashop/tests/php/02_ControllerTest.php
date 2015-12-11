@@ -62,4 +62,60 @@ class CashWayControllerTest extends PHPUnit_Framework_TestCase
             )
         );
     }
+
+    /**
+     * @dataProvider providerNotifications
+    */
+    public function testNotification($url, $payload, $headers, $code, $status, $message, $agent)
+    {
+        $res = \CashWay\cURL::POST($url, json_encode($payload), null, $headers, 'TEST-UA');
+        $this->assertEquals(array(
+             'status' => $status,
+            'message' => $message,
+              'agent' => $agent
+        ), json_decode($res['body'], true));
+        $this->assertEquals($code, $res['code']);
+    }
+
+    public function buildNotification($params)
+    {
+        $body = json_encode($params);
+        $headers = [
+            'X-CashWay-Event: '.$params['event'],
+            'X-CashWay-Signature: sha256='.\CashWay\API::signData(json_encode($params), 'sha256', $_SERVER['TEST_SHARED_SECRET'])
+        ];
+        return [
+            $params,
+            $headers
+        ];
+    }
+
+    public function providerNotifications()
+    {
+        $url = sprintf('http://%s:%d/notification.php', $_SERVER['TEST_SERVER_HOST'], $_SERVER['TEST_SERVER_PORT']);
+
+        return [
+            array_merge(
+                [$url],
+                self::buildNotification([
+                    'event' => 'transaction_expired',
+                    'order_id' => 'TEST-ORDER-ID',
+                    'barcode' => 'TEST-BARCODE',
+                    'status' => 'expired',
+                    'created_at' => 'C',
+                    'paid_at' => null,
+                    'expires_at' => 'C'
+                ]),
+                [200, 'ok', '[LOG] Test.', 'CashWayModule/0.0.0 PrestaShop/1.1.1 PHP/'.PHP_VERSION.' '.PHP_OS]
+            ),
+            array_merge(
+                [$url],
+                self::buildNotification([
+                    'event' => 'status_check'
+                ]),
+                [200, 'ok', '[LOG] Test.', 'CashWayModule/0.0.0 PrestaShop/1.1.1 PHP/'.PHP_VERSION.' '.PHP_OS]
+            )
+        ];
+    }
+
 }

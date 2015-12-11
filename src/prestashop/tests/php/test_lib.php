@@ -37,6 +37,12 @@ class Configuration
 {
     public static function get($key)
     {
+        // NOTE: these values are to match those defined
+        // in phpunit.xml <server name > tags.
+        // Why? Because this test_lib.php library is not run
+        // in the context of PHPUnit (but in a standalone, separate
+        // Web server process; see public/notification.php).
+        //
         $values = array(
             'PS_OS_ERROR' => 1,
             'CASHWAY_SHARED_SECRET' => 'howdy!',

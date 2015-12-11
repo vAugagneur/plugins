@@ -12,6 +12,7 @@
     <server name="TEST_SERVER_DOCROOT" value="tests/php/public" />
     <server name="TEST_KEY" value="test-key-K" />
     <server name="TEST_SECRET" value="test-secret-S" />
+    <server name="TEST_SHARED_SECRET" value="howdy!" />
     <server name="CASHWAY_TEST_ENVIRONMENT" value="1" />
   </php>
 
