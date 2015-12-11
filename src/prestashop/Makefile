@@ -96,7 +96,7 @@ reset-db:
 add-test-products:
 	${TEST_RUN}	spec/add_test_products.rb
 
-add_new_account:
+add-new-account:
 	${TEST_RUN} spec/add_new_account.rb
 
 test-user:
