@@ -31,7 +31,9 @@ foreach ($files as $f)
   <meta charset="utf-8">
   <title>CashWay - Modules installables pour les boutiques</title>
   <meta name="keywords" content="cashway, prestashop, magento, woocommerce, php, api">
+  <meta name="referrer" content="origin-when-crossorigin">
   <link href="https://www.cashway.fr/releases/" rel="canonical">
+  <link href="https://www.cashway.fr/" rel="home">
   <link href="https://www.cashway.fr/wp-content/uploads/2015/06/fav.png" type="image/png" rel="icon">
   <link href="https://www.cashway.fr/wp-content/uploads/2015/06/fav.png" type="image/png" rel="shortcut icon">
   <link href="https://fonts.googleapis.com/css?family=Advent+Pro:400,500,600,700" rel="stylesheet" type="text/css">
