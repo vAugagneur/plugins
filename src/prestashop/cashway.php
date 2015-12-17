@@ -115,7 +115,8 @@ class CashWay extends PaymentModule
     */
     private function installOrderState()
     {
-        if (Configuration::get('PS_OS_CASHWAY')) {
+        if ($order_state_id = Configuration::get('PS_OS_CASHWAY')) {
+            $this->setOrderStateIcon($order_state_id);
             return true;
         }
 
@@ -140,17 +141,28 @@ class CashWay extends PaymentModule
 
         if ($order_state->add()) {
             Configuration::updateValue('PS_OS_CASHWAY', $order_state->id);
-            if (!copy(
-                implode(DIRECTORY_SEPARATOR, array(dirname(__FILE__), 'img', 'logo.gif')),
-                implode(DIRECTORY_SEPARATOR, array(_PS_ROOT_DIR_, 'img', 'os', $order_state->id.'.gif'))
-            )) {
-                $this->_errors[] = $this->l('Failed to copy order state icon.');
-            }
+            $this->setOrderStateIcon($order_state->id);
 
             return true;
         }
 
         return false;
+    }
+
+    private function setOrderStateIcon($order_state_id)
+    {
+        $res = copy(
+            implode(DIRECTORY_SEPARATOR, array(dirname(__FILE__), 'img', 'logo.gif')),
+            implode(DIRECTORY_SEPARATOR, array(_PS_ROOT_DIR_,     'img', 'os', $order_state_id.'.gif'))
+        );
+
+        if (!$res) {
+            $this->_errors[] = $this->l('Failed to copy order state icon.');
+
+            return false;
+        }
+
+        return true;
     }
 
     public function uninstall()
