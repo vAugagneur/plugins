@@ -32,7 +32,7 @@ require __DIR__.'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.13.0';
+    const VERSION = '0.13.1';
 
     /**
     */
@@ -113,7 +113,7 @@ class CashWay extends PaymentModule
     /**
      * Register a specific order status for CashWay
     */
-    private function installOrderState()
+    public function installOrderState()
     {
         if ($order_state_id = Configuration::get('PS_OS_CASHWAY')) {
             $this->setOrderStateIcon($order_state_id);
