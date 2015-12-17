@@ -126,6 +126,7 @@ class CashWay extends PaymentModule
             $order_state->name[$language['id_lang']] = 'En attente de paiement via CashWay';
         }
 
+        $order_state->module_name = 'cashway';
         $order_state->send_email = false;
         $order_state->color = 'RoyalBlue';
         $order_state->invoice = false;
