@@ -707,9 +707,10 @@ class cURL
             if (curl_errno($ch) > 0) {
                 $error = sprintf('curl (%d): %s', curl_errno($ch), curl_error($ch));
             } else {
-                list($headers, $body) = explode("\r\n\r\n", $response, 2);
-                $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                $headers = self::parseHttpHeaders($headers);
+                $code    = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $hsize   = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+                $headers = self::parseHttpHeaders(substr($response, 0, $hsize));
+                $body    = substr($response, $hsize);
             }
         }
         curl_close($ch);
