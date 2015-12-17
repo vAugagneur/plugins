@@ -152,7 +152,7 @@ class CashWay extends PaymentModule
     private function setOrderStateIcon($order_state_id)
     {
         $res = copy(
-            implode(DIRECTORY_SEPARATOR, array(dirname(__FILE__), 'img', 'logo.gif')),
+            implode(DIRECTORY_SEPARATOR, array(dirname(__FILE__), 'logo.gif')),
             implode(DIRECTORY_SEPARATOR, array(_PS_ROOT_DIR_,     'img', 'os', $order_state_id.'.gif'))
         );
 
