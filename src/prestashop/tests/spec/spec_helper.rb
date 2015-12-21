@@ -1,4 +1,12 @@
 require 'rspec'
+require 'dotenv'
+require 'capybara'
+require 'selenium-webdriver'
+require 'capybara-webkit'
+require 'capybara/poltergeist'
+require 'capybara-screenshot/rspec'
+require 'awesome_print'
+require 'uri'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -15,13 +23,9 @@ RSpec.configure do |config|
   config.default_formatter = 'doc'
   config.profile_examples = 10
 	config.order = :defined
-end
 
-require 'dotenv'
-require 'capybara'
-require 'selenium-webdriver'
-require 'awesome_print'
-require 'uri'
+  #config.include Capybara::DSL, type: :feature
+end
 
 include Capybara::DSL
 
@@ -35,14 +39,32 @@ Capybara.register_driver :selenium_en do |app|
 end
 
 $driver = :selenium_en
+#$driver = :webkit
+#$driver = :poltergeist
+
+Capybara::Webkit.configure do |config|
+
+  config.block_unknown_urls
+  config.skip_image_loading
+end
+
 
 Capybara.default_driver = $driver
 Capybara.run_server = false
 Capybara.app_host = ENV['TEST_SERVER']
 Capybara.default_max_wait_time = 15
 
+Capybara::Screenshot.prune_strategy = :keep_last_run
+
 def session
   $session |= Capybara::Session.new $driver
 end
 
+# If Webkit
+#page.driver.header 'Accept-Language', 'en'
+
+# If PhantomJS
+#page.driver.add_header('Accept-Language', 'en', permanent: true)
+
+# If Selenium
 #page.driver.browser.manage.window.maximize
