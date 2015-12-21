@@ -10,8 +10,7 @@ describe "Logging in" do
   end
 end
 
-#[50, 250, 2500]
-[50].each do |price|
+[50, 250, 2500].each do |price|
 
   describe "Testing ordering something > #{price} € on #{ENV['TEST_SERVER']}" do
     it "adds a €#{price}+ product to cart" do
