@@ -32,4 +32,8 @@ describe "Admin post configuration" do
       find(:xpath, '//a[@class="list-action-enable action-disabled"]').click
     end
   end
+
+  # TODO: Advanced Parameters > Performance :
+  # TODO: - Recompile templates if the files have been updated
+  # TODO: - No cache
 end
