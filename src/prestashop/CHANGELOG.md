@@ -1,5 +1,20 @@
 # Changelog for CashWay PrestaShop module
 
+## 2015-12-21 - 0.14
+
+ * code & tests refactoring for better errors detection at run time.
+ * fix proper CW icon in admin menu
+
+## 2015-12-04 - 0.13
+
+ * fix a notification error on paid transactions,
+   refactor checkForPayments + better tests
+ * more specific return codes on notifications
+
+## 2015-11-17 - 0.12
+
+ * rephrase terms of use agreement
+
 ## 2015-10-12 - 0.11
 
  * add configurable paid order status
