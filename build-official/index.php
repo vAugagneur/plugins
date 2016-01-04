@@ -1,5 +1,18 @@
 <?php
 
+if (isset($_GET['prestashop-latest'])) {
+
+  $versions = array_map(function ($el) {
+    $bn = basename($el, '.zip');
+    return explode('-', $bn)[2];
+  },
+  glob(__DIR__ . '/cashway-prestashop*.zip'));
+
+  uasort($versions, 'version_compare');
+  header('Location: cashway-prestashop-'.end($versions).'.zip');
+  die;
+}
+
 $files = array_reverse(glob(__DIR__ . '/*.zip'));
 $f_tmpl = '<li><a href="%s" class="btn">Télécharger la version %s</a><br>%s %s</li>';
 $s = '';
