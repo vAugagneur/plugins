@@ -32,7 +32,7 @@ require __DIR__.'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.14.0';
+    const VERSION = '0.14.1';
 
     /**
     */
@@ -49,7 +49,7 @@ class CashWay extends PaymentModule
         $this->controllers      = array('payment', 'validation', 'notification');
         $this->is_eu_compatible = 1;
 
-        $this->ps_versions_compliancy = array('min' => '1.5');
+        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.7');
 
         parent::__construct();
 
