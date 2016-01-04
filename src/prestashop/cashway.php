@@ -32,7 +32,7 @@ require __DIR__.'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.14.1';
+    const VERSION = '0.14.2';
 
     /**
     */
@@ -695,11 +695,11 @@ class CashWay extends PaymentModule
         if (self::isConfiguredService()) {
             $options['API_KEY']    = Configuration::get('CASHWAY_API_KEY');
             $options['API_SECRET'] = Configuration::get('CASHWAY_API_SECRET');
+        }
 
-            if (isset($_SERVER['CASHWAY_TEST_ENVIRONMENT'])
-                && $_SERVER['CASHWAY_TEST_ENVIRONMENT'] == 1) {
-                $options['API_URL'] = $_SERVER['TEST_SERVER_SCHEME'].'://'.$_SERVER['TEST_SERVER_HOST'].':'.$_SERVER['TEST_SERVER_PORT'];
-            }
+        if (isset($_SERVER['CASHWAY_TEST_ENVIRONMENT'])
+            && $_SERVER['CASHWAY_TEST_ENVIRONMENT'] == 1) {
+            $options['API_URL'] = $_SERVER['TEST_SERVER_SCHEME'].'://'.$_SERVER['TEST_SERVER_HOST'].':'.$_SERVER['TEST_SERVER_PORT'];
         }
 
         return new \Cashway\API($options);
