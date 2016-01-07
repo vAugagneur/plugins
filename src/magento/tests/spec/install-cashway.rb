@@ -1,42 +1,74 @@
 require 'spec_helper'
 require 'pathname'
 
-describe "Magento configuration" do
+MODULE_CONNECT_ACTION_NAME =ENV['MODULE_CHANNEL'] + '|' + ENV['MODULE_NAME']
 
-it "Load admin page" do
-  session.visit ENV['ADMIN_PATH']
+describe "Uninstall and Reinstall Cashway" do
+
+it "Load magento connect manager page" do
+  session.visit ENV['ADMIN_MANAGER_PATH']
 end
 
 it "Log in" do
-  find('#login').set ENV['ADMIN_PASSWD']
-  find('#username').set ENV['ADMIN_FIRSTNAME']
-  first('.form-button').click
-end
-
-it "Connect to Magentoconnect" do
-  if page.first('#message-popup-window')
-    find(:xpath, '//a[@title = "close"]').click
-  end
-  find(:xpath, '//span[text()="System"]').click
-  find(:xpath, '//span[text()="Magento Connect"]').click
-  find(:xpath, '//span[text()="Magento Connect Manager"]').click
+  find('#username').set ENV['ADMIN_USERNAME']
   find('#password').set ENV['ADMIN_PASSWD']
-  find('#username').set ENV['ADMIN_FIRSTNAME']
-  find(:xpath, '//button[@type="submit"]').click
-  archive = Pathname.new ENV['MODULE_ARCHIVE']
-  attach_file 'file', archive.realpath
-  find(:xpath, '//button[text()="Upload"]').click
+  first('button').click
+  #Check if we are logged
+  expect(page).to have_selector '#install_package_id'
 end
 
-it "Active Cashway" do
-  session.visit ENV['ADMIN_PATH']
-  find(:xpath, '//span[text()="System"]').click
-  find(:xpath, '//span[text()="Configuration"]').click
-  find(:xpath, '//span[normalize-space(text())="Cashway"]').click
-  find(:xpath, '//a[@id="cashway_cashway_api-head"]').click
+it "Uninstall cashway" do
+  #Skip uninstall if cashway module is not installed
+  skip "CashWay module is not installed." unless page.has_content? ENV['MODULE_NAME']
+  #Else select uninstall in Cashway's select tag
+  page.select 'Uninstall', :from => "actions[" + MODULE_CONNECT_ACTION_NAME + "]"
+  #Update change
+  first(:xpath, "//button[text() = 'Commit Changes']").click
+  sleep 5 #because uninstall is run in ajax and we should wait for cleaning cache
+end
+
+it "Upload and install archive" do
+  #Archive Pathname from .env
+  archive = Pathname.new ENV['MODULE_ARCHIVE']
+  #attach file to form
+  attach_file 'file', archive.realpath
+  #Upload and install package
+  find(:xpath, '//button[text()="Upload"]').click
+  sleep 5 #because install is run in ajax and we should wait for cleaning cache
+end
+
+it "Active and configure Cashway" do
+  click_link 'Return to Admin' #Click on link Return Admin is used instead session.visit ENV['ADMIN_PATH'] because it use SID form sessio connection
+  expect(page).to have_selector '#page-help-link'
+  #Force locale en_US
+  locale_label = find(:xpath,'//option[@value="en_US"]').text
+  page.select locale_label, :from => 'interface_locale' unless find('#interface_locale').find('option[selected]').value == "en_US"
+
+  #Go to system=>configuration
+  find(:xpath, '//span[text()="System"]').hover
+  find(:xpath, '//span[text()="Configuration"]').click #Do full screen (or large size) on firefox for it's work :-(
+  #And select cashway configuration
+  find(:xpath, '//span[normalize-space(text())="CashWay payment"]').click
+  find(:xpath, '//a[@id="cashway_cashway_api-head"]').click unless find('#cashway_cashway_api-state',:visible => false).value == "1" #Expand form header if is not
+  #Fill test credentials
   fill_in 'cashway_cashway_api_api_key_test', :with => ENV['API_KEY']
   fill_in 'cashway_cashway_api_api_secret_test', :with => ENV['API_SECRET']
-  find(:xpath, '//button[@title="Save Config"]').click
+  fill_in 'cashway_cashway_api_api_shared_secret_test', :with => ENV['API_SHARED_SECRET']
+  #And save
+  first(:xpath, '//button[@title="Save Config"]').click
+
+  #Go to payment methods configuration
+  find(:xpath, '//span[normalize-space(text())="Payment Methods"]').click
+  #Expand form header if is not
+  find(:xpath, '//a[@id="payment_cashway-head"]').click unless find('#payment_cashway-state',:visible => false).value == "1"
+  #Fill configuration form
+  select 'Yes', :from => 'payment_cashway_active'
+  select 'Yes', :from => 'payment_cashway_allowredirect'
+  select 'All Enabled Methods', :from => 'payment_cashway_redirectspecific'
+  select 'Yes', :from => 'payment_cashway_debug'
+  select 'Yes', :from => 'payment_cashway_is_test_mode'
+  #Save configuration
+  first(:xpath, '//button[@title="Save Config"]').click
 end
 
 end
