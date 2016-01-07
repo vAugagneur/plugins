@@ -31,6 +31,7 @@
 "Pay with CASHWAY","Pay with CashWay"
 "Your payment has been refused by <u><em>%s</em></u> for any reason but you can purchase your order now with cashway.","Your payment has been refused by <u><em>%s</em></u> for any reason but you can purchase your order now with CashWay."
 "Cashway allow payment in cash money! Try now!","CashWay allow payment in cash money! Try now!"
+"A fee of %d euro(s) will be added to your total when you pay for your order with one of our distributor.","A fee of %d euro(s) will be added to your total when you pay for your order with one of our distributor."
 "Enabled","Enabled"
 "Yes","Yes"
 "No","No"
