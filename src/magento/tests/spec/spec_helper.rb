@@ -31,6 +31,8 @@ Dotenv.load
 
 Capybara.default_driver = :selenium
 Capybara.run_server = false
+Capybara.page.driver.browser.manage.window.maximize #maximize for increase visibles elements (particulary for nav in menu)
+Capybara.ignore_hidden_elements = false
 Capybara.app_host = ENV['TEST_SERVER']
 
 def session
