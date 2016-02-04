@@ -22,10 +22,19 @@ clean:
 	rm -fr build/*
 
 cs:
-	phpcs --encoding=utf-8 --standard=PSR2 --colors .
+	phpcs --config-set show_warnings 0
+	phpcs --encoding=utf-8 \
+		--standard=PSR2 \
+		--colors \
+		--ignore=lib/,vendor/,coverage/,tools/,build/,archives/ \
+		.
 
 csfix:
-	phpcbf --encoding=utf-8 --standard=PSR2 .
+	phpcbf --encoding=utf-8 \
+		--standard=PSR2 \
+		--colors \
+		--ignore=lib/,vendor/,coverage/,tools/,build/,archives \
+		.
 
 test:
 	phpunit .
