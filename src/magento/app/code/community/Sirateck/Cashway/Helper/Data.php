@@ -24,10 +24,10 @@
 
 /**
  * Helper by default
- * 
+ *
  * @author Kassim Belghait <kassim@sirateck.com>
  */
 class Sirateck_Cashway_Helper_Data extends Mage_Core_Helper_Data
 {
-	
+
 }

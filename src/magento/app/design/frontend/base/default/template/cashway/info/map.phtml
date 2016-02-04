@@ -1,4 +1,4 @@
-<!-- 
+<!--
 /**
  *  CASHWAY
  *
@@ -22,7 +22,7 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
  */
  -->
-  <?php 
+<?php
 $_code=$this->getMethod()->getCode();
 ?>
 <p><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></p>
@@ -38,13 +38,12 @@ $_code=$this->getMethod()->getCode();
 		</li>
 	</ul>
 <script type="text/javascript">
-	<!--
-
+<!--
 	function preventKeyEnter(e){
 		console.log(e.keyCode);
 		console.log(e.which);
 		var code = e.keyCode || e.which;
-	  	if (code == 13) { 
+		if (code == 13) {
 	  	    e.preventDefault();
 	  	    return false;
 	  	}
@@ -61,8 +60,5 @@ $_code=$this->getMethod()->getCode();
 		scriptCshw.src = "https://maps.cashway.fr/js/cashway_map.js";
 		document.body.appendChild(scriptCshw); //add script to body
 	}
-
-	
 //-->
 </script>
-

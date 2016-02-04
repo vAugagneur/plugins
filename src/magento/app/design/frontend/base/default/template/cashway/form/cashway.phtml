@@ -1,4 +1,4 @@
-<!-- 
+<!--
 /**
  *  CASHWAY
  *
@@ -22,19 +22,17 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
  */
  -->
- <?php 
+<?php
 $_code=$this->getMethodCode();
 ?>
 <?php if(!$this->canWork()):?>
 <p><?php echo $this->__("Cashway is actually not available.")?><p>
 <script type="text/javascript">
- 	//<![CDATA[
- 		
+//<![CDATA[
  		$('p_method_cashway').disable();
- 		
- 	//]]>
- </script>
-<?php else:?>
+//]]>
+</script>
+<?php else: ?>
 
 <div id="payment_form_<?php echo $_code ?>" style="display:none;">
 	<h4>Les points de paiement présents autour de votre point de livraison&nbsp;:</h4>
@@ -52,9 +50,6 @@ $_code=$this->getMethodCode();
 			<div><?php echo $this->__("A fee of %d euro(s) will be added to your total when you pay for your order with one of our distributor.",1) ?></div>
 		</li>
 	</ul>
-
-	
-	
 	<script type="text/javascript">
 	//<![CDATA[
 
@@ -62,14 +57,14 @@ $_code=$this->getMethodCode();
 		console.log(e.keyCode);
 		console.log(e.which);
 		var code = e.keyCode || e.which;
-	  	if (code == 13) { 
+		if (code == 13) {
 	  	    e.preventDefault();
 	  	    return false;
 	  	}
 	}
 	//Prevent from from submit
     Event.observe("cashway-map-search","keypress",preventKeyEnter);
-	
+
 	//Observe event dispatched from method selection
 	$('payment_form_<?php echo $_code ?>').observe("payment-method:switched", function(ev){
 
@@ -87,9 +82,8 @@ $_code=$this->getMethodCode();
 
 		}
 	});
-	
-	
+
 	//]]>
 	</script>
 </div>
-<?php endif;?>
+<?php endif; ?>

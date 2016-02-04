@@ -28,7 +28,6 @@
  */
 class Sirateck_Cashway_Block_Reorder extends Mage_Sales_Block_Items_Abstract
 {
-
     /**
      * Get multishipping checkout model
      *
@@ -48,18 +47,19 @@ class Sirateck_Cashway_Block_Reorder extends Mage_Sales_Block_Items_Abstract
         }
         return parent::_prepareLayout();
     }
-    
+
     /**
-     * 
+     *
      * @return Mage_Checkout_Helper_Data
      */
     public function getCheckoutHelper()
     {
-    	return Mage::helper('checkout');
+        return Mage::helper('checkout');
     }
-    
-    public function getPreviousMethodTitle(){
-    	return $this->getCheckout()->getLastPaymentMethodTitle();
+
+    public function getPreviousMethodTitle()
+    {
+        return $this->getCheckout()->getLastPaymentMethodTitle();
     }
 
     public function getBillingAddress()
@@ -101,16 +101,16 @@ class Sirateck_Cashway_Block_Reorder extends Mage_Sales_Block_Items_Abstract
     {
         return $this->getQuote()->getStore()->formatPrice($price);
     }
-    
+
     public function getItems()
     {
-    	return $this->getCheckout()->getQuote()->getAllVisibleItems();
+        return $this->getCheckout()->getQuote()->getAllVisibleItems();
     }
 
-    
+
     public function getPostActionUrl()
     {
-    	return $this->getUrl('*/*/reorderPost');
+        return $this->getUrl('*/*/reorderPost');
     }
 
     public function getTotal()
@@ -118,13 +118,10 @@ class Sirateck_Cashway_Block_Reorder extends Mage_Sales_Block_Items_Abstract
         return $this->getCheckout()->getQuote()->getGrandTotal();
     }
 
-    
-
     public function getBackUrl()
     {
         return $this->getUrl('checkout/cart');
     }
-
 
     /**
      * Retrieve quote
@@ -142,8 +139,7 @@ class Sirateck_Cashway_Block_Reorder extends Mage_Sales_Block_Items_Abstract
         return $this->getShippingAddressTotals($_address);
     }
 
-
-    public function renderTotals($totals, $colspan=null)
+    public function renderTotals($totals, $colspan = null)
     {
         if ($colspan === null) {
             $colspan = $this->helper('tax')->displayCartBothPrices() ? 5 : 3;
@@ -152,5 +148,4 @@ class Sirateck_Cashway_Block_Reorder extends Mage_Sales_Block_Items_Abstract
             . $this->getChild('totals')->setTotals($totals)->renderTotals('footer', $colspan);
         return $totals;
     }
-
 }

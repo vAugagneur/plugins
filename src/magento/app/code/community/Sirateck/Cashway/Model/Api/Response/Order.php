@@ -42,5 +42,5 @@
  */
 class Sirateck_Cashway_Model_Api_Response_Order extends Sirateck_Cashway_Model_Api_Response_Abstract
 {
-	
+
 }

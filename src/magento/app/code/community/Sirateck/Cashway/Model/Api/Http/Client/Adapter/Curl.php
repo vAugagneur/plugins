@@ -136,14 +136,14 @@ class Sirateck_Cashway_Model_Api_Http_Client_Adapter_Curl implements Zend_Http_C
             );
         }
 
-        if(isset($config['proxy_user']) && isset($config['proxy_pass'])) {
+        if (isset($config['proxy_user']) && isset($config['proxy_pass'])) {
             $this->setCurlOption(CURLOPT_PROXYUSERPWD, $config['proxy_user'].":".$config['proxy_pass']);
             unset($config['proxy_user'], $config['proxy_pass']);
         }
 
         foreach ($config as $k => $v) {
             $option = strtolower($k);
-            switch($option) {
+            switch ($option) {
                 case 'proxy_host':
                     $this->setCurlOption(CURLOPT_PROXY, $v);
                     break;
@@ -164,10 +164,10 @@ class Sirateck_Cashway_Model_Api_Http_Client_Adapter_Curl implements Zend_Http_C
       *
       * @return array
       */
-     public function getConfig()
-     {
-         return $this->_config;
-     }
+    public function getConfig()
+    {
+        return $this->_config;
+    }
 
     /**
      * Direct setter for cURL adapter related options.
@@ -284,15 +284,15 @@ class Sirateck_Cashway_Model_Api_Http_Client_Adapter_Curl implements Zend_Http_C
             case Zend_Http_Client::PUT:
                 // There are two different types of PUT request, either a Raw Data string has been set
                 // or CURLOPT_INFILE and CURLOPT_INFILESIZE are used.
-                if(is_resource($body)) {
+                if (is_resource($body)) {
                     $this->_config['curloptions'][CURLOPT_INFILE] = $body;
                 }
                 if (isset($this->_config['curloptions'][CURLOPT_INFILE])) {
                     // Now we will probably already have Content-Length set, so that we have to delete it
                     // from $headers at this point:
-                    foreach ($headers AS $k => $header) {
+                    foreach ($headers as $k => $header) {
                         if (preg_match('/Content-Length:\s*(\d+)/i', $header, $m)) {
-                            if(is_resource($body)) {
+                            if (is_resource($body)) {
                                 $this->_config['curloptions'][CURLOPT_INFILESIZE] = (int)$m[1];
                             }
                             unset($headers[$k]);
@@ -304,7 +304,7 @@ class Sirateck_Cashway_Model_Api_Http_Client_Adapter_Curl implements Zend_Http_C
                         throw new Zend_Http_Client_Adapter_Exception("Cannot set a file-handle for cURL option CURLOPT_INFILE without also setting its size in CURLOPT_INFILESIZE.");
                     }
 
-                    if(is_resource($body)) {
+                    if (is_resource($body)) {
                         $body = '';
                     }
 
@@ -341,7 +341,7 @@ class Sirateck_Cashway_Model_Api_Http_Client_Adapter_Curl implements Zend_Http_C
                 throw new Zend_Http_Client_Adapter_Exception("Method currently not supported");
         }
 
-        if(is_resource($body) && $curlMethod != CURLOPT_PUT) {
+        if (is_resource($body) && $curlMethod != CURLOPT_PUT) {
             #require_once 'Zend/Http/Client/Adapter/Exception.php';
             throw new Zend_Http_Client_Adapter_Exception("Streaming requests are allowed only with PUT");
         }
@@ -353,7 +353,7 @@ class Sirateck_Cashway_Model_Api_Http_Client_Adapter_Curl implements Zend_Http_C
         curl_setopt($this->_curl, $curlHttp, true);
         curl_setopt($this->_curl, $curlMethod, $curlValue);
 
-        if($this->out_stream) {
+        if ($this->out_stream) {
             // headers will be read into the response
             curl_setopt($this->_curl, CURLOPT_HEADER, false);
             curl_setopt($this->_curl, CURLOPT_HEADERFUNCTION, array($this, "readHeader"));
@@ -406,7 +406,7 @@ class Sirateck_Cashway_Model_Api_Http_Client_Adapter_Curl implements Zend_Http_C
         $response = curl_exec($this->_curl);
 
         // if we used streaming, headers are already there
-        if(!is_resource($this->out_stream)) {
+        if (!is_resource($this->out_stream)) {
             $this->_response = $response;
         }
 
@@ -458,7 +458,7 @@ class Sirateck_Cashway_Model_Api_Http_Client_Adapter_Curl implements Zend_Http_C
      */
     public function close()
     {
-        if(is_resource($this->_curl)) {
+        if (is_resource($this->_curl)) {
             curl_close($this->_curl);
         }
         $this->_curl         = null;

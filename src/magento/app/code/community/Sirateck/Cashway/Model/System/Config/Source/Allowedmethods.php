@@ -27,15 +27,12 @@
  *
  * @author Kassim Belghait <kassim@sirateck.com>
  */
-class Sirateck_Cashway_Model_System_Config_Source_Allowedmethods
-    extends Mage_Adminhtml_Model_System_Config_Source_Payment_Allmethods
+class Sirateck_Cashway_Model_System_Config_Source_Allowedmethods extends Mage_Adminhtml_Model_System_Config_Source_Payment_Allmethods
 {
-    
     public function toOptionArray()
     {
-    	$methods = Mage::helper('payment')->getPaymentMethodList(true, true, true);
-    	unset($methods['cashway']);
-    	return $methods;
+        $methods = Mage::helper('payment')->getPaymentMethodList(true, true, true);
+        unset($methods['cashway']);
+        return $methods;
     }
-
 }

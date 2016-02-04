@@ -24,18 +24,18 @@
 
 /**
  * Reorder controller
- * 
+ *
  * @author Kassim Belghait <kassim@sirateck.com>
  */
 
-class Sirateck_Cashway_ReorderController extends Mage_Checkout_Controller_Action {
-	
-	/**
-	 * Predispatch
-	 *
-	 * @return Sirateck_Cashway_ReorderController
-	 */
-/**
+class Sirateck_Cashway_ReorderController extends Mage_Checkout_Controller_Action
+{
+    /**
+     * Predispatch
+     *
+     * @return Sirateck_Cashway_ReorderController
+     */
+    /**
      * Predispatch: should set layout area
      *
      * @return Mage_Checkout_OnepageController
@@ -47,63 +47,63 @@ class Sirateck_Cashway_ReorderController extends Mage_Checkout_Controller_Action
 
         return $this;
     }
-	
-	
-	/**
-	 * Returns whether the minimum amount has been reached
-	 *
-	 * @return bool
-	 */
-	protected function _validateMinimumAmount()
-	{
-		if (!$this->_getCheckout()->validateMinimumAmount()) {
-			$error = $this->_getCheckout()->getMinimumAmountError();
-			$this->_getCheckout()->getCheckoutSession()->addError($error);
-			$this->_redirect('checkout/cart');
-			return false;
-		}
-		return true;
-	}
-	
-	protected function _getCheckout(){
-		return Mage::getSingleton('checkout/session');
-	}
-	
-	protected function getQuote(){
-		return $this->_getCheckout()->getQuote();
-	}
 
-	public function indexAction()
-	{
-		$lastQuoteId = $this->_getCheckout()->getLastQuoteId();
-		$lastOrderId = $this->_getCheckout()->getLastOrderId();
-		
-		//die('QuoteId: '.$lastQuoteId . " OrderId: " . $lastOrderId);
-		
-		if (!$lastQuoteId || !$lastOrderId) {
-			$this->_redirect('checkout/cart');
-			return;
-		}
-		
-		$lastQuoteId = $this->_getCheckout()->getQuoteId();
+    /**
+     * Returns whether the minimum amount has been reached
+     *
+     * @return bool
+     */
+    protected function _validateMinimumAmount()
+    {
+        if (!$this->_getCheckout()->validateMinimumAmount()) {
+            $error = $this->_getCheckout()->getMinimumAmountError();
+            $this->_getCheckout()->getCheckoutSession()->addError($error);
+            $this->_redirect('checkout/cart');
+            return false;
+        }
+        return true;
+    }
 
-		//die("qId: " . $lastQuoteId);
-		
-		$this->loadLayout();
-        $this->_initLayoutMessages('checkout/session');
-		$this->renderLayout();
-	}
-	
-	/**
-	 * Reorder checkout after the overview page
-	 */
-	public function reorderPostAction()
-	{
-		if (!$this->_validateFormKey()) {
-            $this->_redirect('*/*');
+    protected function _getCheckout()
+    {
+        return Mage::getSingleton('checkout/session');
+    }
+
+    protected function getQuote()
+    {
+        return $this->_getCheckout()->getQuote();
+    }
+
+    public function indexAction()
+    {
+        $lastQuoteId = $this->_getCheckout()->getLastQuoteId();
+        $lastOrderId = $this->_getCheckout()->getLastOrderId();
+
+        //die('QuoteId: '.$lastQuoteId . " OrderId: " . $lastOrderId);
+
+        if (!$lastQuoteId || !$lastOrderId) {
+            $this->_redirect('checkout/cart');
             return;
         }
 
+        $lastQuoteId = $this->_getCheckout()->getQuoteId();
+
+        //die("qId: " . $lastQuoteId);
+
+        $this->loadLayout();
+        $this->_initLayoutMessages('checkout/session');
+        $this->renderLayout();
+    }
+
+    /**
+     * Reorder checkout after the overview page
+     */
+    public function reorderPostAction()
+    {
+        if (!$this->_validateFormKey()) {
+            $this->_redirect('*/*');
+            return;
+        }
 
         $result = array();
         try {
@@ -133,36 +133,35 @@ class Sirateck_Cashway_ReorderController extends Mage_Checkout_Controller_Action
             $this->saveOrder();
 
             $this->_getCheckout()->unsLastPaymentMethodTitle();
-            
+
             $this->_redirect('checkout/onepage/success');
-            
+
         } catch (Mage_Payment_Model_Info_Exception $e) {
             $message = $e->getMessage();
             if (!empty($message)) {
-            	$this->_getCheckout()->addError($message);
+                $this->_getCheckout()->addError($message);
             }
-           $this->_redirect('*/*/index');
-           
+            $this->_redirect('*/*/index');
+
         } catch (Mage_Core_Exception $e) {
             Mage::logException($e);
             Mage::helper('checkout')->sendPaymentFailedEmail($this->getQuote(), $e->getMessage());
             $this>_getCheckout()->addError($e->getMessage());
-  
-			$this->_redirect('checkout/cart');
-         	
+
+            $this->_redirect('checkout/cart');
+
         } catch (Exception $e) {
             Mage::logException($e);
             Mage::helper('checkout')->sendPaymentFailedEmail($this->getQuote(), $e->getMessage());
 
             $this->_getCheckout()->addError($this->__('There was an error processing your order. Please contact us or try again later.'));
-            
+
             $this->_redirect('checkout/cart');
         }
         $this->getQuote()->save();
 
-
         return $this;
-	}
+    }
 
     /**
      *
@@ -170,62 +169,60 @@ class Sirateck_Cashway_ReorderController extends Mage_Checkout_Controller_Action
      */
     protected function getConfig()
     {
-    	return Mage::getSingleton('cashway/config');
+        return Mage::getSingleton('cashway/config');
     }
-    
+
     public function saveOrder()
     {
+        $service = Mage::getModel('sales/service_quote', $this->getQuote());
+        $service->submitAll();
 
-    
-    	$service = Mage::getModel('sales/service_quote', $this->getQuote());
-    	$service->submitAll();
+        $this->_getCheckout()->setLastQuoteId($this->getQuote()->getId())
+        ->setLastSuccessQuoteId($this->getQuote()->getId())
+        ->clearHelperData();
 
-    
-    	$this->_getCheckout()->setLastQuoteId($this->getQuote()->getId())
-    	->setLastSuccessQuoteId($this->getQuote()->getId())
-    	->clearHelperData();
-    
-    	$order = $service->getOrder();
-    	if ($order) {
-    		Mage::dispatchEvent('checkout_type_onepage_save_order_after',
-    				array('order'=>$order, 'quote'=>$this->getQuote()));
-    
+        $order = $service->getOrder();
+        if ($order) {
+            Mage::dispatchEvent(
+                'checkout_type_onepage_save_order_after',
+                array('order'=>$order, 'quote'=>$this->getQuote())
+            );
 
-    		if ($order->getCanSendNewEmailFlag()) {
-    			try {
-    				$order->queueNewOrderEmail();
-    			} catch (Exception $e) {
-    				Mage::logException($e);
-    			}
-    		}
-    
-    		// add order information to the session
-    		$this->_getCheckout()->setLastOrderId($order->getId())
-    		->setLastRealOrderId($order->getIncrementId());
-    
-    		// as well a billing agreement can be created
-    		$agreement = $order->getPayment()->getBillingAgreement();
-    		if ($agreement) {
-    			$this->_getCheckout()->setLastBillingAgreementId($agreement->getId());
-    		}
-    	}
-    
-    	// add recurring profiles information to the session
-    	$profiles = $service->getRecurringPaymentProfiles();
-    	if ($profiles) {
-    		$ids = array();
-    		foreach ($profiles as $profile) {
-    			$ids[] = $profile->getId();
-    		}
-    		$this->_getCheckout()->setLastRecurringProfileIds($ids);
-    		// TODO: send recurring profile emails
-    	}
-    
-    	Mage::dispatchEvent(
-    			'checkout_submit_all_after',
-    			array('order' => $order, 'quote' => $this->getQuote(), 'recurring_profiles' => $profiles)
-    			);
-    
-    	return $this;
+            if ($order->getCanSendNewEmailFlag()) {
+                try {
+                    $order->queueNewOrderEmail();
+                } catch (Exception $e) {
+                    Mage::logException($e);
+                }
+            }
+
+            // add order information to the session
+            $this->_getCheckout()->setLastOrderId($order->getId())
+            ->setLastRealOrderId($order->getIncrementId());
+
+            // as well a billing agreement can be created
+            $agreement = $order->getPayment()->getBillingAgreement();
+            if ($agreement) {
+                $this->_getCheckout()->setLastBillingAgreementId($agreement->getId());
+            }
+        }
+
+        // add recurring profiles information to the session
+        $profiles = $service->getRecurringPaymentProfiles();
+        if ($profiles) {
+            $ids = array();
+            foreach ($profiles as $profile) {
+                $ids[] = $profile->getId();
+            }
+            $this->_getCheckout()->setLastRecurringProfileIds($ids);
+            // TODO: send recurring profile emails
+        }
+
+        Mage::dispatchEvent(
+            'checkout_submit_all_after',
+            array('order' => $order, 'quote' => $this->getQuote(), 'recurring_profiles' => $profiles)
+        );
+
+        return $this;
     }
 }

@@ -29,32 +29,31 @@
  */
 class Sirateck_Cashway_Block_Adminhtml_System_Config_Form_Field_Allowredirectmethod extends Mage_Adminhtml_Block_System_Config_Form_Field
 {
-	
-	/**
-	 *
-	 * @param Varien_Data_Form_Element_Abstract $element
-	 * @return string
-	 */
-	protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
-	{
-		$javaScript = "
+    /**
+     *
+     * @param Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
+    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
+    {
+        $javaScript = "
             <script type=\"text/javascript\">
                 Event.observe('{$element->getId()}', 'change', function(){
                     redirect_method=$('{$element->getId()}').value;
                     $('{$this->_getRedirectMethodElementId($element)}').disabled = (!redirect_method || redirect_method!=1);
                 });
             </script>";
-		
-		$element->setData('after_element_html',$javaScript.$element->getAfterElementHtml());
-		
-		$this->toggleDisabled($element);
-	
-		return parent::_getElementHtml($element);
-	}
+
+        $element->setData('after_element_html', $javaScript.$element->getAfterElementHtml());
+
+        $this->toggleDisabled($element);
+
+        return parent::_getElementHtml($element);
+    }
 
     public function toggleDisabled($element)
     {
-        if(!$element->getValue() || $element->getValue()!=1) {
+        if (!$element->getValue() || $element->getValue()!=1) {
 
             $element->getForm()->getElement($this->_getRedirectMethodElementId($element))->setDisabled('disabled');
         }
@@ -65,5 +64,4 @@ class Sirateck_Cashway_Block_Adminhtml_System_Config_Form_Field_Allowredirectmet
     {
         return substr($element->getId(), 0, strrpos($element->getId(), 'redirectspecific')) . 'redirectmethod';
     }
-
 }

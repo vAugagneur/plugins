@@ -53,5 +53,5 @@
  */
 class Sirateck_Cashway_Model_Api_Response_Account extends Sirateck_Cashway_Model_Api_Response_Abstract
 {
-	
+
 }

@@ -6,7 +6,7 @@
             <action method="setTemplate"><template>page/1column.phtml</template></action>
         </reference>
 	</default>
-	
+
 	<cashway_reorder_index>
 		 <label>Cashway Reorder Page</label>
          <reference name="content">
