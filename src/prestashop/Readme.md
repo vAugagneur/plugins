@@ -21,6 +21,13 @@ This module depends on APIs provided by [CashWay](https://www.cashway.fr/):
  * Tests in `tests/spec` are to be run against a live PrestaShop test instance.
 
 
+## Building a release
+
+```shell
+$ make build
+```
+
+
 ## Contributing
 
 Issues, PR and ideas are welcome.
