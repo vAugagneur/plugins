@@ -14,12 +14,14 @@ describe "PrestaShop basic setup" do
   end
 
   it "fills admin user form" do
-    fill_in 'infosShop', :with => 'test'
-    fill_in 'infosFirstname', :with => ENV['ADMIN_FIRSTNAME']
-    fill_in 'infosName', :with => ENV['ADMIN_LASTNAME']
-    fill_in 'infosEmail', :with => ENV['ADMIN_EMAIL']
-    fill_in 'infosPassword', :with => ENV['ADMIN_PASSWD']
-    fill_in 'infosPasswordRepeat', :with => ENV['ADMIN_PASSWD']
+    fill_in 'infosShop', with: 'test'
+    fill_in 'infosFirstname', with: ENV['ADMIN_FIRSTNAME']
+    fill_in 'infosName', with: ENV['ADMIN_LASTNAME']
+    fill_in 'infosEmail', with: ENV['ADMIN_EMAIL']
+    fill_in 'infosPassword', with: ENV['ADMIN_PASSWD']
+    fill_in 'infosPasswordRepeat', with: ENV['ADMIN_PASSWD']
+    fill_in 'infosCountry', with: 'fr'
+    fill_in 'infosActivity', with: '17'
     find('#btNext').click
   end
 
