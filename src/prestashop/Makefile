@@ -5,10 +5,14 @@ BUILD_TMP=${BUILD_DIR}/tmp
 RELEASE_FILE=${BUILD_DIR}/cashway-prestashop-${BRANCH}-${TAG}.zip
 TS=$(shell date +"%Y-%m-%dT%H:%M:%SZ")
 TEST_RUN=cd tests && bundle exec rspec
+UPDATE_ENV_ON_RELEASE=0
 
 usage:
 	@echo "Available targets:"
 	@cat Makefile | grep "^[A-z]" | awk '{print " - "$$1}' | sed "s/://g"
+
+check-deps:
+	which git zip unzip gsed bash shasum gpg phpcs phpcbf phpunit ruby bundle
 
 build: release release-sign
 
@@ -24,14 +28,16 @@ release: release-file
 	# Export archives from src/prestashop...
 	git archive --prefix=cashway/ --format zip --output ${BUILD_TMP}/cashway.zip ${TAG}
 	# ...and src/php
-	cd ../php/ && git archive --prefix=cashway/lib/cashway/ --format zip --output ../prestashop/${BUILD_TMP}/lib.zip HEAD {cashway_lib,compat}.php
+	cd ../php/ && git archive --prefix=cashway/lib/cashway/ --format=zip --output=../prestashop/${BUILD_TMP}/lib.zip HEAD cashway_lib.php compat.php
 	# Unzip lib.zip and rezip its content into main zip
 	cd ${BUILD_TMP} && unzip lib.zip && zip -r cashway.zip cashway && rm lib.zip
 	# Move into release dir, cleanup tmp
 	mv ${BUILD_TMP}/cashway.zip ${RELEASE_FILE}
 	rm -fr ${BUILD_TMP}
+ifeq ($(UPDATE_ENV_ON_RELEASE), 1)
 	# Update .env
-	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env
+	sed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env
+endif
 
 release-sign: release-file
 	shasum -a 256 ${RELEASE_FILE} > ${RELEASE_FILE}.sha256
