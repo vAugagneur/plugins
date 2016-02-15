@@ -16,8 +16,9 @@ test-deps:
 	which make
 	which vagrant
 	which ansible
+	which gsed
 
-test-all: test-setup test-checkout test-config test-run
+test: test-setup test-config test-run test-clean
 
 test-setup:
 	cd tests/box && vagrant up
@@ -27,11 +28,6 @@ test-halt:
 
 test-provision:
 	cd tests/box && vagrant provision
-
-test-checkout:
-	git clone https://github.com/cshw/cashway-prestashop src/prestashop
-	git clone https://github.com/cshw/cashway-magento src/magento
-	git clone https://github.com/cshw/cashway-woocommerce src/woocommerce
 
 test-config: test-config-$(PS)
 
