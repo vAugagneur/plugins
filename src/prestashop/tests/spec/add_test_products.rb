@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Adds test products (50/250/2500 €)" do
+describe "Adds test products" do
   it "goes to admin" do
     session.visit ENV['ADMIN_PATH']
   end
@@ -11,27 +11,35 @@ describe "Adds test products (50/250/2500 €)" do
     find('button[name=submitLogin]').click
   end
 
+  # NOTE: do not attempt to bulk upload a CSV products file.
+  # Their file upload widget is not accessible.
+  # If you still do, remember to increment below counter.
+  # Number of times it has been tried and given up: 2.
+
   [50, 250, 2500].each do |price|
-    it "adds #{price} € product" do
-      find('li#maintab-AdminCatalog').find('a.title').click
-      click_link_or_button('desc-product-new')
-      fill_in 'name_1', :with => 'Test ' + price.to_s
-      find(:xpath, '//input[@id="virtual_product"]').click
-      click_link_or_button('link-Prices')
-      fill_in 'priceTE', :with => price.to_s
+    describe "adds #{price} € product" do
+      it "open new product page" do
+        find('li#maintab-AdminCatalog').click
+        click_link_or_button 'Add new product'
 
-      should have_xpath("//button[@name='submitAddproductAndStay' and not(@disabled='disabled')]")
-      find('button[name=submitAddproductAndStay]').click
-    end
+        find(:xpath, '//input[@id="virtual_product"]').click
+        fill_in 'name_1', with: 'Test ' + price.to_s
 
-    it "adds quantities" do
-      click_link_or_button('link-Quantities')
-      should have_selector('td#qty_0')
-      fill_in 'qty_0', :with => '10000'
+        find('#link-Prices').click
+        fill_in 'priceTI', with: price.to_s
 
-      should have_xpath("//button[@name='submitAddproductAndStay' and not(@disabled='disabled')]")
-      find('button[name=submitAddproductAndStay]', match: :first).click
-      should have_content 'Successful update'
+        should have_xpath("//button[@name='submitAddproductAndStay' and not(@disabled='disabled')]")
+        find('button[name=submitAddproductAndStay]').click
+
+        find('#link-Quantities').click
+        should have_selector('td#qty_0')
+        fill_in 'qty_0', with: '10000'
+
+        should have_xpath("//button[@name='submitAddproductAndStay' and not(@disabled='disabled')]")
+        find('button[name=submitAddproductAndStay]', match: :first).click
+
+        should have_content 'Successful update'
+      end
     end
   end
 
