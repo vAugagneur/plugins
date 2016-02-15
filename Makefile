@@ -1,4 +1,3 @@
-PS := prestashop
 
 usage:
 	@echo "Available targets:"
@@ -9,7 +8,10 @@ build-all:
 	mv src/prestashop/build/* build/
 
 push-builds:
-	rsync -avz --delete -e ssh build-official/ deploy@help.cashway.fr:/var/www/apps/releases
+	rsync -avz --delete -e ssh build-official/ cw-prod-release:/var/www/apps/releases
+
+list: src/
+	@ls -la src/
 
 test-deps:
 	which git
@@ -29,16 +31,16 @@ test-halt:
 test-provision:
 	cd tests/box && vagrant provision
 
-test-config: test-config-$(PS)
+test-config: test-config-prestahop
 
-test-run: test-run-$(PS)
+test-run: test-run-prestashop
 
-test-config-$(PS):
-	cd src/$(PS); make config-platform
+test-config-%:
+	cd src/$*; make config-platform
 
-test-run-$(PS):
-	#cd $(PS); make test
-	cd src/$(PS); make test-user
+test-run-%:
+	#cd src/$*; make test
+	cd src/$*; make test-user
 
 test-clean:
 	cd tests/box && vagrant halt && vagrant destroy --force
