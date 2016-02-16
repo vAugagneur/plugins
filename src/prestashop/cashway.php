@@ -416,7 +416,8 @@ class CashWay extends PaymentModule
                                       about 2 minutes after the other method failed.')
                             .'<br>'
                             .sprintf(
-                                $this->l('Feel free to %sask us%s if you would like to know more about how this works.'),
+                                $this->l('Feel free to %sask us%s if you would like
+                                         to know more about how this works.'),
                                 '<a href="https://www.cashway.fr/contact/">',
                                 '</a>'
                             ),
@@ -507,25 +508,25 @@ class CashWay extends PaymentModule
 
         return array(
             'CASHWAY_API_KEY'          => Tools::getValue(
-                                                          'CASHWAY_API_KEY',
-                                                          Configuration::get('CASHWAY_API_KEY')
-                                                          ),
+                'CASHWAY_API_KEY',
+                Configuration::get('CASHWAY_API_KEY')
+            ),
             'CASHWAY_API_SECRET'       => Tools::getValue(
-                                                          'CASHWAY_API_SECRET',
-                                                          Configuration::get('CASHWAY_API_SECRET')
-                                                          ),
+                'CASHWAY_API_SECRET',
+                Configuration::get('CASHWAY_API_SECRET')
+            ),
             'CASHWAY_PAYMENT_TEMPLATE' => Tools::getValue(
-                                                          'CASHWAY_PAYMENT_TEMPLATE',
-                                                          Configuration::get('CASHWAY_PAYMENT_TEMPLATE')
-                                                          ),
+                'CASHWAY_PAYMENT_TEMPLATE',
+                Configuration::get('CASHWAY_PAYMENT_TEMPLATE')
+            ),
             'CASHWAY_SEND_EMAIL'       => Tools::getValue(
-                                                          'CASHWAY_SEND_EMAIL',
-                                                          Configuration::get('CASHWAY_SEND_EMAIL')
-                                                          ),
+                'CASHWAY_SEND_EMAIL',
+                Configuration::get('CASHWAY_SEND_EMAIL')
+            ),
             'CASHWAY_OS_PAYMENT'       => (int)Tools::getValue(
-                                                               'CASHWAY_OS_PAYMENT',
-                                                               Configuration::get('CASHWAY_OS_PAYMENT')
-                                                               ),
+                'CASHWAY_OS_PAYMENT',
+                Configuration::get('CASHWAY_OS_PAYMENT')
+            ),
 
             'name'    => Tools::getValue('name', $name),
             'email'   => Tools::getValue('email', $email),
@@ -719,8 +720,8 @@ class CashWay extends PaymentModule
         if (isset($_SERVER['CASHWAY_TEST_ENVIRONMENT'])
             && $_SERVER['CASHWAY_TEST_ENVIRONMENT'] == 1) {
             $options['API_URL'] = $_SERVER['TEST_SERVER_SCHEME'].'://'.
-        $_SERVER['TEST_SERVER_HOST'].':'.
-        $_SERVER['TEST_SERVER_PORT'];
+            $_SERVER['TEST_SERVER_HOST'].':'.
+            $_SERVER['TEST_SERVER_PORT'];
         }
 
         return new \Cashway\API($options);
