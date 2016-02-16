@@ -220,15 +220,15 @@ class CashWay extends PaymentModule
             }
             if (!$params['password'] || empty($params['password']) || !Validate::isGenericName($params['password'])) {
                 $output .= $this->displayError($this->l('Missing password.'));
-            } elseif (!$params['email'] || empty($params['email']) || !Validate::isEmail($params['email']))
+            } elseif (!$params['email'] || empty($params['email']) || !Validate::isEmail($params['email'])) {
                 $output .= $this->displayError($this->l('Missing email.'));
-            elseif (!$params['phone'] || empty($params['phone']) || !Validate::isPhoneNumber($params['phone']))
+            } elseif (!$params['phone'] || empty($params['phone']) || !Validate::isPhoneNumber($params['phone'])) {
                 $output .= $this->displayError($this->l('Missing phone.'));
-            elseif (!$params['country'] || empty($params['country']) || !Validate::isLangIsoCode($params['country']))
+            } elseif (!$params['country'] || empty($params['country']) || !Validate::isLangIsoCode($params['country'])) {
                 $output .= $this->displayError($this->l('Missing country.'));
-            elseif (!$params['company'] || empty($params['company']) || !Validate::isGenericName($params['company']))
+            } elseif (!$params['company'] || empty($params['company']) || !Validate::isGenericName($params['company'])) {
                 $output .= $this->displayError($this->l('Missing company.'));
-            else {
+            } else {
                 $cashway = self::getCashWayAPI();
 
                 $res = $cashway->registerAccount($params);
