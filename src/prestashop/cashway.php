@@ -806,7 +806,7 @@ class CashWay extends PaymentModule
             ));
         }
 
-        $results = [];
+        $results = array();
         foreach ($common_refs as $ref) {
             $results[$ref] = self::reviewOrder($ref, $cw_orders[$ref], $open_orders[$ref]);
         }

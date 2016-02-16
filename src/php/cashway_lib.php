@@ -684,7 +684,7 @@ class cURL
         $code  = 0;
         $error = false;
         $body  = false;
-        $headers = [];
+        $headers = array();
 
         $base_options = array(
             CURLOPT_HEADER         => true,
@@ -715,12 +715,12 @@ class cURL
         }
         curl_close($ch);
 
-        return [
+        return array(
                'code' => $code,
             'headers' => $headers,
                'body' => $body,
               'error' => $error
-        ];
+        );
     }
 
     /**
@@ -732,7 +732,7 @@ class cURL
     */
     public static function parseHttpHeaders($str)
     {
-        $headers = [];
+        $headers = array();
         foreach (explode("\n", $str) as $line) {
             if (strpos($line, 'HTTP/') === 0) {
                 continue;
