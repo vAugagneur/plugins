@@ -4,7 +4,6 @@ require 'capybara'
 require 'selenium-webdriver'
 require 'capybara-webkit'
 require 'capybara/poltergeist'
-require 'capybara-screenshot/rspec'
 require 'awesome_print'
 require 'uri'
 
@@ -34,6 +33,7 @@ Dotenv.load
 Capybara.register_driver :selenium_en do |app|
   profile = Selenium::WebDriver::Firefox::Profile.new app
   profile["intl.accept_languages"] = "en"
+  profile["webdriver.load.strategy"] = "unstable"
   args = []
   Capybara::Selenium::Driver.new app, browser: :firefox, profile: profile
 end
@@ -41,30 +41,27 @@ end
 $driver = :selenium_en
 #$driver = :webkit
 #$driver = :poltergeist
-
 Capybara::Webkit.configure do |config|
-
   config.block_unknown_urls
   config.skip_image_loading
 end
-
 
 Capybara.default_driver = $driver
 Capybara.run_server = false
 Capybara.app_host = ENV['TEST_SERVER']
 Capybara.default_max_wait_time = 15
 
-Capybara::Screenshot.prune_strategy = :keep_last_run
-
 def session
   $session |= Capybara::Session.new $driver
 end
 
-# If Webkit
-#page.driver.header 'Accept-Language', 'en'
+if $driver == :webkit
+  page.driver.header 'Accept-Language', 'en'
+end
 
-# If PhantomJS
-#page.driver.add_header('Accept-Language', 'en', permanent: true)
+if $driver == :poltergeist
+  page.driver.add_header('Accept-Language', 'en', permanent: true)
+end
 
 # If Selenium
 #page.driver.browser.manage.window.maximize

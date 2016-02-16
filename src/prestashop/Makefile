@@ -80,6 +80,7 @@ tests/.env:
 	cd tests && bundle exec ruby build_env.rb > .env
 
 config-base:
+	cd tests && bundle
 	${TEST_RUN} spec/config_base.rb
 
 remove-install-dir:

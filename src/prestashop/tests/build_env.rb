@@ -20,7 +20,7 @@ def register_shop_account(acc)
       {
         email: acc[:email],
         name: acc[:firstname] + ' ' + acc[:lastname],
-        password: SecureRandom.hex(16)
+        password: SecureRandom.hex(12)
       }.to_json,
       accept: :json,
       content_type: :json
@@ -69,4 +69,3 @@ API_SECRET=#{account[:api_secret]}
 CONF
 
 puts conf
-

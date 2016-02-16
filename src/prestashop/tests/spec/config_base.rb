@@ -14,14 +14,18 @@ describe "PrestaShop basic setup" do
   end
 
   it "fills admin user form" do
+    find(:xpath, '//span[text()="Select your country"]').click
+    find(:xpath, '//ul[@class="chosen-results"]/li[contains(@class, "active-result") and text()="' + ENV['SERVER_COUNTRY'] + '"]').click
+
     fill_in 'infosShop', with: 'test'
     fill_in 'infosFirstname', with: ENV['ADMIN_FIRSTNAME']
     fill_in 'infosName', with: ENV['ADMIN_LASTNAME']
     fill_in 'infosEmail', with: ENV['ADMIN_EMAIL']
     fill_in 'infosPassword', with: ENV['ADMIN_PASSWD']
     fill_in 'infosPasswordRepeat', with: ENV['ADMIN_PASSWD']
-    fill_in 'infosCountry', with: 'fr'
-    fill_in 'infosActivity', with: '17'
+
+    sleep(1)
+
     find('#btNext').click
   end
 
@@ -30,8 +34,8 @@ describe "PrestaShop basic setup" do
   end
 
   it "succeeds installation" do
-    #$stdin.gets
-    sleep 70
+    $stdin.gets
+    #sleep 70
     find('#install_process_success', visible: true)
   end
 end
