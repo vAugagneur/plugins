@@ -28,8 +28,8 @@
             <a class="cashway {if $template_type == 'normal'}cashway-hl{/if}"
                 href="{$link->getModuleLink('cashway', 'payment', [], true)|escape:'htmlall':'UTF-8'}"
                 title="{l s='Paiement en espèces sur internet' mod='cashway'}">
-                {l s='Payer en espèces avec CashWay, chez un buraliste près de chez vous'}
-                <span>(frais de traitement&nbsp;: {$cart_fee|escape:'htmlall':'UTF-8'})</span>
+                {l s='Payer en espèces avec CashWay, chez un buraliste près de chez vous' mod='cashway'}
+                <span>{l s='(frais de traitement :' mod='cashway'} {$cart_fee|escape:'htmlall':'UTF-8'})</span>
             </a>
         </p>
     </div>

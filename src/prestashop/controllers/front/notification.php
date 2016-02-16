@@ -131,12 +131,12 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
     {
         http_response_code($code);
         header('Content-Type: application/json; charset=utf-8');
-        header('CW-Agent: CashWayModule/'.Cashway::VERSION.' PrestaShop/'._PS_VERSION_.' PHP/'.PHP_VERSION.' '.PHP_OS);
+        header('CW-Agent: CashWayModule/'.CW_VERSION.' PrestaShop/'._PS_VERSION_.' PHP/'.PHP_VERSION.' '.PHP_OS);
 
-        echo json_encode(array(
+        echo Tools::jsonEncode(array(
              'status' => $code < 400 ? 'ok' : 'error',
             'message' => $message,
-              'agent' => 'CashWayModule/'.Cashway::VERSION.' PrestaShop/'._PS_VERSION_.' PHP/'.PHP_VERSION.' '.PHP_OS
+              'agent' => 'CashWayModule/'.CW_VERSION.' PrestaShop/'._PS_VERSION_.' PHP/'.PHP_VERSION.' '.PHP_OS
         ));
         exit;
     }
