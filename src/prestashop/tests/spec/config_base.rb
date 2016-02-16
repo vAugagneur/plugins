@@ -24,6 +24,8 @@ describe "PrestaShop basic setup" do
     fill_in 'infosPassword', with: ENV['ADMIN_PASSWD']
     fill_in 'infosPasswordRepeat', with: ENV['ADMIN_PASSWD']
 
+    sleep(1)
+
     find('#btNext').click
   end
 
@@ -32,8 +34,8 @@ describe "PrestaShop basic setup" do
   end
 
   it "succeeds installation" do
-    #$stdin.gets
-    sleep 70
+    $stdin.gets
+    #sleep 70
     find('#install_process_success', visible: true)
   end
 end
