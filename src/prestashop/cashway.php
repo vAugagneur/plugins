@@ -215,19 +215,16 @@ class CashWay extends PaymentModule
             $params['company'] = Tools::getValue('company');
             $params['url'] = $this->context->shop->getBaseURL();
 
-            if (!$params['name'] || empty($params['name']) || !Validate::isGenericName($params['name'])) {
-                $output .= $this->displayError($this->l('Missing name.'));
-            }
-            if (!$params['password'] || empty($params['password']) || !Validate::isGenericName($params['password'])) {
-                $output .= $this->displayError($this->l('Missing password.'));
-            } elseif (!$params['email'] || empty($params['email']) || !Validate::isEmail($params['email'])) {
-                $output .= $this->displayError($this->l('Missing email.'));
-            } elseif (!$params['phone'] || empty($params['phone']) || !Validate::isPhoneNumber($params['phone'])) {
-                $output .= $this->displayError($this->l('Missing phone.'));
-            } elseif (!$params['country'] || empty($params['country']) || !Validate::isLangIsoCode($params['country'])) {
-                $output .= $this->displayError($this->l('Missing country.'));
-            } elseif (!$params['company'] || empty($params['company']) || !Validate::isGenericName($params['company'])) {
-                $output .= $this->displayError($this->l('Missing company.'));
+            $varsValid = '';
+            $varsValid .= $this->validateVarMsg($params['name'], 'isGenericName', 'Missing name.');
+            $varsValid .= $this->validateVarMsg($params['password'], 'isGenericName', 'Missing password.');
+            $varsValid .= $this->validateVarMsg($params['email'], 'isEmail', 'Missing email.');
+            $varsValid .= $this->validateVarMsg($params['phone'], 'isPhoneNumber', 'Missing phone.');
+            $varsValid .= $this->validateVarMsg($params['country'], 'isLangIsoCode', 'Missing country.');
+            $varsValid .= $this->validateVarMsg($params['company'], 'isGenericName', 'Missing company.');
+
+            if (Tools::strlen($varsValid) > 0) {
+                $output .= $varsValid;
             } else {
                 $cashway = self::getCashWayAPI();
 
@@ -248,6 +245,20 @@ class CashWay extends PaymentModule
         }
 
         return $output.$this->renderForm();
+    }
+
+    /**
+     * Shorter validation function, see getContent() above.
+     *
+     * @return string
+    */
+    private function validateVar($var = null, $method = null, $message = '')
+    {
+        if (!$var || empty($var) || !call_user_func(['Validate', $method], $var)) {
+            return $this->displayError($this->l($message));
+        }
+
+        return '';
     }
 
     public function renderForm()
