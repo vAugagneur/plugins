@@ -27,20 +27,19 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require __DIR__.'/lib/cashway/cashway_lib.php';
-require __DIR__.'/lib/cashway/compat.php';
+require dirname(__FILE__).'/lib/cashway/cashway_lib.php';
+require dirname(__FILE__).'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '0.14.2';
-
-    /**
-    */
     public function __construct()
     {
         $this->name             = 'cashway';
         $this->tab              = 'payments_gateways';
-        $this->version          = self::VERSION;
+        $this->version          = '0.14.2';
+
+        define('CW_VERSION', $this->version);
+
         $this->author           = 'CashWay';
         $this->need_instance    = 1;
         $this->bootstrap        = true;
@@ -294,7 +293,8 @@ class CashWay extends PaymentModule
                         'desc' => $this->l('CashWay is only available to shops operating in France for the time being.')
                             .'<br>'
                             .sprintf(
-                                $this->l('Feel free to %scontact us%s if you would like to see support in your country!'),
+                                $this->l('Feel free to %scontact us%s if you would like
+                                         to see support in your country!'),
                                 '<a href="https://www.cashway.fr/contact/">',
                                 '</a>'
                             ),
@@ -362,12 +362,14 @@ class CashWay extends PaymentModule
                 'description' => $is_configured
                     ? ''
                     : '<p>'.sprintf(
-                        $this->l('Please get your CashWay API credentials by registering below or contact us to activate your account on %s.'),
+                        $this->l('Please get your CashWay API credentials by registering below
+                                 or contact us to activate your account on %s.'),
                         sprintf('<a href="%s" target="blank">www.cashway.fr</a>', $cashway_register_url)
                     ).'</p>',
                 'warning' =>
                     $is_configured
-                        ? $this->l('Please keep these safe in a private location; do not share them; do not send them to anyone.')
+                        ? $this->l('Please keep these safe in a private location;
+                                   do not share them; do not send them to anyone.')
                         : ''
             )
         ));
@@ -393,7 +395,8 @@ class CashWay extends PaymentModule
                         'type' => 'select',
                         'label' => $this->l('Payment template'),
                         'name' => 'CASHWAY_PAYMENT_TEMPLATE',
-                        'desc' => $this->l('Choose between a light CashWay payment button or a normal CashWay orange button.'),
+                        'desc' => $this->l('Choose between a light CashWay payment button or
+                                           a normal CashWay orange button.'),
                         'required' => true,
                         'options' => array(
                             'query' => array(
@@ -409,10 +412,12 @@ class CashWay extends PaymentModule
                         'label' => $this->l('Failed payment recovery'),
                         'desc' => $this->l('Try to recover a failed payment from another payment provider.')
                             .'<br>'
-                            .$this->l('This will send a recovery email from your shop to your customer, about 2 minutes after the other method failed.')
+                            .$this->l('This will send a recovery email from your shop to your customer,
+                                      about 2 minutes after the other method failed.')
                             .'<br>'
                             .sprintf(
-                                $this->l('Feel free to %sask us%s if you would like to know more about how this works.'),
+                                $this->l('Feel free to %sask us%s if you would like
+                                         to know more about how this works.'),
                                 '<a href="https://www.cashway.fr/contact/">',
                                 '</a>'
                             ),
@@ -502,11 +507,26 @@ class CashWay extends PaymentModule
         $company = Configuration::get('PS_SHOP_NAME');
 
         return array(
-            'CASHWAY_API_KEY'          => Tools::getValue('CASHWAY_API_KEY', Configuration::get('CASHWAY_API_KEY')),
-            'CASHWAY_API_SECRET'       => Tools::getValue('CASHWAY_API_SECRET', Configuration::get('CASHWAY_API_SECRET')),
-            'CASHWAY_PAYMENT_TEMPLATE' => Tools::getValue('CASHWAY_PAYMENT_TEMPLATE', Configuration::get('CASHWAY_PAYMENT_TEMPLATE')),
-            'CASHWAY_SEND_EMAIL'       => Tools::getValue('CASHWAY_SEND_EMAIL', Configuration::get('CASHWAY_SEND_EMAIL')),
-            'CASHWAY_OS_PAYMENT'       => (int)Tools::getValue('CASHWAY_OS_PAYMENT', Configuration::get('CASHWAY_OS_PAYMENT')),
+            'CASHWAY_API_KEY'          => Tools::getValue(
+                'CASHWAY_API_KEY',
+                Configuration::get('CASHWAY_API_KEY')
+            ),
+            'CASHWAY_API_SECRET'       => Tools::getValue(
+                'CASHWAY_API_SECRET',
+                Configuration::get('CASHWAY_API_SECRET')
+            ),
+            'CASHWAY_PAYMENT_TEMPLATE' => Tools::getValue(
+                'CASHWAY_PAYMENT_TEMPLATE',
+                Configuration::get('CASHWAY_PAYMENT_TEMPLATE')
+            ),
+            'CASHWAY_SEND_EMAIL'       => Tools::getValue(
+                'CASHWAY_SEND_EMAIL',
+                Configuration::get('CASHWAY_SEND_EMAIL')
+            ),
+            'CASHWAY_OS_PAYMENT'       => (int)Tools::getValue(
+                'CASHWAY_OS_PAYMENT',
+                Configuration::get('CASHWAY_OS_PAYMENT')
+            ),
 
             'name'    => Tools::getValue('name', $name),
             'email'   => Tools::getValue('email', $email),
@@ -688,7 +708,7 @@ class CashWay extends PaymentModule
     public static function getCashWayAPI()
     {
         $options = array(
-            'USER_AGENT' => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_,
+            'USER_AGENT' => 'CashWayModule/'.CW_VERSION.' PrestaShop/'._PS_VERSION_,
             'USE_STAGING' => Configuration::get('CASHWAY_USE_STAGING'),
         );
 
@@ -699,7 +719,9 @@ class CashWay extends PaymentModule
 
         if (isset($_SERVER['CASHWAY_TEST_ENVIRONMENT'])
             && $_SERVER['CASHWAY_TEST_ENVIRONMENT'] == 1) {
-            $options['API_URL'] = $_SERVER['TEST_SERVER_SCHEME'].'://'.$_SERVER['TEST_SERVER_HOST'].':'.$_SERVER['TEST_SERVER_PORT'];
+            $options['API_URL'] = $_SERVER['TEST_SERVER_SCHEME'].'://'.
+            $_SERVER['TEST_SERVER_HOST'].':'.
+            $_SERVER['TEST_SERVER_PORT'];
         }
 
         return new \Cashway\API($options);
@@ -794,15 +816,10 @@ class CashWay extends PaymentModule
         switch ($remote['status']) {
             case 'paid':
                 \CashWay\Log::info(sprintf('I, found order %s has been paid. Updating local record.', $ref));
-
                 return self::verifyAndSetPaid($ref, $remote, $local);
-                break;
-
             case 'expired':
                 \CashWay\Log::info(sprintf('I, found order %s has expired. Updating local record.', $ref));
                 return self::setOrderAs((int)Configuration::get('PS_OS_CANCELED'), $local['id_order']);
-                break;
-
             default:
             case 'confirmed':
             case 'open':
@@ -810,7 +827,6 @@ class CashWay extends PaymentModule
                 \CashWay\Log::info(sprintf('I, found order %s, still pending (%s).', $ref, $remote['status']));
                 break;
         }
-
         return true;
     }
 
@@ -823,8 +839,6 @@ class CashWay extends PaymentModule
     */
     public static function verifyAndSetPaid($ref, $remote, $local)
     {
-        $return = true;
-
         if ($local['total_paid'] != $remote['order_total']) {
             \CashWay\Log::error(sprintf(
                 'expected payments differ: %.2f vs. %.2f (remote/local)',
