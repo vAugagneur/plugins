@@ -17,8 +17,10 @@ end
       session.visit '/'
       should have_content 'Test ' + price.to_s
       selector = '//a[@class="product-name" and @title="Test ' + price.to_s + '"]/../..'
-      find(:xpath, selector, match: :first).hover
-      click_link_or_button('Add to cart')
+      #find(:xpath, selector, match: :first).hover
+      #click_link_or_button('Add to cart')
+      find(:xpath, selector, match: :first).click_link_or_button('Add to cart')
+
       should have_content 'Proceed to checkout'
     end
 
