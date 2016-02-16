@@ -1,4 +1,8 @@
 ---
+# TODO if reset keyword set, drop database first, just in case
+- name: Drop DB for {{ name }}
+  mysql_db: name={{ name }} state=absent
+
 - name: Create DB for {{ name }}
   mysql_db: name={{ name }} state=present
 

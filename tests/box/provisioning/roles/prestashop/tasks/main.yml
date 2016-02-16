@@ -9,10 +9,21 @@
 # register: command_result
 # ignore_errors: yes
 
+# TODO, if reset tag, remove target directory here and continue
+# else if already installed, skip
+
+- name: Drop existing PrestaShop setup
+  file: path=/var/www/html/prestashop state=absent
+
+- name: Check if archive exists
+  stat: path=/var/www/html/prestashop-latest.zip
+  register: sym
+
 - name: Download PrestaShop
   get_url: >
     url='https://www.prestashop.com/ajax/controller.php?method=download&type=releases&file=prestashop_1.6.1.1.zip&language=fr'
     dest=/var/www/html/prestashop-latest.zip
+  when: sym.stat.islnk is not defined
 
 - name: Unpack files
   unarchive: src={{ item }} dest=/var/www/html setype=zip copy=no
