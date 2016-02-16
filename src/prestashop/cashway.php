@@ -36,7 +36,7 @@ class CashWay extends PaymentModule
     {
         $this->name             = 'cashway';
         $this->tab              = 'payments_gateways';
-        $this->version          = '0.14.2';
+        $this->version          = '1.0.0';
 
         define('CW_VERSION', $this->version);
 
