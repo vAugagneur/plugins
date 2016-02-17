@@ -1,5 +1,9 @@
 # Changelog for CashWay PrestaShop module
 
+## 2016-02-17 - 1.0.1
+
+ * official release version for addons
+
 ## 2016-01-04 - 0.14.1
 
  * fix installation compliance test for PS 1.5

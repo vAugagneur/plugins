@@ -36,7 +36,7 @@ class CashWay extends PaymentModule
     {
         $this->name             = 'cashway';
         $this->tab              = 'payments_gateways';
-        $this->version          = '1.0.0';
+        $this->version          = '1.0.1';
 
         define('CW_VERSION', $this->version);
 
@@ -47,6 +47,7 @@ class CashWay extends PaymentModule
         $this->currencies_mode  = 'checkbox';
         $this->controllers      = array('payment', 'validation', 'notification');
         $this->is_eu_compatible = 1;
+        $this->module_key       = 'ca05dafd3cc2f9f98a086d70fe28c098';
 
         $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.7');
 
