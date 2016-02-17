@@ -1,0 +1,89 @@
+<!--
+/**
+ *  CASHWAY
+ *
+ *  Copyright 2015 CashWay
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ * @category   Sirateck
+ * @package    Sirateck_Cashway
+ * @copyright  Copyright 2015 CashWay
+ * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
+ */
+ -->
+<?php
+$_code=$this->getMethodCode();
+?>
+<?php if(!$this->canWork()):?>
+<p><?php echo $this->__("Cashway is actually not available.")?><p>
+<script type="text/javascript">
+//<![CDATA[
+ 		$('p_method_cashway').disable();
+//]]>
+</script>
+<?php else: ?>
+
+<div id="payment_form_<?php echo $_code ?>" style="display:none;">
+	<h4>Les points de paiement présents autour de votre point de livraison&nbsp;:</h4>
+	<ul class="form-list">
+		<li class="control">
+			<div class="input-box">
+				<input id="cashway-map-search" type="text" class="input-text" value="<?php echo $this->getAddressOneLine() ?>" />
+				<button type="button" class="button" id="cashway-map-search-btn"><span><span><?php echo $this->__("Find cashway payment points") ?></span></span></button>
+			</div>
+		</li>
+		<li class="wide">
+			<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
+		</li>
+		<li>
+			<div><?php echo $this->__("A fee of %d euro(s) will be added to your total when you pay for your order with one of our distributor.",1) ?></div>
+		</li>
+	</ul>
+	<script type="text/javascript">
+	//<![CDATA[
+
+	function preventKeyEnter(e){
+		console.log(e.keyCode);
+		console.log(e.which);
+		var code = e.keyCode || e.which;
+		if (code == 13) {
+	  	    e.preventDefault();
+	  	    return false;
+	  	}
+	}
+	//Prevent from from submit
+    Event.observe("cashway-map-search","keypress",preventKeyEnter);
+
+	//Observe event dispatched from method selection
+	$('payment_form_<?php echo $_code ?>').observe("payment-method:switched", function(ev){
+
+		if(ev.memo.method_code == "<?php echo $_code ?>"){ //If it's our code add map script
+
+			if(document.scripts.namedItem('cashway-map-script') === null){ //Check if not already displayed
+
+				var scriptCshw = document.createElement("script");
+				scriptCshw.id = "cashway-map-script"
+				scriptCshw.type = "text/javascript";
+				scriptCshw.async = true;
+				scriptCshw.src = "https://maps.cashway.fr/js/cashway_map.js";
+				document.body.appendChild(scriptCshw); //add script to body
+			}
+
+		}
+	});
+
+	//]]>
+	</script>
+</div>
+<?php endif; ?>

@@ -1,0 +1,196 @@
+<?php
+/**
+ *  CASHWAY
+ *
+ *  Copyright 2015 CashWay
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ * @category   Sirateck
+ * @package    Sirateck_Cashway
+ * @copyright  Copyright 2015 CashWay
+ * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
+ */
+?>
+<?php /** @var $this Sirateck_Cashway_Block_Reorder */ ?>
+<?php $_hco = $this->getCheckoutHelper() ?>
+<div class="multiple-checkout">
+    <div class="page-title">
+        <h1><?php echo $this->__('Pay with CASHWAY') ?></h1>
+    </div>
+    <div>
+    	<h3 class="error error-cashway"><?php echo $this->__('Your payment has been refused by <u><em>%s</em></u> for any reason but you can purchase your order now with cashway.',$this->getPreviousMethodTitle())?></h3>
+    	<h4 class="success success-cashway"><?php echo $this->__('Cashway allow payment in cash money! Try now!')?></h4>
+    </div>
+    <div class="divider">&nbsp;</div>
+    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+    <form id="review-order-form" action="<?php echo $this->getPostActionUrl() ?>" method="post" onsubmit="return showLoader();">
+        <?php echo $this->getBlockHtml('formkey'); ?>
+        <div class="col2-set">
+            <h2 class="legend"><?php echo $_hco->__('Billing Information') ?></h2>
+            <div class="col-1">
+                <div class="box">
+                    <?php $_address=$this->getBillingAddress() ?>
+                    <div class="box-title">
+                        <h3><?php echo $_hco->__('Billing Address') ?></h3>
+                    </div>
+                    <div class="box-content">
+                        <address>
+                            <?php echo $_address->format('html') ?>
+                        </address>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="box">
+                    <div class="box-title">
+                        <h3><?php echo $_hco->__('Payment Method') ?></h3>
+                    </div>
+                    <div class="box-content">
+                        <?php echo $this->getPaymentHtml() ?>
+                    </div>
+                </div>
+            </div>
+         </div>
+        <?php $mergedCells = ($this->helper('tax')->displayCartBothPrices() ? 2 : 1); ?>
+        <div class="col2-set">
+        <h2 class="legend"><?php echo $_hco->__('Shipping Information') ?></h2>
+        <?php $_shippingAddress = $this->getShippingAddress() ?>
+                <div class="col-1 col-narrow">
+                    <div class="box">
+                    	 <div class="box-title">
+                        <h3><?php echo $_hco->__('Shipping To') ?></h3>
+                    </div>
+                        <div class="box-content">
+                            <address>
+                                <?php echo $_shippingAddress->format('html') ?>
+                            </address>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+                	<div class="box">
+                        <div class="box-title">
+                            <h3><?php echo $_hco->__('Shipping Method') ?></h3>
+                        </div>
+                        <div class="box-content">
+                            <?php if($_rate=$this->getShippingAddressRate($_shippingAddress)): ?>
+                            <p>
+                            <?php echo $this->escapeHtml($_rate->getCarrierTitle()) ?> - <?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
+                            <?php $_excl = $this->getShippingPriceExclTax($_shippingAddress); ?>
+                            <?php $_incl = $this->getShippingPriceInclTax($_shippingAddress); ?>
+                            <?php echo $_excl; ?>
+                            <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                                (<?php echo $_hco->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                            <?php endif; ?>
+                            </p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div >
+        	<h2 class="legend"><?php echo $_hco->__('Order Review') ?></h2>
+                    <h4><?php echo $_hco->__('Items') ?></h4>
+                    <?php $_tableClass = $this->helper('tax')->displayCartBothPrices() ? 'linearize-table-large' : 'linearize-table'; ?>
+                    <table class="data-table <?php echo $_tableClass; ?> checkout-review-table" id="overview-table-<?php echo $_shippingAddress->getId() ?>">
+                        <col />
+                        <col width="1" />
+                        <?php if ($this->helper('tax')->displayCartBothPrices()): ?>
+                        <col width="1" />
+                        <?php endif; ?>
+                        <col width="1" />
+                        <col width="1" />
+                        <?php if ($this->helper('tax')->displayCartBothPrices()): ?>
+                        <col width="1" />
+                        <?php endif; ?>
+                        <thead>
+                            <tr>
+                                <th rowspan="<?php echo $mergedCells; ?>"><?php echo $_hco->__('Product Name') ?></th>
+                                <th colspan="<?php echo $mergedCells; ?>" class="a-center"><?php echo $_hco->__('Price') ?></th>
+                                <th rowspan="<?php echo $mergedCells; ?>"><?php echo $_hco->__('Qty') ?></th>
+                                <th colspan="<?php echo $mergedCells; ?>" class="a-center"><?php echo $_hco->__('Subtotal') ?></th>
+                            </tr>
+                            <?php if ($this->helper('tax')->displayCartBothPrices()): ?>
+                            <tr>
+                                <th class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></th>
+                                <th><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></th>
+                                <th class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></th>
+                                <th><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></th>
+                            </tr>
+                            <?php endif; ?>
+                        </thead>
+                        <tfoot>
+                            <?php echo $this->renderTotals($this->getShippingAddressTotals($_shippingAddress)); ?>
+                        </tfoot>
+                        <tbody>
+                        <?php foreach ($this->getItems() as $_item): ?>
+                            <?php echo $this->getItemHtml($_item); ?>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <script type="text/javascript">decorateTable('overview-table-<?php echo $_shippingAddress->getId() ?>')</script>
+        </div>
+           <?php echo $this->getChildHtml('items_after'); ?>
+
+            <div id="checkout-review-submit">
+                <?php echo $this->getChildHtml('agreements') ?>
+                <div class="place-order">
+                    <div class="grand-total">
+                        <div class="inner">
+                            <big><?php echo $_hco->__('Grand Total:') ?> <?php echo $_hco->formatPrice($this->getTotal()) ?></big>
+                            <div id="review-buttons-container">
+                                <button type="submit" title="<?php echo $_hco->__('Place Order') ?>" class="button btn-checkout" id="review-button"><span><span><?php echo $_hco->__('Place Order') ?></span></span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="please-wait" id="review-please-wait" style="display:none;">
+                        <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $_hco->__('Submitting order information...') ?>" title="<?php echo $_hco->__('Submitting order information...') ?>" class="v-middle" /> <?php echo $_hco->__('Submitting order information...') ?>
+                    </span>
+                </div>
+            </div>
+            <div class="buttons-set">
+            	<p class="back-link"><?php echo $_hco->__('Forgot an Item?') ?> <a href="<?php echo $this->getBackUrl() ?>"><?php echo $_hco->__('Edit Your Cart') ?></a></p>
+            </div>
+        </form>
+        <script type="text/javascript">
+        //<![CDATA[
+            var submitted = false;
+
+            function showLoader()
+            {
+                if (submitted) {
+                    return false;
+                }
+                if ($('checkout-agreements')) {
+                    var checkboxes = $$('#checkout-agreements input');
+                    for (var i=0, l=checkboxes.length; i<l; i++) {
+                        if (!checkboxes[i].checked) {
+                            alert("<?php echo $_hco->__('Please agree to all Terms and Conditions before placing the orders.')?>");
+                            return false;
+                        }
+                    }
+                }
+
+                submitted = true;
+                var step='review';
+                Element.show(step+'-please-wait');
+                $(step+'-buttons-container').setStyle({opacity:.5});
+                $(step+'-buttons-container').descendants().each(function(s) {
+                      s.disabled = true;
+                });
+                return true;
+            }
+        //]]>
+        </script>
+</div>

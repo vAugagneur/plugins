@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+       Copyright 2015 CASHWAY SAS
+   
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+   
+           http://www.apache.org/licenses/LICENSE-2.0
+   
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+       
+       @category   Sirateck
+       @package    Sirateck_Cashway
+       @copyright  Copyright 2015 CashWay
+       @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License, Version 2.0
+ -->
+
+<config>
+	<modules>
+		<Sirateck_Cashway>
+			<version>0.2.0</version>
+		</Sirateck_Cashway>
+	</modules>
+	<global>
+		<blocks>
+			<cashway>
+				<class>Sirateck_Cashway_Block</class>
+			</cashway>
+		</blocks>
+		<helpers>
+			<cashway>
+				<class>Sirateck_Cashway_Helper</class>
+			</cashway>
+		</helpers>
+		<models>
+			<cashway>
+				<class>Sirateck_Cashway_Model</class>
+				<resourceModel>cashway_resource</resourceModel>
+			</cashway>
+			 <cashway_resource>
+                <class>Sirateck_Cashway_Model_Resource</class>
+                <!-- <deprecatedNode>cashway_mysql4</deprecatedNode> -->
+            </cashway_resource>
+		</models>
+		<resources>
+            <sirateck_cashway_setup>
+                <setup>
+                    <module>Sirateck_Cashway</module>
+                </setup>
+            </sirateck_cashway_setup>
+        </resources>
+        <payment>
+          	<groups>
+              <offline>Offline Payment Methods</offline>
+           </groups>
+        </payment>
+	</global>
+	<frontend>
+	    <routers>
+			<cashway>
+				<use>standard</use>
+				<args>
+					<module>Sirateck_Cashway</module>
+					<frontName>cashway</frontName>
+				</args>
+			</cashway>
+        </routers>
+		 <translate>
+            <modules>
+                <Sirateck_Cashway>
+                    <files>
+                        <default>Sirateck_Cashway.csv</default>
+                    </files>
+                </Sirateck_Cashway>
+            </modules>
+        </translate>
+        <layout>
+			<updates>
+				<cashway>
+					<file>cashway.xml</file>
+				</cashway>
+			</updates>
+		</layout>
+         <events>
+	        <controller_action_predispatch_checkout_onepage_failure>
+	              <observers>
+	                  <cashway_redirect_method>
+	                      <class>Sirateck_Cashway_Model_Observer</class>
+	                      <method>redirectToCashway</method>
+	                  </cashway_redirect_method>
+	              </observers>
+	        </controller_action_predispatch_checkout_onepage_failure>
+        </events>
+	</frontend>
+	<adminhtml>
+		 <translate>
+            <modules>
+                <Sirateck_Cashway>
+                    <files>
+                        <default>Sirateck_Cashway.csv</default>
+                    </files>
+                </Sirateck_Cashway>
+            </modules>
+        </translate>
+        <events>
+	        <core_config_data_save_after>
+	              <observers>
+	                  <cashway_account_config>
+	                      <class>Sirateck_Cashway_Model_Observer</class>
+	                      <method>updateAccount</method>
+	                  </cashway_account_config>
+	              </observers>
+	        </core_config_data_save_after>
+        </events>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                    	<cashway>
+                                   			<title>Cashway API Configuration</title>
+                                    	</cashway>
+                                        <payment>
+                                        	<children>
+	                                        	<cashway translate="title">
+	                                            	<title>Cashway Payment</title>
+	                                            </cashway>
+                                        	</children>
+                                        </payment>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+	</adminhtml>
+	<default>
+		<cashway>
+			<cashway_api>			
+				<api_secret backend_model="adminhtml/system_config_backend_encrypted"/>
+				<api_shared_secret backend_model="adminhtml/system_config_backend_encrypted"/>
+				<api_secret_test backend_model="adminhtml/system_config_backend_encrypted"/>
+				<api_shared_secret_test backend_model="adminhtml/system_config_backend_encrypted"/>
+				<api_base_uri>https://api.cashway.fr/</api_base_uri>
+				<api_base_uri_test>https://api-staging.cashway.fr/</api_base_uri_test>
+				<api_ipn_path>cashway/ipn/</api_ipn_path>
+				<account_update_api_endpoint>/shops/me</account_update_api_endpoint>
+				<order_api_endpoint>/transactions</order_api_endpoint>
+				<confirm_order_api_endpoint>/transactions/$ID/confirm</confirm_order_api_endpoint>
+				<evaluate_transaction_api_endpoint>/transactions/hint</evaluate_transaction_api_endpoint>
+				<events_api_endpoint>/shops/me/events</events_api_endpoint>
+			</cashway_api>
+		</cashway>
+		<payment>
+			<cashway>
+				<active>0</active>
+				<title>Cashway payment</title>
+				<payment_action>initialize</payment_action>
+				<allowredirect>1</allowredirect>
+				<redirectspecific>0</redirectspecific>
+				<allowspecific>0</allowspecific>
+				<is_test_mode>0</is_test_mode>
+				<debug>0</debug>
+				<model>cashway/method_cashway</model>		
+			</cashway>
+		</payment>
+	</default>
+</config>
