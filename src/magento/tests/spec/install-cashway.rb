@@ -3,9 +3,9 @@ require 'pathname'
 
 MODULE_CONNECT_ACTION_NAME =ENV['MODULE_CHANNEL'] + '|' + ENV['MODULE_NAME']
 
-describe "Uninstall and Reinstall Cashway" do
+describe "Reset Cashway module" do
 
-it "Load magento connect manager page" do
+it "Load Magento connect manager" do
   session.visit ENV['ADMIN_MANAGER_PATH']
 end
 
@@ -17,7 +17,7 @@ it "Log in" do
   expect(page).to have_selector '#install_package_id'
 end
 
-it "Uninstall cashway" do
+it "Uninstall module if present" do
   #Skip uninstall if cashway module is not installed
   skip "CashWay module is not installed." unless page.has_content? ENV['MODULE_NAME']
   #Else select uninstall in Cashway's select tag
@@ -27,7 +27,7 @@ it "Uninstall cashway" do
   sleep 5 #because uninstall is run in ajax and we should wait for cleaning cache
 end
 
-it "Upload and install archive" do
+it "Upload and install new module version" do
   #Archive Pathname from .env
   archive = Pathname.new ENV['MODULE_ARCHIVE']
   #attach file to form
@@ -37,9 +37,10 @@ it "Upload and install archive" do
   sleep 5 #because install is run in ajax and we should wait for cleaning cache
 end
 
-it "Active and configure Cashway" do
+it "Activate and configure Cashway" do
   click_link 'Return to Admin' #Click on link Return Admin is used instead session.visit ENV['ADMIN_PATH'] because it use SID form sessio connection
   expect(page).to have_selector '#page-help-link'
+
   #Force locale en_US
   locale_label = find(:xpath,'//option[@value="en_US"]').text
   page.select locale_label, :from => 'interface_locale' unless find('#interface_locale').find('option[selected]').value == "en_US"
@@ -47,16 +48,19 @@ it "Active and configure Cashway" do
   #Go to system=>configuration
   find(:xpath, '//span[text()="System"]').hover
   find(:xpath, '//span[text()="Configuration"]').click #Do full screen (or large size) on firefox for it's work :-(
+
   #And select cashway configuration
   find(:xpath, '//span[normalize-space(text())="CashWay payment"]').click
   find(:xpath, '//a[@id="cashway_cashway_api-head"]').click unless find('#cashway_cashway_api-state',:visible => false).value == "1" #Expand form header if is not
+
   #Fill test credentials
   fill_in 'cashway_cashway_api_api_key_test', :with => ENV['API_KEY']
   fill_in 'cashway_cashway_api_api_secret_test', :with => ENV['API_SECRET']
   fill_in 'cashway_cashway_api_api_shared_secret_test', :with => ENV['API_SHARED_SECRET']
-  #And save
   first(:xpath, '//button[@title="Save Config"]').click
+end
 
+it "Configure payment methods" do
   #Go to payment methods configuration
   find(:xpath, '//span[normalize-space(text())="Payment Methods"]').click
   #Expand form header if is not

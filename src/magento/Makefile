@@ -39,6 +39,12 @@ csfix:
 test:
 	phpunit .
 
+config-platform: config-base \
+	config-magento config-shipping add-test-products add-new-account install-cashway
+
+config-base:
+	cd tests && bundle
+
 install-cashway:
 	${TEST_RUN} spec/install-cashway.rb
 
@@ -46,16 +52,10 @@ add-new-account:
 	${TEST_RUN} spec/add_new_account.rb
 
 test-user:
-	${TEST_RUN} spec/02_client_use_spec.rb
+	${TEST_RUN} spec/client_use.rb
 
-add-products:
-	${TEST_RUN} spec/admin_add_products.rb
-
-test-user-250e:
-	${TEST_RUN} spec/02_client_use_250e.rb
-
-test-user-2500e:
-	${TEST_RUN} spec/02_client_use_2500e.rb
+add-test-products:
+	${TEST_RUN} spec/add_test_products.rb
 
 config-shipping:
 	${TEST_RUN} spec/set-shipping-price.rb

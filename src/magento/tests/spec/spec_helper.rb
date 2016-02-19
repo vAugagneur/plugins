@@ -1,4 +1,10 @@
 require 'rspec'
+require 'dotenv'
+require 'capybara'
+require 'capybara/dsl'
+require 'selenium-webdriver'
+require 'awesome_print'
+require 'uri'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -9,32 +15,46 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
-	config.fail_fast = true
+  config.fail_fast = true
   #config.disable_monkey_patching!
   #config.warnings = true
   config.default_formatter = 'doc'
   config.profile_examples = 10
-	config.order = :defined
+  config.order = :defined
 end
 
-require 'dotenv'
-require 'capybara'
-require 'selenium-webdriver'
-require 'awesome_print'
-require 'uri'
-
-
 include Capybara::DSL
-#include Capybara::RSpecMatchers
 
 Dotenv.load
 
-Capybara.default_driver = :selenium
+Capybara.register_driver :selenium_en do |app|
+  profile = Selenium::WebDriver::Firefox::Profile.new app
+  profile["intl.accept_languages"] = "en"
+  profile["webdriver.load.strategy"] = "unstable"
+  args = []
+  Capybara::Selenium::Driver.new app, browser: :firefox, profile: profile
+end
+
+$driver = :selenium_en
+#$driver = :webkit
+#$driver = :poltergeist
+
+Capybara.default_driver = $driver
 Capybara.run_server = false
-Capybara.page.driver.browser.manage.window.maximize #maximize for increase visibles elements (particulary for nav in menu)
-Capybara.ignore_hidden_elements = false
 Capybara.app_host = ENV['TEST_SERVER']
+Capybara.default_max_wait_time = 15
 
 def session
-  $session |= Capybara::Session.new :selenium
+  $session |= Capybara::Session.new $driver
 end
+
+if $driver == :webkit
+  page.driver.header 'Accept-Language', 'en'
+end
+
+if $driver == :poltergeist
+  page.driver.add_header('Accept-Language', 'en', permanent: true)
+end
+
+# If Selenium
+#page.driver.browser.manage.window.maximize
