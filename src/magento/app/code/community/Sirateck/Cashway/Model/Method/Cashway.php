@@ -186,6 +186,17 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
         $params['order']['at'] = $orderDate->toString("c");
         $params['order']['currency'] = $order->getBaseCurrencyCode();
         $params['order']['total'] = $order->getBaseGrandTotal();
+        $params['order']['items_count'] = $order->getItemsCollection()->count();
+
+        $details = array();
+        foreach ($order->getItemsCollection() as $item) {
+            $details[] = array(
+                'description' => $item->getName(),
+                'quantity' => $item->getQtyOrdered(),
+                'price' => $item->getPrice()
+            );
+        }
+        $params['order']['details'] = $details;
 
         $this->_debug($params);
 
