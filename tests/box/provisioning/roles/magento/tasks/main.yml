@@ -1,13 +1,18 @@
-- name: Download Magento
-  get_url: >
-    url='https://www.prestashop.com/ajax/controller.php?method=download&type=releases&file=prestashop_1.6.1.1.zip&language=fr'
-    dest=/var/www/html/prestashop-latest.zip
 
-#- name: Copy sources
-#  copy: src=magento-1.9.2.1-2015-08-03-06-33-36.zip dest=/var/www/html/magento-latest.zip mode=0644
+---
+
+- name: Drop existing Magento setup if any
+  file: path=/var/www/html/magento state=absent
+
+- name: Check if archive exists
+  stat: path=/var/www/html/magento-latest.zip
+  register: sym
+
+- name: Get Magento from local copy (expects a working copy in /vagrant_data)
+  command: cp /vagrant_data/magento-1.9.2.3-2016-01-20-02-52-21.zip /var/www/html/magento-latest.zip
+  when: sym.stat.islnk is not defined
 
 - name: Unpack files
-  unarchive: src={{ item }} dest=/var/www/html setype=zip copy=no
-  with_items:
-    - /var/www/html/magento-latest.zip
-    - /var/www/html/prestashop-latest.zip
+  unarchive: src=/var/www/html/magento-latest.zip dest=/var/www/html setype=zip copy=no
+
+# For 2.x, see http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-subcommands.html
