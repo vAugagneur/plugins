@@ -4,9 +4,9 @@
   roles:
     - common
     - { role: db, name: prestashop }
-    - { role: db, name: wordpress }
-    - { role: db, name: magento }
-    #- wordpress
-    #- magento
     - prestashop
+    - { role: db, name: magento }
+    - magento
+    #- { role: db, name: wordpress }
+    #- wordpress
     - webserver
