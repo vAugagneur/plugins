@@ -30,4 +30,20 @@ class UtilitiesTest extends PHPUnit_Framework_TestCase
         $output = ob_get_clean();
         $this->assertStringMatchesFormat('[%s] ERROR: Coucou', $output);
     }
+
+    /**
+     * @dataProvider datesProvider
+    */
+    public function testGetLocalizedDateInfo($date, $expected)
+    {
+        $this->assertStringMatchesFormat($expected, \CashWay\getLocalizedDateInfo($date, 'fr'));
+    }
+
+    public function datesProvider()
+    {
+        return [
+            ['2015-01-01T01:01:01Z', 'jeudi 1er janvier à 1 heures'],
+            ['2016-03-01T15:09:01Z', 'mardi 1er mars à 15 heures']
+        ];
+    }
 }

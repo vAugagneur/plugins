@@ -60,6 +60,61 @@ function checkDependencies()
 }
 
 /**
+ * Returns a localized date string, not depending on server locale configuration
+ * (too many strange cases encountered)
+ *
+ * @param string $date ISO8601 formatted date
+ * @param string $locale locale we want; for now, defaults to first defined locale
+ *
+ * @return string
+*/
+function getLocalizedDateInfo($date = null, $locale = 'fr')
+{
+    $days = array(
+        'fr' => array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi')
+    );
+
+    $months = array(
+        'fr' => array(
+            '-',
+            'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+            'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+        )
+    );
+
+    if (is_null($date)) {
+        return $date;
+    }
+
+    if (!array_key_exists($locale, $days)) {
+        $locale = array_keys($days)[0];
+    }
+
+    $date = new \DateTime($date);
+
+    $lmts = array(
+        'wday' => $days[$locale][$date->format('w')],
+        'mday' => $date->format('j'),
+        'month' => $months[$locale][$date->format('n')],
+        'year' => $date->format('Y'),
+        'hour' => $date->format('G'),
+        'minutes' => $date->format('m')
+    );
+
+    if ($locale == 'fr' && $lmts['mday'] == '1') {
+        $lmts['mday'] = '1er';
+    }
+
+    return sprintf(
+        '%s %s %s à %d heures',
+        $lmts['wday'],
+        $lmts['mday'],
+        $lmts['month'],
+        $lmts['hour']
+    );
+}
+
+/**
 */
 function getRandomString($length = 24)
 {
