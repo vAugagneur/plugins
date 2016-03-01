@@ -36,8 +36,7 @@
       rendez-vous dans un des points de paiement
       indiqués sur <a href="#cashway-map-l">notre carte</a>, muni du code suivant&nbsp;:
       <code id="cashway-barcode-label">{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
-      (ce code n'est valide que jusqu'au {$expires|date_format:"%A %e %B"|escape:'htmlall':'UTF-8'|strtolower}
-      à {$expires|date_format:"%H"|escape:'htmlall':'UTF-8'}h).
+      (ce code n'est valide que jusqu'au {$expires_fr|escape:'htmlall':'UTF-8'}).
     </p>
     </p>
     {if $kyc_conditions.may_pay_this eq 'req_kyc'}
