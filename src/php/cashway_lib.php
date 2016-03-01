@@ -212,7 +212,7 @@ class API
         return hash_hmac($signature[0], $data, $secret, false) === $signature[1];
     }
 
-    public static function signData($data, $algo = 'sha256', $secret)
+    public static function signData($data, $algo = 'sha256', $secret = null)
     {
         return hash_hmac($algo, $data, $secret, false);
     }
@@ -542,7 +542,7 @@ class API
             );
         }
 
-        switch($verb) {
+        switch ($verb) {
             case 'GET':
                 $headers  = array('Accept: application/json');
                 $query    = http_build_query($query);

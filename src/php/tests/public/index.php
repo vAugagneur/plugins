@@ -3,9 +3,9 @@
 
 $ret = json_encode(array(
         'headers' => apache_request_headers(),
-        'method' => $_SERVER['REQUEST_METHOD'],
+        'method'  => $_SERVER['REQUEST_METHOD'],
         'request' => $_SERVER['REQUEST_URI'],
-        'body' => file_get_contents('php://input')
+        'body'    => file_get_contents('php://input')
     ),
     JSON_PRETTY_PRINT
 );

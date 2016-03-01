@@ -30,7 +30,7 @@ function response($status, $message)
         'message' => $message
         )
     );
-    die
+    die;
 }
 
 // This takes care of authenticating the message against SHARED_SECRET
