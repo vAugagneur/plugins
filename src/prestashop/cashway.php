@@ -637,6 +637,8 @@ class CashWay extends PaymentModule
         );
         $location['search'] = implode(' ', $location);
 
+        $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
+
         $this->smarty->assign(array(
             'total_to_pay' => Tools::displayPrice(
                 $params['total_to_pay'],
@@ -647,7 +649,8 @@ class CashWay extends PaymentModule
                 '+ %s €',
                 number_format(\CashWay\Fee::getCartFee($params['total_to_pay']), 0, ',', '&nbsp;')
             ),
-            'expires' => array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null,
+            'expires' => $expires,
+            'expires_fr' => \CashWay\getLocalizedDateInfo($expires, 'fr'),
             'kyc_conditions' => array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null,
             'location' => $location,
             'cashway_api_base_url' => \CashWay\API_URL,
