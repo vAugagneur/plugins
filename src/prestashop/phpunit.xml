@@ -26,4 +26,12 @@
     <log type="coverage-html" target="coverage"/>
     <log type="tap" target="php://stdout"/>
   </logging>
+  <filter>
+    <whitelist processUncoveredFilesFromWhitelist="false">
+      <directory suffix=".php">.</directory>
+      <exclude>
+        <directory>tests/public</directory>
+      </exclude>
+    </whitelist>
+  </filter>
 </phpunit>
