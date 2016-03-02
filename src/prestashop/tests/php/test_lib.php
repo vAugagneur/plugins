@@ -124,6 +124,11 @@ class Tools
     {
         return file_get_contents($file);
     }
+
+    public static function jsonEncode($mixed)
+    {
+        return json_encode($mixed);
+    }
 }
 
 class Validate
