@@ -32,13 +32,13 @@ require dirname(__FILE__).'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
+    const VERSION = '1.0.2';
+
     public function __construct()
     {
         $this->name             = 'cashway';
         $this->tab              = 'payments_gateways';
-        $this->version          = '1.0.1';
-
-        define('CW_VERSION', $this->version);
+        $this->version          = '1.0.2';
 
         $this->author           = 'CashWay';
         $this->need_instance    = 1;
@@ -723,7 +723,7 @@ class CashWay extends PaymentModule
     public static function getCashWayAPI()
     {
         $options = array(
-            'USER_AGENT' => 'CashWayModule/'.CW_VERSION.' PrestaShop/'._PS_VERSION_,
+            'USER_AGENT' => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_,
             'USE_STAGING' => Configuration::get('CASHWAY_USE_STAGING'),
         );
 
