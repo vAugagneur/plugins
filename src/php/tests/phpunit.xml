@@ -22,11 +22,11 @@
     <log type="tap" target="php://stdout"/>
   </logging>
   <filter>
-  <whitelist processUncoveredFilesFromWhitelist="false">
-    <directory suffix=".php">../</directory>
-    <exclude>
-      <file>public/index.php</file>
-    </exclude>
-  </whitelist>
-</filter>
+    <whitelist processUncoveredFilesFromWhitelist="false">
+      <directory suffix=".php">../</directory>
+      <exclude>
+        <file>public/index.php</file>
+      </exclude>
+    </whitelist>
+  </filter>
 </phpunit>
