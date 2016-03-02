@@ -127,7 +127,7 @@ class APITest extends PHPUnit_Framework_TestCase
 
     function testUpdateAccount()
     {
-        $sent_data = array('key' => 'value');
+        $sent_data = ['key' => 'value'];
 
         $api = new \CashWay\API(get_conf());
         $res = $api->updateAccount($sent_data);
@@ -137,13 +137,13 @@ class APITest extends PHPUnit_Framework_TestCase
     function testOpenTransaction()
     {
         $api = new \CashWay\API(get_conf());
-        $sent_data = array(
+        $sent_data = [
             'agent'    => $api->user_agent,
             'order'    => $api->order,
             'customer' => $api->customer,
             'confirm'  => true,
             'more'     => array()
-        );
+        ];
 
         $res = $api->openTransaction(true);
         $this->assertEquals('POST', $res['method']);
@@ -154,12 +154,12 @@ class APITest extends PHPUnit_Framework_TestCase
     public function testConfirmTransaction()
     {
         $api = new \CashWay\API(get_conf());
-        $sent_data = array(
+        $sent_data = [
             'agent'    => $api->user_agent,
             'order_id'   => 'ord-id',
             'email'      => null,
             'phone'      => null
-        );
+        ];
 
         $res = $api->confirmTransaction('tx-id', 'ord-id', null, null);
         $this->assertEquals('POST', $res['method']);
@@ -173,47 +173,46 @@ class APITest extends PHPUnit_Framework_TestCase
         $res = $api->reportFailedPayment('ord-id', 10.01, 'cust-id', 'cust-email', 'pprov', 'reasons');
         $this->assertEquals('POST', $res['method']);
         $this->assertEquals('/1/shops/me/events', $res['request']);
-        $this->assertJsonStringEqualsJsonString(json_encode(array(
-                'event' => 'payment_failed',
-                'provider' => 'pprov',
-                'reason' => 'reasons',
-                'customer' => array('id' => 'cust-id', 'email' => 'cust-email'),
-                'order' => array('id' => 'ord-id', 'total' => 10.01),
+        $this->assertJsonStringEqualsJsonString(json_encode([
+                'event'      => 'payment_failed',
+                'provider'   => 'pprov',
+                'reason'     => 'reasons',
+                'customer'   => ['id' => 'cust-id', 'email' => 'cust-email'],
+                'order'      => ['id' => 'ord-id', 'total' => 10.01],
                 'created_at' => date('c')
-            )),
+            ]),
             $res['body']);
     }
 
     public function testCheckTransactions()
     {
         $api = new \CashWay\API(get_conf());
-        $res = $api->checkTransactionsForOrders(array());
+        $res = $api->checkTransactionsForOrders([]);
         $this->assertEquals('GET', $res['method']);
         $this->assertEquals('/1/shops/me/transactions?', $res['request']);
-        $this->assertJsonStringEqualsJsonString(json_encode(null),
-            $res['body']);
+        $this->assertEquals('', $res['body']);
     }
 
     public function urlConfigProvider()
     {
-        return array(
-            array(
-                'conf' => array(),
+        return [
+            [
+                'conf' => [],
                 'url'  => 'https://api.cashway.fr/1'
-            ),
-            array(
-                'conf' => array('USE_STAGING' => 'oui'),
+            ],
+            [
+                'conf' => ['USE_STAGING' => 'oui'],
                 'url'  => 'https://api-staging.cashway.fr/1'
-            ),
-            array(
-                'conf' => array('API_URL' => 'http://example.org'),
+            ],
+            [
+                'conf' => ['API_URL' => 'http://example.org'],
                 'url'  => 'http://example.org/1'
-            ),
-            array(
-                'conf' => array('USE_STAGING' => 'oui', 'API_URL' => 'http://example.org'),
+            ],
+            [
+                'conf' => ['USE_STAGING' => 'oui', 'API_URL' => 'http://example.org'],
                 'url'  => 'http://example.org/1'
-            )
-        );
+            ]
+        ];
     }
 
     public function signaturesProvider()
@@ -241,7 +240,7 @@ R;
 
         function extract_vars($output)
         {
-            $vars = array();
+            $vars = [];
 
             foreach ($output as $line) {
                 $line = explode('=', $line);
@@ -253,11 +252,11 @@ R;
             return $vars;
         }
 
-        $test_values = array(
-            array('body1', 'secret1', 'sha256'),
-            array(json_encode(array('key' => 'value')), 'howdy!', 'sha256'),
-            array(bin2hex(openssl_random_pseudo_bytes(128)), bin2hex(openssl_random_pseudo_bytes(32)), 'sha256'),
-        );
+        $test_values = [
+            ['body1', 'secret1', 'sha256'],
+            [json_encode(['key' => 'value']), 'howdy!', 'sha256'],
+            [bin2hex(openssl_random_pseudo_bytes(128)), bin2hex(openssl_random_pseudo_bytes(32)), 'sha256'],
+        ];
 
         foreach ($test_values as $k => $run)
         {
