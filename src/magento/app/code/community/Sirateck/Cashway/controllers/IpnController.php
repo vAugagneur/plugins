@@ -64,6 +64,7 @@ class Sirateck_Cashway_IpnController extends Mage_Core_Controller_Front_Action
     {
         if ($this->getData()) {//Check if datas are presents
         //We load order to get the storeId of this order and get the good shared key
+            // FIXME: signature must be checked independently of payload contents (here order id)
             /* @var $order Mage_Sales_Model_Order */
             $order = Mage::getModel('sales/order')->loadByIncrementId($this->getData()->order_id);
 
@@ -151,6 +152,7 @@ class Sirateck_Cashway_IpnController extends Mage_Core_Controller_Front_Action
 
                 break;
             case "transaction_paid":
+                    // FIXME: if already paid, should reply with a status code and not update database.
                     //We change state of the order to processing
                     $this->getOrder()->setState(
                         Mage_Sales_Model_Order::STATE_PROCESSING,
