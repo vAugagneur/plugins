@@ -1,11 +1,11 @@
 <?php
 
-return array(
+return [
   'extension_name'         => 'CashWay',
-  'summary'                => 'E-payment cash solution',
+  'summary'                => 'Paiement de commandes en espèces',
   'description'            => 'Payment method with possibility to buy with cash money.',
-  'notes'                  => 'Typo fixes, properly aborts ajax requests.',
-  'extension_version'      => '0.1.0',
+  'notes'                  => '',
+  'extension_version'      => null,
   'skip_version_compare'   => false,
   'auto_detect_version'    => true,
 
@@ -24,5 +24,5 @@ return array(
   'php_min'                => '5.2.0',
   'php_max'                => '6.0.0',
 
-  'extensions'             => array()
-);
+  'extensions'             => []
+];
