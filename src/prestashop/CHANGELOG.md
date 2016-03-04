@@ -1,5 +1,12 @@
 # Changelog for CashWay PrestaShop module
 
+## 2016-03-04 - 1.1.0
+
+ * fix localized date display
+ * fix tests
+ * validated package for addons
+ * remove registration form from admin
+
 ## 2016-02-17 - 1.0.1
 
  * official release version for addons
