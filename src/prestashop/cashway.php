@@ -420,7 +420,7 @@ class CashWay extends PaymentModule
 
         $this->context->smarty->assign(array(
             'template_type'        => $template,
-            'cart_fee'             => $this->formatFee(\CashWay\Fee::getCartFee($params['cart']->getOrderTotal())),
+            'cart_fee'             => self::formatFee(\CashWay\Fee::getCartFee($params['cart']->getOrderTotal())),
             'this_path'            => $this->_path,
             'this_path_cashway'    => $this->_path,
             'this_path_ssl'        => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
@@ -515,7 +515,7 @@ class CashWay extends PaymentModule
                 $params['currencyObj'],
                 false
             ),
-            'cart_fee'       => '+ '.$this->formatFee(\CashWay\Fee::getCartFee($params['total_to_pay'])),
+            'cart_fee'       => '+ '.self::formatFee(\CashWay\Fee::getCartFee($params['total_to_pay'])),
             'expires'        => $expires,
             'expires_fr'     => \CashWay\getLocalizedDateInfo($expires, 'fr'),
             'kyc_conditions' => array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null,
@@ -529,9 +529,11 @@ class CashWay extends PaymentModule
         );
     }
 
-    private function formatFee($fee_value)
+    /**
+    */
+    public static function formatFee($fee_value)
     {
-        return sprintf('%s €', number_format($mixed, 0, ',', '&nbsp;'));
+        return sprintf('%s&nbsp;&euro;', number_format($fee_value, 0, ',', '&nbsp;'));
     }
 
     /**
