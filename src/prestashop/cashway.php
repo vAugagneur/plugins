@@ -419,19 +419,11 @@ class CashWay extends PaymentModule
         }
 
         $this->context->smarty->assign(array(
-            'template_type' => $template,
-            'cart_fee' => sprintf(
-                '%d €',
-                number_format(
-                    \CashWay\Fee::getCartFee($params['cart']->getOrderTotal()),
-                    0,
-                    ',',
-                    '&nbsp;'
-                )
-            ),
-            'this_path' => $this->_path,
-            'this_path_cashway' => $this->_path,
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
+            'template_type'        => $template,
+            'cart_fee'             => $this->formatFee(\CashWay\Fee::getCartFee($params['cart']->getOrderTotal())),
+            'this_path'            => $this->_path,
+            'this_path_cashway'    => $this->_path,
+            'this_path_ssl'        => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
             'cashway_api_base_url' => self::getCashWayAPI()->api_base_url
         ));
         $this->context->controller->addCSS($this->_path.'views/css/cashway.css', 'all');
@@ -459,16 +451,14 @@ class CashWay extends PaymentModule
 
         $status = 'ok';
         $barcode = Tools::getValue('cw_barcode');
+        $reference = isset($params['objOrder']->reference) ? $params['objOrder']->reference : '';
         $cw_res = array();
+
         // maybe -failed- or something valid
         if ($barcode != '-failed-') {
+
             $cashway = self::getCashWayAPI();
-            $cw_res = $cashway->confirmTransaction(
-                Tools::getValue('cw_barcode'),
-                $params['objOrder']->reference,
-                null,
-                null
-            );
+            $cw_res = $cashway->confirmTransaction($barcode, $reference, null, null);
 
             // TODO: log or report this.
             if (array_key_exists('errors', $cw_res)) {
@@ -478,7 +468,34 @@ class CashWay extends PaymentModule
             $status = 'failed';
         }
 
-        $address  = new Address($this->context->cart->id_address_delivery);
+        $this->smarty->assign($this->paymentReturnVars(
+            $barcode,
+            $reference,
+            $status,
+            $cw_res,
+            $params,
+            new Address($this->context->cart->id_address_delivery)
+        ));
+        // NOTE: do not use addJS, we need careful placement/loading of our lib.
+
+        return $this->display(__FILE__, 'payment_return.tpl');
+    }
+
+    /**
+     * @param  string   $barcode
+     * @param  string   $reference
+     * @param  string   $status
+     * @param  string   $expires
+     * @param  string   $conditions
+     * @param  array    $params
+     * @param  Address  $address
+     *
+     * @return array
+    */
+    private function paymentReturnVars($barcode, $reference, $status, $cw_res, $params, $address)
+    {
+        $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
+
         $location = array(
             'address'  => $address->address1,
             'postcode' => $address->postcode,
@@ -487,42 +504,34 @@ class CashWay extends PaymentModule
         );
         $location['search'] = implode(' ', $location);
 
-        $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
-
-        $this->smarty->assign(array(
+        return array(
+            'env'       => \CashWay\ENV,
+            'barcode'   => $barcode,
+            'reference' => $reference,
+            'id_order'  => $params['objOrder']->id,
+            'status'    => $status,
             'total_to_pay' => Tools::displayPrice(
                 $params['total_to_pay'],
                 $params['currencyObj'],
                 false
             ),
-            'cart_fee' => sprintf(
-                '+ %s €',
-                number_format(\CashWay\Fee::getCartFee($params['total_to_pay']), 0, ',', '&nbsp;')
-            ),
-            'expires' => $expires,
-            'expires_fr' => \CashWay\getLocalizedDateInfo($expires, 'fr'),
+            'cart_fee'       => '+ '.$this->formatFee(\CashWay\Fee::getCartFee($params['total_to_pay'])),
+            'expires'        => $expires,
+            'expires_fr'     => \CashWay\getLocalizedDateInfo($expires, 'fr'),
             'kyc_conditions' => array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null,
-            'location' => $location,
+            'location'       => $location,
             'cashway_api_base_url' => \CashWay\API_URL,
-            'kyc_upload_url' => \CashWay\API_URL.\CashWay\KYC_PATH,
-            'kyc_upload_mail' => \CashWay\KYC_MAIL,
-            'barcode' => $barcode,
-            'status' => $status,
-            'env' => \CashWay\ENV,
-            'id_order' => $params['objOrder']->id,
-            'this_path' => $this->getPathUri(),
+            'kyc_upload_url'    => \CashWay\API_URL.\CashWay\KYC_PATH,
+            'kyc_upload_mail'   => \CashWay\KYC_MAIL,
+            'this_path'         => $this->getPathUri(),
             'this_path_cashway' => $this->getPathUri(),
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
-        ));
+            'this_path_ssl'     => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
+        );
+    }
 
-        if (isset($params['objOrder']->reference) && !empty($params['objOrder']->reference)) {
-            $this->smarty->assign('reference', $params['objOrder']->reference);
-        }
-
-        // Nice but does not defer/async, so we inject this in the template for now
-        //$this->context->controller->addJS('https://maps.cashway.fr/js/cwm.min.js');
-
-        return $this->display(__FILE__, 'payment_return.tpl');
+    private function formatFee($fee_value)
+    {
+        return sprintf('%s €', number_format($mixed, 0, ',', '&nbsp;'));
     }
 
     /**
