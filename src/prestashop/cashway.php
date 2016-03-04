@@ -206,60 +206,7 @@ class CashWay extends PaymentModule
             Configuration::updateValue('CASHWAY_USE_STAGING', Tools::getValue('CASHWAY_USE_STAGING'));
         }
 
-        if (Tools::isSubmit('submitRegister')) {
-            $params = array();
-            $params['name'] = Tools::getValue('name');
-            $params['email'] = Tools::getValue('email');
-            $params['password'] = Tools::getValue('password');
-            $params['phone'] = Tools::getValue('phone');
-            $params['country'] = Tools::getValue('country');
-            $params['company'] = Tools::getValue('company');
-            $params['url'] = $this->context->shop->getBaseURL();
-
-            $varsValid = '';
-            $varsValid .= $this->validateVarMsg($params['name'], 'isGenericName', 'Missing name.');
-            $varsValid .= $this->validateVarMsg($params['password'], 'isGenericName', 'Missing password.');
-            $varsValid .= $this->validateVarMsg($params['email'], 'isEmail', 'Missing email.');
-            $varsValid .= $this->validateVarMsg($params['phone'], 'isPhoneNumber', 'Missing phone.');
-            $varsValid .= $this->validateVarMsg($params['country'], 'isLangIsoCode', 'Missing country.');
-            $varsValid .= $this->validateVarMsg($params['company'], 'isGenericName', 'Missing company.');
-
-            if (Tools::strlen($varsValid) > 0) {
-                $output .= $varsValid;
-            } else {
-                $cashway = self::getCashWayAPI();
-
-                $res = $cashway->registerAccount($params);
-
-                if (isset($res['errors'])) {
-                    foreach ($res['errors'] as $key => $value) {
-                        $output .= $this->displayError($value['code'].' => '.$value['message']);
-                    }
-                } elseif ($res['status'] == 'newbie') {
-                    Configuration::updateValue('CASHWAY_API_KEY', $res['api_key']);
-                    Configuration::updateValue('CASHWAY_API_SECRET', $res['api_secret']);
-                    $this->updateNotificationParameters();
-
-                    $output .= $this->displayConfirmation($this->l('Register completed'));
-                }
-            }
-        }
-
         return $output.$this->renderForm();
-    }
-
-    /**
-     * Shorter validation function, see getContent() above.
-     *
-     * @return string
-    */
-    private function validateVar($var = null, $method = null, $message = '')
-    {
-        if (!$var || empty($var) || !call_user_func(['Validate', $method], $var)) {
-            return $this->displayError($this->l($message));
-        }
-
-        return '';
     }
 
     public function renderForm()
@@ -268,77 +215,6 @@ class CashWay extends PaymentModule
 
         $cashway_register_url = 'https://www.cashway.fr';
         $is_configured = self::isConfiguredService();
-
-        $fields_form_registration = array(
-        array(
-            'form' => array(
-                'legend' => array(
-                    'title' => $this->l('Register Your CashWay Shop Account'),
-                    'icon' => 'icon-user',
-                ),
-                'input' => array(
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Shop Name'),
-                        'name' => 'name',
-                        'class' =>  'fixed-width-xxl',
-                        'required' => true,
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Email'),
-                        'name' => 'email',
-                        'class' =>  'fixed-width-xxl',
-                        'size' => 64,
-                        'required' => true,
-                    ),
-                    array(
-                        'type' => 'password',
-                        'label' => $this->l('Password'),
-                        'name' => 'password',
-                        'required' => true,
-                    ),
-                    array(
-                        'type' => 'select',
-                        'label' => $this->l('Country'),
-                        'name' => 'country',
-                        'desc' => $this->l('CashWay is only available to shops operating in France for the time being.')
-                            .'<br>'
-                            .sprintf(
-                                $this->l('Feel free to %scontact us%s if you would like
-                                         to see support in your country!'),
-                                '<a href="https://www.cashway.fr/contact/">',
-                                '</a>'
-                            ),
-                        'required' => true,
-                        'options' => array(
-                            'query' => Country::getCountries($this->context->language->id),
-                            'name' => 'name',
-                            'id' => 'iso_code'
-                        )
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Company'),
-                        'name' => 'company',
-                        'class' =>  'fixed-width-xxl',
-                        'required' => true,
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Phone'),
-                        'name' => 'phone',
-                        'class' =>  'fixed-width-xxl',
-                        'required' => false,
-                    )
-                ),
-                'submit' => array(
-                    'title' => $this->l('Send'),
-                    'icon' => 'icon-share-square-o',
-                    'name' => 'submitRegister',
-                )
-            )
-        ));
 
         $fields_form_api = array(
         array(
@@ -498,14 +374,8 @@ class CashWay extends PaymentModule
 
         $helper->fields_value = $this->getFormFieldsValue();
 
-        if ($is_configured) {
-            $output = $helper->generateForm($fields_form_api);
-            $output .= $helper->generateForm($fields_form_settings);
-        } else {
-            $output = $helper->generateForm($fields_form_api);
-            $output .= $helper->generateForm($fields_form_registration);
-            $output .= $helper->generateForm($fields_form_settings);
-        }
+        $output = $helper->generateForm($fields_form_api);
+        $output .= $helper->generateForm($fields_form_settings);
 
         return $output;
     }
