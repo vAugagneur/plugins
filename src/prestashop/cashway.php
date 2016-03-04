@@ -32,13 +32,13 @@ require dirname(__FILE__).'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '1.0.2';
+    const VERSION = '1.1.0';
 
     public function __construct()
     {
         $this->name             = 'cashway';
         $this->tab              = 'payments_gateways';
-        $this->version          = '1.0.2';
+        $this->version          = '1.1.0';
 
         $this->author           = 'CashWay';
         $this->need_instance    = 1;
@@ -128,16 +128,16 @@ class CashWay extends PaymentModule
         }
 
         $order_state->module_name = 'cashway';
-        $order_state->send_email = false;
-        $order_state->color = 'RoyalBlue';
-        $order_state->invoice = false;
+        $order_state->send_email  = false;
+        $order_state->color       = 'RoyalBlue';
+        $order_state->invoice     = false;
         $order_state->unremovable = false;
-        $order_state->hidden = false;
-        $order_state->logable = false;
-        $order_state->delivery = false;
-        $order_state->shipped = false;
-        $order_state->paid = false;
-        $order_state->deleted = false;
+        $order_state->hidden      = false;
+        $order_state->logable     = false;
+        $order_state->delivery    = false;
+        $order_state->shipped     = false;
+        $order_state->paid        = false;
+        $order_state->deleted     = false;
 
         if ($order_state->add()) {
             Configuration::updateValue('PS_OS_CASHWAY', $order_state->id);
@@ -206,60 +206,7 @@ class CashWay extends PaymentModule
             Configuration::updateValue('CASHWAY_USE_STAGING', Tools::getValue('CASHWAY_USE_STAGING'));
         }
 
-        if (Tools::isSubmit('submitRegister')) {
-            $params = array();
-            $params['name'] = Tools::getValue('name');
-            $params['email'] = Tools::getValue('email');
-            $params['password'] = Tools::getValue('password');
-            $params['phone'] = Tools::getValue('phone');
-            $params['country'] = Tools::getValue('country');
-            $params['company'] = Tools::getValue('company');
-            $params['url'] = $this->context->shop->getBaseURL();
-
-            $varsValid = '';
-            $varsValid .= $this->validateVarMsg($params['name'], 'isGenericName', 'Missing name.');
-            $varsValid .= $this->validateVarMsg($params['password'], 'isGenericName', 'Missing password.');
-            $varsValid .= $this->validateVarMsg($params['email'], 'isEmail', 'Missing email.');
-            $varsValid .= $this->validateVarMsg($params['phone'], 'isPhoneNumber', 'Missing phone.');
-            $varsValid .= $this->validateVarMsg($params['country'], 'isLangIsoCode', 'Missing country.');
-            $varsValid .= $this->validateVarMsg($params['company'], 'isGenericName', 'Missing company.');
-
-            if (Tools::strlen($varsValid) > 0) {
-                $output .= $varsValid;
-            } else {
-                $cashway = self::getCashWayAPI();
-
-                $res = $cashway->registerAccount($params);
-
-                if (isset($res['errors'])) {
-                    foreach ($res['errors'] as $key => $value) {
-                        $output .= $this->displayError($value['code'].' => '.$value['message']);
-                    }
-                } elseif ($res['status'] == 'newbie') {
-                    Configuration::updateValue('CASHWAY_API_KEY', $res['api_key']);
-                    Configuration::updateValue('CASHWAY_API_SECRET', $res['api_secret']);
-                    $this->updateNotificationParameters();
-
-                    $output .= $this->displayConfirmation($this->l('Register completed'));
-                }
-            }
-        }
-
         return $output.$this->renderForm();
-    }
-
-    /**
-     * Shorter validation function, see getContent() above.
-     *
-     * @return string
-    */
-    private function validateVar($var = null, $method = null, $message = '')
-    {
-        if (!$var || empty($var) || !call_user_func(['Validate', $method], $var)) {
-            return $this->displayError($this->l($message));
-        }
-
-        return '';
     }
 
     public function renderForm()
@@ -268,77 +215,6 @@ class CashWay extends PaymentModule
 
         $cashway_register_url = 'https://www.cashway.fr';
         $is_configured = self::isConfiguredService();
-
-        $fields_form_registration = array(
-        array(
-            'form' => array(
-                'legend' => array(
-                    'title' => $this->l('Register Your CashWay Shop Account'),
-                    'icon' => 'icon-user',
-                ),
-                'input' => array(
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Shop Name'),
-                        'name' => 'name',
-                        'class' =>  'fixed-width-xxl',
-                        'required' => true,
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Email'),
-                        'name' => 'email',
-                        'class' =>  'fixed-width-xxl',
-                        'size' => 64,
-                        'required' => true,
-                    ),
-                    array(
-                        'type' => 'password',
-                        'label' => $this->l('Password'),
-                        'name' => 'password',
-                        'required' => true,
-                    ),
-                    array(
-                        'type' => 'select',
-                        'label' => $this->l('Country'),
-                        'name' => 'country',
-                        'desc' => $this->l('CashWay is only available to shops operating in France for the time being.')
-                            .'<br>'
-                            .sprintf(
-                                $this->l('Feel free to %scontact us%s if you would like
-                                         to see support in your country!'),
-                                '<a href="https://www.cashway.fr/contact/">',
-                                '</a>'
-                            ),
-                        'required' => true,
-                        'options' => array(
-                            'query' => Country::getCountries($this->context->language->id),
-                            'name' => 'name',
-                            'id' => 'iso_code'
-                        )
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Company'),
-                        'name' => 'company',
-                        'class' =>  'fixed-width-xxl',
-                        'required' => true,
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Phone'),
-                        'name' => 'phone',
-                        'class' =>  'fixed-width-xxl',
-                        'required' => false,
-                    )
-                ),
-                'submit' => array(
-                    'title' => $this->l('Send'),
-                    'icon' => 'icon-share-square-o',
-                    'name' => 'submitRegister',
-                )
-            )
-        ));
 
         $fields_form_api = array(
         array(
@@ -498,54 +374,28 @@ class CashWay extends PaymentModule
 
         $helper->fields_value = $this->getFormFieldsValue();
 
-        if ($is_configured) {
-            $output = $helper->generateForm($fields_form_api);
-            $output .= $helper->generateForm($fields_form_settings);
-        } else {
-            $output = $helper->generateForm($fields_form_api);
-            $output .= $helper->generateForm($fields_form_registration);
-            $output .= $helper->generateForm($fields_form_settings);
-        }
+        $output = $helper->generateForm($fields_form_api);
+        $output .= $helper->generateForm($fields_form_settings);
 
         return $output;
     }
 
     protected function getFormFieldsValue()
     {
-        $name = Configuration::get('PS_SHOP_NAME'); //employee name $this->context->employee->firstname;
-        $email = Configuration::get('PS_SHOP_EMAIL');
-        $phone = Configuration::get('PS_SHOP_PHONE');
-        $country = Country::getNameById($this->context->language->id, (int)Configuration::get('PS_SHOP_COUNTRY_ID'));
-        $company = Configuration::get('PS_SHOP_NAME');
+        $ret = array();
 
-        return array(
-            'CASHWAY_API_KEY'          => Tools::getValue(
-                'CASHWAY_API_KEY',
-                Configuration::get('CASHWAY_API_KEY')
-            ),
-            'CASHWAY_API_SECRET'       => Tools::getValue(
-                'CASHWAY_API_SECRET',
-                Configuration::get('CASHWAY_API_SECRET')
-            ),
-            'CASHWAY_PAYMENT_TEMPLATE' => Tools::getValue(
-                'CASHWAY_PAYMENT_TEMPLATE',
-                Configuration::get('CASHWAY_PAYMENT_TEMPLATE')
-            ),
-            'CASHWAY_SEND_EMAIL'       => Tools::getValue(
-                'CASHWAY_SEND_EMAIL',
-                Configuration::get('CASHWAY_SEND_EMAIL')
-            ),
-            'CASHWAY_OS_PAYMENT'       => (int)Tools::getValue(
-                'CASHWAY_OS_PAYMENT',
-                Configuration::get('CASHWAY_OS_PAYMENT')
-            ),
-
-            'name'    => Tools::getValue('name', $name),
-            'email'   => Tools::getValue('email', $email),
-            'phone'   => Tools::getValue('phone', $phone),
-            'country' => Tools::getValue('country', $country),
-            'company' => Tools::getValue('company', $company)
+        $configKeys = array(
+            'CASHWAY_API_KEY',
+            'CASHWAY_API_SECRET',
+            'CASHWAY_PAYMENT_TEMPLATE',
+            'CASHWAY_SEND_EMAIL',
+            'CASHWAY_OS_PAYMENT'
         );
+        foreach ($configKeys as $key) {
+            $ret[$key] = Tools::getValue($key, Configuration::get($key));
+        }
+
+        return $ret;
     }
 
     public function hookDisplayPayment($params)
@@ -569,19 +419,11 @@ class CashWay extends PaymentModule
         }
 
         $this->context->smarty->assign(array(
-            'template_type' => $template,
-            'cart_fee' => sprintf(
-                '%d €',
-                number_format(
-                    \CashWay\Fee::getCartFee($params['cart']->getOrderTotal()),
-                    0,
-                    ',',
-                    '&nbsp;'
-                )
-            ),
-            'this_path' => $this->_path,
-            'this_path_cashway' => $this->_path,
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
+            'template_type'        => $template,
+            'cart_fee'             => self::formatFee(\CashWay\Fee::getCartFee($params['cart']->getOrderTotal())),
+            'this_path'            => $this->_path,
+            'this_path_cashway'    => $this->_path,
+            'this_path_ssl'        => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
             'cashway_api_base_url' => self::getCashWayAPI()->api_base_url
         ));
         $this->context->controller->addCSS($this->_path.'views/css/cashway.css', 'all');
@@ -609,16 +451,14 @@ class CashWay extends PaymentModule
 
         $status = 'ok';
         $barcode = Tools::getValue('cw_barcode');
+        $reference = isset($params['objOrder']->reference) ? $params['objOrder']->reference : '';
         $cw_res = array();
+
         // maybe -failed- or something valid
         if ($barcode != '-failed-') {
+
             $cashway = self::getCashWayAPI();
-            $cw_res = $cashway->confirmTransaction(
-                Tools::getValue('cw_barcode'),
-                $params['objOrder']->reference,
-                null,
-                null
-            );
+            $cw_res = $cashway->confirmTransaction($barcode, $reference, null, null);
 
             // TODO: log or report this.
             if (array_key_exists('errors', $cw_res)) {
@@ -628,7 +468,34 @@ class CashWay extends PaymentModule
             $status = 'failed';
         }
 
-        $address  = new Address($this->context->cart->id_address_delivery);
+        $this->smarty->assign($this->paymentReturnVars(
+            $barcode,
+            $reference,
+            $status,
+            $cw_res,
+            $params,
+            new Address($this->context->cart->id_address_delivery)
+        ));
+        // NOTE: do not use addJS, we need careful placement/loading of our lib.
+
+        return $this->display(__FILE__, 'payment_return.tpl');
+    }
+
+    /**
+     * @param  string   $barcode
+     * @param  string   $reference
+     * @param  string   $status
+     * @param  string   $expires
+     * @param  string   $conditions
+     * @param  array    $params
+     * @param  Address  $address
+     *
+     * @return array
+    */
+    private function paymentReturnVars($barcode, $reference, $status, $cw_res, $params, $address)
+    {
+        $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
+
         $location = array(
             'address'  => $address->address1,
             'postcode' => $address->postcode,
@@ -637,42 +504,36 @@ class CashWay extends PaymentModule
         );
         $location['search'] = implode(' ', $location);
 
-        $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
-
-        $this->smarty->assign(array(
+        return array(
+            'env'       => \CashWay\ENV,
+            'barcode'   => $barcode,
+            'reference' => $reference,
+            'id_order'  => $params['objOrder']->id,
+            'status'    => $status,
             'total_to_pay' => Tools::displayPrice(
                 $params['total_to_pay'],
                 $params['currencyObj'],
                 false
             ),
-            'cart_fee' => sprintf(
-                '+ %s €',
-                number_format(\CashWay\Fee::getCartFee($params['total_to_pay']), 0, ',', '&nbsp;')
-            ),
-            'expires' => $expires,
-            'expires_fr' => \CashWay\getLocalizedDateInfo($expires, 'fr'),
+            'cart_fee'       => '+ '.self::formatFee(\CashWay\Fee::getCartFee($params['total_to_pay'])),
+            'expires'        => $expires,
+            'expires_fr'     => \CashWay\getLocalizedDateInfo($expires, 'fr'),
             'kyc_conditions' => array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null,
-            'location' => $location,
+            'location'       => $location,
             'cashway_api_base_url' => \CashWay\API_URL,
-            'kyc_upload_url' => \CashWay\API_URL.\CashWay\KYC_PATH,
-            'kyc_upload_mail' => \CashWay\KYC_MAIL,
-            'barcode' => $barcode,
-            'status' => $status,
-            'env' => \CashWay\ENV,
-            'id_order' => $params['objOrder']->id,
-            'this_path' => $this->getPathUri(),
+            'kyc_upload_url'    => \CashWay\API_URL.\CashWay\KYC_PATH,
+            'kyc_upload_mail'   => \CashWay\KYC_MAIL,
+            'this_path'         => $this->getPathUri(),
             'this_path_cashway' => $this->getPathUri(),
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
-        ));
+            'this_path_ssl'     => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
+        );
+    }
 
-        if (isset($params['objOrder']->reference) && !empty($params['objOrder']->reference)) {
-            $this->smarty->assign('reference', $params['objOrder']->reference);
-        }
-
-        // Nice but does not defer/async, so we inject this in the template for now
-        //$this->context->controller->addJS('https://maps.cashway.fr/js/cwm.min.js');
-
-        return $this->display(__FILE__, 'payment_return.tpl');
+    /**
+    */
+    public static function formatFee($fee_value)
+    {
+        return sprintf('%s&nbsp;&euro;', number_format($fee_value, 0, ',', '&nbsp;'));
     }
 
     /**
@@ -723,7 +584,7 @@ class CashWay extends PaymentModule
     public static function getCashWayAPI()
     {
         $options = array(
-            'USER_AGENT' => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_,
+            'USER_AGENT'  => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_,
             'USE_STAGING' => Configuration::get('CASHWAY_USE_STAGING'),
         );
 
@@ -797,10 +658,10 @@ class CashWay extends PaymentModule
     */
     public static function reviewKnownOrders($open_orders, $cw_orders)
     {
-        $cw_refs = array_keys($cw_orders);
+        $cw_refs   = array_keys($cw_orders);
         $open_refs = array_keys($open_orders);
 
-        $common_refs = array_intersect($open_refs, $cw_refs);
+        $common_refs  = array_intersect($open_refs, $cw_refs);
         $missing_refs = array_diff($open_refs, $cw_refs);
 
         if (count($missing_refs) > 0) {
