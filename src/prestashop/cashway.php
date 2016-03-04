@@ -382,40 +382,20 @@ class CashWay extends PaymentModule
 
     protected function getFormFieldsValue()
     {
-        $name = Configuration::get('PS_SHOP_NAME'); //employee name $this->context->employee->firstname;
-        $email = Configuration::get('PS_SHOP_EMAIL');
-        $phone = Configuration::get('PS_SHOP_PHONE');
-        $country = Country::getNameById($this->context->language->id, (int)Configuration::get('PS_SHOP_COUNTRY_ID'));
-        $company = Configuration::get('PS_SHOP_NAME');
+        $ret = array();
 
-        return array(
-            'CASHWAY_API_KEY'          => Tools::getValue(
-                'CASHWAY_API_KEY',
-                Configuration::get('CASHWAY_API_KEY')
-            ),
-            'CASHWAY_API_SECRET'       => Tools::getValue(
-                'CASHWAY_API_SECRET',
-                Configuration::get('CASHWAY_API_SECRET')
-            ),
-            'CASHWAY_PAYMENT_TEMPLATE' => Tools::getValue(
-                'CASHWAY_PAYMENT_TEMPLATE',
-                Configuration::get('CASHWAY_PAYMENT_TEMPLATE')
-            ),
-            'CASHWAY_SEND_EMAIL'       => Tools::getValue(
-                'CASHWAY_SEND_EMAIL',
-                Configuration::get('CASHWAY_SEND_EMAIL')
-            ),
-            'CASHWAY_OS_PAYMENT'       => (int)Tools::getValue(
-                'CASHWAY_OS_PAYMENT',
-                Configuration::get('CASHWAY_OS_PAYMENT')
-            ),
-
-            'name'    => Tools::getValue('name', $name),
-            'email'   => Tools::getValue('email', $email),
-            'phone'   => Tools::getValue('phone', $phone),
-            'country' => Tools::getValue('country', $country),
-            'company' => Tools::getValue('company', $company)
+        $configKeys = array(
+            'CASHWAY_API_KEY',
+            'CASHWAY_API_SECRET',
+            'CASHWAY_PAYMENT_TEMPLATE',
+            'CASHWAY_SEND_EMAIL',
+            'CASHWAY_OS_PAYMENT'
         );
+        foreach ($configKeys as $key) {
+            $ret[$key] = Tools::getValue($key, Configuration::get($key));
+        }
+
+        return $ret;
     }
 
     public function hookDisplayPayment($params)
