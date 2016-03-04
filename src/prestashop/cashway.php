@@ -128,16 +128,16 @@ class CashWay extends PaymentModule
         }
 
         $order_state->module_name = 'cashway';
-        $order_state->send_email = false;
-        $order_state->color = 'RoyalBlue';
-        $order_state->invoice = false;
+        $order_state->send_email  = false;
+        $order_state->color       = 'RoyalBlue';
+        $order_state->invoice     = false;
         $order_state->unremovable = false;
-        $order_state->hidden = false;
-        $order_state->logable = false;
-        $order_state->delivery = false;
-        $order_state->shipped = false;
-        $order_state->paid = false;
-        $order_state->deleted = false;
+        $order_state->hidden      = false;
+        $order_state->logable     = false;
+        $order_state->delivery    = false;
+        $order_state->shipped     = false;
+        $order_state->paid        = false;
+        $order_state->deleted     = false;
 
         if ($order_state->add()) {
             Configuration::updateValue('PS_OS_CASHWAY', $order_state->id);
@@ -573,7 +573,7 @@ class CashWay extends PaymentModule
     public static function getCashWayAPI()
     {
         $options = array(
-            'USER_AGENT' => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_,
+            'USER_AGENT'  => 'CashWayModule/'.self::VERSION.' PrestaShop/'._PS_VERSION_,
             'USE_STAGING' => Configuration::get('CASHWAY_USE_STAGING'),
         );
 
@@ -647,10 +647,10 @@ class CashWay extends PaymentModule
     */
     public static function reviewKnownOrders($open_orders, $cw_orders)
     {
-        $cw_refs = array_keys($cw_orders);
+        $cw_refs   = array_keys($cw_orders);
         $open_refs = array_keys($open_orders);
 
-        $common_refs = array_intersect($open_refs, $cw_refs);
+        $common_refs  = array_intersect($open_refs, $cw_refs);
         $missing_refs = array_diff($open_refs, $cw_refs);
 
         if (count($missing_refs) > 0) {
