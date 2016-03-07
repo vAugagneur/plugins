@@ -115,6 +115,21 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
         return $response;
     }
 
+    public function getModuleAgent()
+    {
+        if (!property_exists($this, $cashway_agent)) {
+            $this->cashway_agent = sprintf(
+                'CashWayModule/%s Magento/%s PHP/%s %s',
+                Mage::getConfig()->getModuleConfig("Sirateck_Cashway")->version,
+                Mage::getVersion(),
+                PHP_VERSION,
+                PHP_OS
+            );
+        }
+
+        return $this->cashway_agent;
+    }
+
     /**
      * Format event payment failed datas before are sended to the API
      * @param Mage_Sales_Model_Order $order
@@ -123,6 +138,7 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
     public function getEventPaymentFailedParams($order)
     {
         $params = array();
+        $params['agent'] = $this->getModuleAgent();
         $params["event"] = "payment_failed";
 
         $orderDate = Mage::app()->getLocale()->storeDate(
@@ -163,11 +179,24 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
         );//$order->getCreatedAtStoreDate();
 
         $params = $this->getCustomerParams($payment);
+        $params['agent'] = $this->getModuleAgent();
+
         $params['order'] =array();
         $params['order']['id'] = $order->getIncrementId();
         $params['order']['at'] = $orderDate->toString("c");
         $params['order']['currency'] = $order->getBaseCurrencyCode();
         $params['order']['total'] = $order->getBaseGrandTotal();
+        $params['order']['items_count'] = $order->getItemsCollection()->count();
+
+        $details = array();
+        foreach ($order->getItemsCollection() as $item) {
+            $details[] = array(
+                'description' => $item->getName(),
+                'quantity' => $item->getQtyOrdered(),
+                'price' => $item->getPrice()
+            );
+        }
+        $params['order']['details'] = $details;
 
         $this->_debug($params);
 
@@ -186,6 +215,8 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
 
         $orderDate = $order->getCreatedAtStoreDate();
         $params = array();
+        $params['agent'] = $this->getModuleAgent();
+
         $params['order_id'] = $order->getIncrementId();
         $params['email'] = $order->getCustomerEmail();
         $params['phone'] = $order->getBillingAddress()->getTelephone();

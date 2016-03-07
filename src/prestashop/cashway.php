@@ -504,12 +504,15 @@ class CashWay extends PaymentModule
         );
         $location['search'] = implode(' ', $location);
 
+        $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
+
         return array(
             'env'       => \CashWay\ENV,
             'barcode'   => $barcode,
             'reference' => $reference,
             'id_order'  => $params['objOrder']->id,
             'status'    => $status,
+
             'total_to_pay' => Tools::displayPrice(
                 $params['total_to_pay'],
                 $params['currencyObj'],

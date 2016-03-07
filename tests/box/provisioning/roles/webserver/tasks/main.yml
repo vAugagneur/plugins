@@ -3,7 +3,7 @@
   sudo: true
   command: chown -R www-data:www-data /var/www/html/
 
-- name: Set htaccess
+- name: Set host config
   sudo: true
   copy: >
     src=000-default.conf
