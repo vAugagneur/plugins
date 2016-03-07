@@ -24,7 +24,7 @@
 
 {if $status == 'ok'}
     <p>
-    {if !isset($reference)}
+    {if !empty($reference)}
         {l s='Please note and keep your order number #%d.' sprintf=$id_order mod='cashway'}
     {else}
         {l s='Please note and keep your order reference %s.' sprintf=$reference mod='cashway'}

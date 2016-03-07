@@ -11,6 +11,26 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
         return 'Basic '.base64_encode($_SERVER['TEST_KEY'].':'.$_SERVER['TEST_SECRET']);
     }
 
+    /**
+     * @dataProvider feesProvider
+    */
+    public function testFormatFee($fee, $expected)
+    {
+        $this->assertEquals($expected, CashWay::formatFee($fee));
+    }
+
+    public function feesProvider()
+    {
+        return [
+            [10.00, '10&nbsp;&euro;'],
+            [10.40, '10&nbsp;&euro;'],
+            [10, '10&nbsp;&euro;'],
+            ['10', '10&nbsp;&euro;'],
+            ['10.60', '11&nbsp;&euro;'],
+            [10.99, '11&nbsp;&euro;'],
+        ];
+    }
+
     public function testHookActionOrderStatusUpdate()
     {
         $cwmod = new CashWay();
