@@ -13,6 +13,9 @@ push-builds:
 list: src/
 	@ls -la src/
 
+install-test-deps:
+	./tests/install-test-deps.sh
+
 test-deps:
 	which git
 	which make
