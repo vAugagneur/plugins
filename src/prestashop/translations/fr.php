@@ -62,6 +62,7 @@ $_MODULE['<{cashway}prestashop>payment_execution_8520b283b0884394b13b80d5689628b
 $_MODULE['<{cashway}prestashop>payment_execution_f1d3b424cd68795ecaa552883759aceb'] = 'Résumé de la commande';
 $_MODULE['<{cashway}prestashop>payment_execution_879f6b8877752685a966564d072f498f'] = 'Votre panier est vide.';
 $_MODULE['<{cashway}prestashop>payment_execution_43ad128d441629bac78dfef028162a04'] = 'Paiement avec';
+$_MODULE['<{cashway}prestashop>payment_execution_3c152a90efa875265b838c944463927c'] = 'Payer en espèces avec';
 $_MODULE['<{cashway}prestashop>payment_execution_36ce4a3bfddd58b558c25a77481a80fb'] = 'CashWay';
 $_MODULE['<{cashway}prestashop>payment_execution_69697532df73565f0e156d4d097a482f'] = '(taxes incluses)';
 $_MODULE['<{cashway}prestashop>payment_execution_52f64bc0164b0e79deaeaaaa7e93f98f'] = 'Merci de confirmer votre commande en cliquant \'Je confirme ma commande avec CashWay\'.';
@@ -72,6 +73,8 @@ $_MODULE['<{cashway}prestashop>infos_0e6860bb292fab77080fb32b2954c5ad'] = 'Si vo
 $_MODULE['<{cashway}prestashop>infos_23d459d16b7d99a872cdb8ffb0376e21'] = 'Une tâche récurrente consultera le service CashWay pour vérifier le paiement des commandes en attente et les confirmer dès que réglées.';
 $_MODULE['<{cashway}prestashop>payment_f89c1ef19321a40c8a16e5ae1d886ca0'] = 'Paiement en espèces sur Internet';
 $_MODULE['<{cashway}prestashop>payment_fa94ee64c44ad0584915dcb6d01f9ae0'] = 'Vous payez en espèces chez un buraliste près de chez vous, la commande sera automatiquement validée. (Frais de traitement : ';
+$_MODULE['<{cashway}prestashop>payment_7cb52ece38275b427d4de5924d1b8ef2'] = 'Payer en espèces avec CashWay, chez un buraliste près de chez vous';
+$_MODULE['<{cashway}prestashop>payment_b11deef26c1a191699d60c3626ba9e7f'] = '(fees: ';
 $_MODULE['<{cashway}prestashop>payment_return_de4e59adb7759721d38f247750ce7e18'] = 'Veuillez bien noter et conserver le numéro de la commande #%d.';
 $_MODULE['<{cashway}prestashop>payment_return_108f028599720d27279e10e7eccce6a7'] = 'Veuillez bien noter et conserver la référence de la commande %s.';
 $_MODULE['<{cashway}prestashop>payment_return_514e512f8b788d07ef969cf957c941fe'] = 'Un email et un SMS vont vous être envoyés avec ces informations.';
@@ -82,3 +85,37 @@ $_MODULE['<{cashway}prestashop>payment_return_4d13bfb198f57f98bd82a3716b858829']
 $_MODULE['<{cashway}prestashop>payment_return_f79c9df7be6c25e430617302fb1655ce'] = 'Votre panier reste inchangé, vous pouvez toujours régler avec un autre moyen de paiement.';
 $_MODULE['<{cashway}prestashop>payment_return_ceae801606cc77dec25a30376b2e069a'] = 'Choisir un autre moyen de paiement.';
 $_MODULE['<{cashway}prestashop>payment_return_9bdf695c5a30784327137011da6ef568'] = 'Il y a un petit souci avec votre commande... Si vous pensez que c\'est une erreur, n\'hésitez pas à contacter notre';
+
+//trads ajoutées
+$_MODULE['<{cashway}prestashop>payment_return_f7483bdfed23dbbf314ba739685b2a34'] = 'Pour régler les <span class="price">%d</span> de votre commande,';
+$_MODULE['<{cashway}prestashop>payment_return_42d4e8c4b28a4481e599c1bbad90960a'] = 'rendez-vous dans un des points de paiement indiqués';
+$_MODULE['<{cashway}prestashop>payment_return_6d7cbcd6bc4f50c9042566fdf4522dc4'] = 'sur <a href="#cashway-map-l">notre carte</a>, muni du code suivant&nbsp;';
+$_MODULE['<{cashway}prestashop>payment_return_e466cfea1f87b102360aa144be2313b1'] = '<code id="cashway-barcode-label">%s</code>';
+$_MODULE['<{cashway}prestashop>payment_return_fa1f9241c6c088ef4c1de49bb9cd0be2'] = '(ce code n\'est valide que jusqu\'au %t).';
+
+$_MODULE['<{cashway}prestashop>payment_execution_924d4ba9f75332158dc857926a2869f3'] = 'Payez en espèces avec CashWay';
+$_MODULE['<{cashway}prestashop>payment_execution_515760479a9145b38e5fe2a0766a45f4'] = 'Après confirmation de votre commande,';
+$_MODULE['<{cashway}prestashop>payment_execution_e9285bad184cee2d578788012b13536d'] = 'vous recevrez par email et par SMS un code';
+$_MODULE['<{cashway}prestashop>payment_execution_4450894f052d76bf098017a03a1dcc0a'] = 'à présenter chez un des buralistes';
+$_MODULE['<{cashway}prestashop>payment_execution_054044f1bb46fbfa3fd9a4efa5da44ab'] = 'présents sur la carte ci-dessous,';
+$_MODULE['<{cashway}prestashop>payment_execution_aa4577d91e9243946e7f5214e5e8d478'] = 'celui-ci pourra ainsi encaisser et valider votre paiement.';
+$_MODULE['<{cashway}prestashop>payment_execution_588e1430d2a33919751d76912c601585'] = 'Votre commande sera alors immédiatement traitée par nos services.';
+$_MODULE['<{cashway}prestashop>payment_execution_09ea0959871e67cc87b9b18e3265b621'] = 'Votre commande s\'élève à ';
+$_MODULE['<{cashway}prestashop>payment_execution_314b16fb5c953089d64303af1e8f5cf4'] = '(taxes incluses)';
+$_MODULE['<{cashway}prestashop>payment_execution_5165feae79464e658056da3426230bc3'] = 'Frais destinés à votre buraliste : %d€.';
+$_MODULE['<{cashway}prestashop>payment_execution_fc53a08149ad4ae482764f6c916887d5'] = 'Total à payer au buraliste : ';
+$_MODULE['<{cashway}prestashop>payment_execution_9288e3238e07f4bc3aee98ec681446e7'] = 'Attention :';
+$_MODULE['<{cashway}prestashop>payment_execution_49fd160215c8e2ca182d34374390d549'] = 'pour encaisser ce montant,';
+$_MODULE['<{cashway}prestashop>payment_execution_337e00c3ed1f1f38b8908d80751f3c73'] = 'la réglementation française nous impose de contrôler votre identité.';
+$_MODULE['<{cashway}prestashop>payment_execution_53625171dd24c9dec634b05e5abf3528'] = 'Nous aurons ainsi besoin :';
+$_MODULE['<{cashway}prestashop>payment_execution_f116398ac348d1d56aa01e90c3dbbb77'] = '1) d\'une copie recto/verso de votre carte d\'identité,';
+$_MODULE['<{cashway}prestashop>payment_execution_15352145cd1c165906776713b23a8a64'] = '2) d\'un justificatif de domicile de moins de 3 mois.';
+$_MODULE['<{cashway}prestashop>payment_execution_e0041dbdcc6e7bb39ac7e0d650ac3ebf'] = 'En confirmant votre commande, vous reconnaissez avoir lu et adhéré sans réserve aux';
+$_MODULE['<{cashway}prestashop>payment_execution_9f8969d800165cae2ee1143279bf7c67'] = 'conditions générales de CashWay';
+$_MODULE['<{cashway}prestashop>payment_execution_52f64bc0164b0e79deaeaaaa7e93f98f'] = 'Merci de confirmer votre commande en cliquant sur \'Je valide ma commande avec CashWay\'.';
+$_MODULE['<{cashway}prestashop>payment_execution_5b7c0c40304f42fe4aaa4d134041b151'] = 'Hélas : cette méthode de paiement est temporairement indisponible';
+$_MODULE['<{cashway}prestashop>payment_execution_9fa8431fdc4904cddf53a2be5f05964c'] = 'Nous mettons tout en œuvre pour la rétablir le plus tôt possible.';
+$_MODULE['<{cashway}prestashop>payment_execution_41834144cedee125331751e257e9e83d'] = 'Vous pouvez choisir une autre méthode';
+$_MODULE['<{cashway}prestashop>payment_execution_27c15c6f285d1c061a085b99a2ec2b30'] = 'Les distributeurs proches de chez vous :';
+$_MODULE['<{cashway}prestashop>payment_execution_69e4c3519439258f7cc30a93d82e7c21'] = 'Hélas, vous avez dépassé le montant maximum possible d\'achats';
+$_MODULE['<{cashway}prestashop>payment_execution_0af3f8093b50533a7509fc4d1d02618f'] = 'via CashWay sur la période des 12 derniers mois';
