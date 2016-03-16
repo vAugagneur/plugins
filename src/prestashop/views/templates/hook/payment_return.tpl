@@ -31,7 +31,7 @@
     {/if}
     </p>
     <p>
-      {l s='In order to pay the' mod='cashway'} <span class="price">{$total_to_pay|escape:'htmlall':'UTF-8'},{$cart_fee|escape:'htmlall':'UTF-8'}</span>
+      {l s='In order to pay the' mod='cashway'} <span class="price">{$total_to_pay|escape:'htmlall':'UTF-8'}{$cart_fee|escape:'htmlall':'UTF-8'}</span>
       {l s='of your order,' mod='cashway'}
       {l s='you are asked to go to one of the payment places' mod='cashway'}
       {l s='showed on' mod='cashway'}&nbsp;<a href="#cashway-map-l">{l s='our map' mod='cashway'}</a>,&nbsp;
