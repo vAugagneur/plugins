@@ -54,7 +54,7 @@
       (<a href="{$kyc_upload_url|escape:'htmlall':'UTF-8'}?barcode={$barcode|escape:'htmlall':'UTF-8'}">{l s='more info).' mod='cashway'}
     </p>
     {/if}
-    <p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Print the receipt</a></p>
+    <p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">{l s='Print the receipt' mod='cashway'}</a></p>
 
     <p>{l s='An email and a text message have been sent to you with all this information.' mod='cashway'}
         <br /><br /><strong>{l s='Your order will be sent as soon as we receive your payment.' mod='cashway'}</strong>
