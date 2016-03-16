@@ -34,24 +34,24 @@
       {l s='In order to pay the' mod='cashway'} <span class="price">{$total_to_pay|escape:'htmlall':'UTF-8'},{$cart_fee|escape:'htmlall':'UTF-8'}</span>
       {l s='of your order,' mod='cashway'}
       {l s='you are asked to go to one of the payment places' mod='cashway'}
-      {l s='showed on' mod='cashway'}<a href="#cashway-map-l">{l s='our map' mod='cashway'}</a>
-      {l s=', with the following code&nbsp;:' mod='cashway'}
+      {l s='showed on' mod='cashway'} <a href="#cashway-map-l">{l s='our map' mod='cashway'}</a>
+      {l s=', with the following code :' mod='cashway'}
       <code id="cashway-barcode-label">{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
       {l s='(this code is only usable until %t).' sprintf={$expires_fr|escape:'htmlall':'UTF-8'} mod='cashway'}
     </p>
 
     {if $kyc_conditions.may_pay_this eq 'req_kyc'}
     <p>
-      <strong>{l s='Caution&nbsp;:' mod='cashway'}</strong>
-      {l s='we need&nbsp;:' mod='cashway'}
+      <strong>{l s='Caution :' mod='cashway'}</strong>
+      {l s='we need :' mod='cashway'}
       {l s='1) a duplicate of your ID card' mod='cashway'}
       {l s='and 2) a proof of address of 3 months at most,' mod='cashway'}
       {l s='to cash your payment.' mod='cashway'}
       <strong>{l s='Without those documents and their validation, your code won\'t be active.' mod='cashway'}</strong>
       {l s='You can scan those documents in order to send them to us' mod='cashway'}
-      <a href="mailto:{$kyc_upload_mail|escape:'htmlall':'UTF-8'}?subject=Validation {$barcode|escape:'htmlall':'UTF-8'}" class="button button-small" id="cashway-kyc-email">by email</a>
-      or <a href="{$kyc_upload_url|escape:'htmlall':'UTF-8'}?barcode={$barcode|escape:'htmlall':'UTF-8'}" class="button button-small" id="cashway-kyc-form">by form</a>
-      (<a href="{$kyc_upload_url|escape:'htmlall':'UTF-8'}?barcode={$barcode|escape:'htmlall':'UTF-8'}">more info).
+      <a href="mailto:{$kyc_upload_mail|escape:'htmlall':'UTF-8'}?subject=Validation {$barcode|escape:'htmlall':'UTF-8'}" class="button button-small" id="cashway-kyc-email">{l s='by email' mod='cashway'}</a>
+      {l s='or' mod='cashway'} <a href="{$kyc_upload_url|escape:'htmlall':'UTF-8'}?barcode={$barcode|escape:'htmlall':'UTF-8'}" class="button button-small" id="cashway-kyc-form">{l s='by form' mod='cashway'}</a>
+      (<a href="{$kyc_upload_url|escape:'htmlall':'UTF-8'}?barcode={$barcode|escape:'htmlall':'UTF-8'}">{l s='more info).' mod='cashway'}
     </p>
     {/if}
     <p><a href="https://api.cashway.fr/1/b/{$barcode|escape:'htmlall':'UTF-8'}.html?f=payment" class="button">Print the receipt</a></p>
