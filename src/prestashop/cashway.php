@@ -750,7 +750,10 @@ class CashWay extends PaymentModule
         }
 
         if ($local['total_paid_real'] >= $remote['order_total']) {
-            \CashWay\Log::warn('I, it has already been updated: skipping.');
+            \CashWay\Log::warn('I, it has already been updated:');
+            \CashWay\Log::warn('I, (local) total_paid_real = '.$local['total_paid_real']);
+            \CashWay\Log::warn('I, (local) current_state = '.$local['current_state']);
+            \CashWay\Log::warn('I, still trying to force order status to paid: ');
 
             // if the total_paid_real is already set,
             // we still force the order status to paid.
