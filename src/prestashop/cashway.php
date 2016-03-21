@@ -104,10 +104,21 @@ class CashWay extends PaymentModule
 
     public function installDefaultValues()
     {
-        Configuration::updateValue('CASHWAY_SHARED_SECRET', bin2hex(openssl_random_pseudo_bytes(24)));
+        Configuration::updateValue('CASHWAY_SHARED_SECRET', $this->getSharedSecret());
         Configuration::updateValue('CASHWAY_OS_PAYMENT', (int)Configuration::get('PS_OS_WS_PAYMENT'));
 
         return true;
+    }
+
+    private function getSharedSecret()
+    {
+        if (isset($_SERVER['CASHWAY_TEST_ENVIRONMENT']) &&
+            isset($_SERVER['TEST_SHARED_SECRET'])) {
+
+            return $_SERVER['TEST_SHARED_SECRET'];
+        } else {
+            return bin2hex(openssl_random_pseudo_bytes(24));
+        }
     }
 
     /**
