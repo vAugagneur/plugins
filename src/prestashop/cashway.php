@@ -734,7 +734,7 @@ class CashWay extends PaymentModule
     {
         if ($local['total_paid'] != $remote['order_total']) {
             \CashWay\Log::error(sprintf(
-                'expected payments differ: %.2f vs. %.2f (remote/local)',
+                'expected payments differ for %s: %.2f vs. %.2f (remote/local)',
                 $ref,
                 $remote['order_total'],
                 $local['total_paid']
@@ -847,7 +847,7 @@ class CashWay extends PaymentModule
             $sql = sprintf('SELECT * FROM %sorders WHERE id_order=%d', _DB_PREFIX_, (int)$id_or_ref);
         } else {
             $id_or_ref = filter_var((string)$id_or_ref, FILTER_SANITIZE_STRING);
-            $sql = sprintf('SELECT * FROM %sorders WHERE reference=%s', _DB_PREFIX_, $id_or_ref);
+            $sql = sprintf('SELECT * FROM %sorders WHERE reference="%s"', _DB_PREFIX_, $id_or_ref);
         }
 
         if ($order = Db::getInstance()->getRow($sql)) {
