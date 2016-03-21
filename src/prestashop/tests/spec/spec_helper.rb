@@ -1,6 +1,7 @@
 require 'rspec'
 require 'dotenv'
 require 'capybara'
+require 'capybara/dsl'
 require 'selenium-webdriver'
 require 'capybara-webkit'
 require 'capybara/poltergeist'
