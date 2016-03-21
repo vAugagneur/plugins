@@ -88,6 +88,27 @@ end
         # TODO liste texte des bureaux de paiement
       end
 
+      it "fetches order info" do
+        $barcode = find('#cashway-barcode-label').text.tr(' ', '')
+        $order_id = find('#shop-order-id').text
+        $total = find('#payment')['data-payment']
+      end
+
+      it "posts payment notification to shop" do
+        # FIXME: how do we get the shared_secret here?
+        # In test, this should be randomly set on web server setup, as a global env var.
+        shared_secret = 'howdy!'
+        notify_url = ENV['TEST_SERVER'] + '/index.php?fc=module&module=cashway&controller=notification'
+        pung = "php ../php/notify.php \"#{notify_url}\" transaction_paid \"#{$barcode}\" \"#{$order_id}\" \"#{$total}\" \"#{shared_secret}\""
+        puts pung
+        puts system(pung)
+      end
+
+      it "checks that the order _is_ paid on the shop" do
+        # TODO: inspect order status as a customer
+        # TODO: inspect order status as an admin
+      end
+
     end
 
   end

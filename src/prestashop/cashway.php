@@ -516,6 +516,7 @@ class CashWay extends PaymentModule
         $location['search'] = implode(' ', $location);
 
         $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
+        $payment = array_key_exists('customer_payment', $cw_res) ? $cw_res['customer_payment'] : null;
 
         return array(
             'env'       => \CashWay\ENV,
@@ -530,6 +531,8 @@ class CashWay extends PaymentModule
                 false
             ),
             'cart_fee'       => '+ '.self::formatFee(\CashWay\Fee::getCartFee($params['total_to_pay'])),
+            'payment_raw'    => $payment,
+            'payment'        => Tools::displayPrice($payment, $params['currencyObj'], false),
             'expires'        => $expires,
             'expires_fr'     => \CashWay\getLocalizedDateInfo($expires, 'fr'),
             'kyc_conditions' => array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null,
