@@ -610,8 +610,8 @@ class CashWay extends PaymentModule
         if (isset($_SERVER['CASHWAY_TEST_ENVIRONMENT'])
             && $_SERVER['CASHWAY_TEST_ENVIRONMENT'] == 1) {
             $options['API_URL'] = $_SERVER['TEST_SERVER_SCHEME'].'://'.
-            $_SERVER['TEST_SERVER_HOST'].':'.
-            $_SERVER['TEST_SERVER_PORT'];
+                $_SERVER['TEST_SERVER_HOST'].':'.
+                $_SERVER['TEST_SERVER_PORT'];
         }
 
         return new \Cashway\API($options);
