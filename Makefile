@@ -22,6 +22,8 @@ test-deps:
 	which vagrant
 	which ansible
 	which gsed
+	which bundle
+	which ruby
 
 test: test-setup test-config test-run test-clean
 
@@ -34,7 +36,7 @@ test-halt:
 test-provision:
 	cd tests/box && vagrant provision
 
-test-config: test-config-prestahop
+test-config: test-config-prestashop
 
 test-run: test-run-prestashop
 
