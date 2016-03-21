@@ -550,7 +550,7 @@ class CashWay extends PaymentModule
     */
     public static function formatFee($fee_value)
     {
-        return sprintf('%s&nbsp;&euro;', number_format($fee_value, 0, ',', '&nbsp;'));
+        return sprintf('%s €', number_format($fee_value, 0, ',', '&nbsp;'));
     }
 
     /**
