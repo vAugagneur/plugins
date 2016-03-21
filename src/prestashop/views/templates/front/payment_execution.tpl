@@ -63,19 +63,24 @@
                         {l s='whom will be able to validate and cash your payment.' mod='cashway'}
                         {l s='Your order will then be immediately treated by our services.' mod='cashway'}
                     </p></li>
-                    <li><p>
-                        {l s='Your order amount to' mod='cashway'} <span id="amount" class="price">{displayPrice price=$total}</span>
-                        {if $use_taxes == 1}{l s='(taxes included)' mod='cashway'}{/if}.
-                    </p></li>
-                    {if $cart_fee > 0}
-                    <li><p>
-                        {l s='Fees destined to your newsagent : %d€.' sprintf={displayPrice price=$cart_fee} mod='cashway'}
-                    </p></li>
-                    {/if}
-                    <li><p>
-                        <strong>{l s='Total amount to give to your newsagent :' mod='cashway'}
-                        <span id="amount" class="price">{displayPrice price=$total + $cart_fee}</span>.</strong>
-                    </p></li>
+                    <li><table border="0">
+                        <tr>
+                            <td>{l s='Total of your order:' mod='cashway'}</td>
+                            <td style="text-align: right;"><span id="amount" class="price">{displayPrice price=$total}</span></td>
+                            <td>{if $use_taxes == 1}({l s='taxes included' mod='cashway'}){/if}</td>
+                        </tr>
+                        {if $cart_fee > 0}
+                        <tr>
+                            <td>{l s='Service fees:' mod='cashway'}</td>
+                            <td style="text-align: right;"> {displayPrice price=$cart_fee}</td>
+                        </tr>
+                        {/if}
+                        <tr>
+                            <td><strong>{l s='Total amount to pay:' mod='cashway'}</strong></td>
+                            <td style="text-align: right;"><strong><span id="amount" class="price">{displayPrice price=$total + $cart_fee}</span></strong></td>
+                        </tr>
+                    </table>
+                    </li>
                     {if $kyc_conditions.may_pay_this eq 'req_kyc'}
                     <li><p>
                         <strong>{l s='Caution&nbsp;:' mod='cashway'}</strong>
@@ -87,31 +92,21 @@
                     </p></li>
                     {/if}
                 </ul>
-                <p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b></p>
-                <div class="form-group form-group-sm">
-                    <p>{l s='By confirming your order, you confirm you have read and agreed to' mod='cashway'}
-                        <a href="https://help.cashway.fr/cgu/"
-                               target="blank"
-                               rel="nofollow"
-                               style="color: orange;">
-                        {l s='CashWay\'s terms and conditions' mod='cashway'}</a>.</p>
-                </div>
+                <p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b>
+                    {l s='By confirming your order, you confirm you have read and agreed to' mod='cashway'}
+                    <a href="https://help.cashway.fr/cgu/"
+                       target="blank"
+                       rel="nofollow"
+                       style="color: orange;">
+                    {l s='CashWay\'s terms and conditions' mod='cashway'}</a>.</p>
+
                 <p class="cart_navigation" id="cart_navigation">
-                    {if (rand(1,100) > 50)}
-                    <input type="hidden" name="btn" value="image"/>
-                    <input id="cashway-confirm-btn"
-                        type="image"
-                        src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}/views/img/cashway-confirm.png"
-                        alt="{l s='I confirm my order' mod='cashway'}"/>
-                    {else}
                     <input type="hidden" name="btn" value="button"/>
                     <input id="cashway-confirm-btn"
                         type="submit"
                         class="btn btn-primary button button-primary"
                         value="{l s='I confirm my order' mod='cashway'}"/>
-                    {/if}
                 </p>
-                <style>input[disabled] { opacity: 0.5; }</style>
             </form>
             <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?p=ps&amp;v=ok" alt="" />
         {else}
