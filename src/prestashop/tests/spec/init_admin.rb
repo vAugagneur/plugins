@@ -22,7 +22,4 @@ describe "Admin post configuration" do
     end
   end
 
-  # TODO: Advanced Parameters > Performance :
-  # TODO: - Recompile templates if the files have been updated
-  # TODO: - No cache
 end

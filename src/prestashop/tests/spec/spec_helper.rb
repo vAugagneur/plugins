@@ -47,10 +47,15 @@ Capybara::Webkit.configure do |config|
   config.skip_image_loading
 end
 
-Capybara.default_driver = $driver
-Capybara.run_server = false
-Capybara.app_host = ENV['TEST_SERVER']
-Capybara.default_max_wait_time = 15
+Capybara.configure do |config|
+  config.default_driver = $driver
+  config.run_server = false
+  config.always_include_port = true
+  config.app_host = ENV['TEST_SERVER']
+  config.default_max_wait_time = 15
+  config.ignore_hidden_elements = true
+  # wait_on_first_by_default
+end
 
 def session
   $session |= Capybara::Session.new $driver
