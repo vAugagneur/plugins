@@ -64,4 +64,6 @@ if $driver == :poltergeist
 end
 
 # If Selenium
-#page.driver.browser.manage.window.maximize
+if $driver == :selenium_en
+  page.driver.browser.manage.window.maximize
+end
