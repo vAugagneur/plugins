@@ -8,8 +8,7 @@ machine:
 
 test:
   override:
-    - cd src/php && make test:
-        background: true
+    - cd src/php && make test
     - cd src/prestashop && make test
 
 general:
