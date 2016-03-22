@@ -58,21 +58,22 @@ end
       it "confirms CashWay transaction" do
         fail "Le service ne fonctionne pas..." if page.has_content? 'Hélas'
 
-        expect(page).to have_content 'Total à payer au buraliste'
-        expect(page).to have_content 'Please confirm your order by clicking'
-        expect(page).to have_content 'avoir lu et adhéré sans réserve aux conditions générales de CashWay'
-        expect(page).to have_content 'Les distributeurs proches de chez vous'
+        expect(page).to have_content 'Order total'
+        expect(page).to have_content 'Service fees'
+        expect(page).to have_content 'Total amount to pay'
+        expect(page).to have_content 'you confirm you have read and agreed to'
+        expect(page).to have_content 'Dealers near you'
 
         if 250 == price
-          expect(page).to have_content 'pour encaisser ce montant, la réglementation française nous impose de contrôler votre identité.'
+          #expect(page).to have_content 'pour encaisser ce montant, la réglementation française nous impose de contrôler votre identité.'
         end
 
         find('#cashway-confirm-btn').click
       end
 
       it "checks what to do next" do
-        expect(page).to have_content 'rendez-vous dans un des points de paiement indiqués sur notre carte, muni du code suivant'
         expect(page).to have_content 'Please note and keep your order reference'
+
         $barcode = find('#cashway-barcode-label').text.gsub(' ', '')
 
         if 250 == price

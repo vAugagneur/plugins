@@ -37,7 +37,7 @@
       {l s='of your order,' mod='cashway'}
       {l s='you are asked to go to one of the payment places' mod='cashway'}
       {l s='showed on' mod='cashway'}&nbsp;<a href="#cashway-map-l">{l s='our map' mod='cashway'}</a>,&nbsp;
-      {l s='with the following code :' mod='cashway'}
+      {l s='with the following code:' mod='cashway'}
       <code id="cashway-barcode-label">{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
       {l s='(this code is only usable until' mod='cashway'} {$expires_fr|escape:'htmlall':'UTF-8'}).
     </p>
