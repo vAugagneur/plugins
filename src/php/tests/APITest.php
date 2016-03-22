@@ -41,13 +41,12 @@ class APITest extends PHPUnit_Framework_TestCase
         $api = new \CashWay\API(get_conf());
         $api->setOrder('prestashop', 1, new Cart(), new Customer(), 'FR', 'EUR');
         $res = $api->openTransaction();
-        var_dump($res);
 
         $this->assertEquals('POST', $res['method']);
         $this->assertEquals('/1/transactions/', $res['request']);
 
         $expected_data = array(
-            'agent' => 'CashWay/' . (string)\CashWay\VERSION . ' PHP/' . (string)PHP_VERSION . ' Darwin',
+            'agent' => sprintf('CashWay/%s PHP/%s %s', (string)\CashWay\VERSION, (string)PHP_VERSION, PHP_OS),
             'order' => array(
                 'id' => 1,
                 'at' => '2015-01-02T03:04:06Z',
