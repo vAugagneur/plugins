@@ -5,7 +5,7 @@ MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER'] do
 
 	it "loads admin page" do
-		session.visit ENV['ADMIN_PATH']
+		session.visit ENV['ADMIN_PATH'] + '/index.php?controller=AdminModules'
 	end
 
 	it "authenticates" do
@@ -17,7 +17,7 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 	end
 
 	it 'goes to modules list' do
-		find('li#maintab-AdminParentModules').find('a.title').click
+#		find('li#maintab-AdminParentModules').find('a.title').click
 	end
 
 	it 'checks if module is already there' do
@@ -27,7 +27,6 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 	it 'removes installed module' do
 		skip "CashWay module is not installed." unless page.has_selector? '#anchorCashway'
 
-		#find(:xpath, '//a[@data-module-name="cashway"]/../button[@data-toggle="dropdown"]').click
 		find(:xpath, '//div[@id="anchorCashway"]/../../td[@class="actions"]/div/div/button[@data-toggle="dropdown"]').click
 		click_link 'Delete'
 		page.driver.browser.switch_to.alert.accept
