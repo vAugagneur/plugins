@@ -51,6 +51,33 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 		expect(page).to have_content 'Module(s) installed successfully.'
 	end
 
+	# Go query PrestaShop configuration value in vagrant test box
+	def get_shared_secret
+		puts Dir.pwd
+		cmd = 'cd ../../tests/box; \
+			vagrant ssh -c \
+				"mysql -uroot -sNe \
+					\"SELECT value FROM ps_configuration WHERE name=\'CASHWAY_SHARED_SECRET\';\" \
+					prestashop"'
+
+		data = []
+		IO.popen(cmd) { |f| data << f.gets }
+
+		data[0].strip
+	end
+
+	# Update shared secret in .env
+	def update_env_shared_secret_with(value)
+		puts Dir.pwd
+		system("sed -i .bak 's|SHARED_SECRET=.*|SHARED_SECRET=#{value}|g' tests/.env")
+	end
+
+	# Only valid/useful if using vagrant here:
+	# This is necessary for client_use.rb payment tests
+	it 'fetches shared secret on test host' do
+		update_env_shared_secret_with get_shared_secret
+	end
+
 	it 'configures module' do
 		find('#CASHWAY_API_KEY').set ENV['API_KEY']
 		find('#CASHWAY_API_SECRET').set ENV['API_SECRET']

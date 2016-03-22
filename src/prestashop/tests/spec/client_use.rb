@@ -100,19 +100,19 @@ end
         $total = find('#payment')['data-payment']
       end
 
+      # See 01_install_module.rb for how the shop shared_secret value
+      # if fetched and updated in .env
       it "posts payment notification to shop" do
-        # FIXME: how do we get the shared_secret here?
-        # In test, this should be randomly set on web server setup, as a global env var.
-        shared_secret = 'howdy!'
+        shared_secret = ENV['SHARED_SECRET']
         notify_url = ENV['TEST_SERVER'] + '/index.php?fc=module&module=cashway&controller=notification'
-        pung = "php ../php/notify.php \"#{notify_url}\" transaction_paid \"#{$barcode}\" \"#{$order_id}\" \"#{$total}\" \"#{shared_secret}\""
+        pung = "php tests/php/notify.php '#{notify_url}' transaction_paid '#{$barcode}' '#{$order_id}' '#{$total}' '#{$total}' '#{shared_secret}'"
         puts pung
         puts system(pung)
       end
 
       it "checks that the order _is_ paid on the shop" do
-        # TODO: inspect order status as a customer
-        # TODO: inspect order status as an admin
+        # TODO: inspect order status as a customer (must be paid or blocked at this point)
+        # TODO: inspect order status as an admin (must be paid or blocked)
       end
 
     end

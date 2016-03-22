@@ -66,6 +66,11 @@ MODULE_PAY_ACTION_TEST=
 
 API_KEY=#{account[:api_key]}
 API_SECRET=#{account[:api_secret]}
+
+SHARED_SECRET=
+VERIFY_CONTENT=
+DEV_EMAIL=
+
 CONF
 
 puts conf
