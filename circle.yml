@@ -1,0 +1,18 @@
+machine:
+  timezone:
+    'Europe/Paris'
+  php:
+    version: '5.6.5'
+
+  environment:
+
+test:
+  override:
+    - cd src/php && make test
+    - cd src/prestashop && make test
+
+general:
+  artifacts:
+    - src/php/coverage
+    - src/prestashop/coverage
+
