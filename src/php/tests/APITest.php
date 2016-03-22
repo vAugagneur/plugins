@@ -41,6 +41,7 @@ class APITest extends PHPUnit_Framework_TestCase
         $api = new \CashWay\API(get_conf());
         $api->setOrder('prestashop', 1, new Cart(), new Customer(), 'FR', 'EUR');
         $res = $api->openTransaction();
+        var_dump($res);
 
         $this->assertEquals('POST', $res['method']);
         $this->assertEquals('/1/transactions/', $res['request']);
