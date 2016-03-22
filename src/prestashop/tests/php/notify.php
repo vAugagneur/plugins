@@ -1,5 +1,7 @@
 <?php
 /**
+ * Used to test transaction payment notification against a real test order on a Shop.
+ * See src/prestashop/tests/spec/client_use.rb
 */
 
 require __DIR__.'/../../../php/cashway_lib.php';
@@ -23,7 +25,7 @@ function buildNotification($params, $secret)
     ];
 }
 
-if (count($argv) != 7) {
+if (count($argv) != 8) {
     usage();
     exit(1);
 }
