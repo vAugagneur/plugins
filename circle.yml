@@ -6,6 +6,10 @@ machine:
 
   environment:
 
+dependencies:
+  pre:
+    - echo "always_populate_raw_post_data = -1" > ~/.phpenv/versions/$(phpenv global)/etc/conf.d/custom.ini
+
 test:
   override:
     - cd src/php && make test
