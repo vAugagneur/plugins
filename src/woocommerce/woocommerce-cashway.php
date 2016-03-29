@@ -240,31 +240,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function process_payment($order_id)
             {
                 $order = wc_get_order($order_id);
-                /*if ( get_post_meta( $order->id, '_payment_method', true ) != 'woocashway' ) {
-                  return;
-                }
-                */
-              /*  echo $order->payment_method_title;
-                echo "<br>";
-                echo get_post_meta( $order->id, '_payment_method', true );
-                echo "<br>";
-                //echo "----SUITE----";
-                echo $order->billing_address_1;
-                echo $order->billing_email;
-                echo $order->billing_phone;
-                print_r( $order );
-                global $woocommerce;
-                // echo "<p><b>Juste avant les messages</b></p>";
-                wc_add_notice(__('message 1', 'woocommerce'), 'success');
-                wc_add_notice(__('message 2', 'woocommerce'), 'error');
-                //die('erreur, il manque un truc');
-
-                /*
-                customer id =
-
-
-                */
-                $order = wc_get_order($order_id);
 
                 $customer_id = $order->user_id;
                 $customer_name = $order->billing_first_name.' '.$order->billing_last_name;
@@ -277,26 +252,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 $order_id = $order_id;
                 $order_at = date('Y-m-d#G:i:s#');
-                //$order_currency = date('Y-m-d#G:i:s#');
-                //$order_totla = date('Y-m-d#G:i:s#');
 
                 $customer = new WC_Customer();
                 global $woocommerce;
                 $customer = $woocommerce->customer;
-
-                // print_r( $customer );
-                // echo "<br><br><br>";
-                // print_r( $order );
-                // echo "<br><br><br>";
-                // $total_price = $order->get_total();
-                // print_r( $total_price );
-                // echo "<br><br><br>";
-                // echo '$user_id = ' . $customer_id;
-                // echo "<br><br><br>";
-                // $order_currency = $order->get_order_currency();
-                // print_r( $order_currency );
-                // echo "<br><br><br>";
-                // die();
 
                 $total_price = $order->get_total();
                 $order_currency = $order->get_order_currency();
@@ -330,17 +289,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     'body' => json_encode($body),
                 );
                 $response = wp_remote_post('https://api-staging.cashway.fr/1/transactions', $args);
-
-                // print_r($response);
-
-                // echo 'XXX<br>';
-                /*
-                print_r($response_body);
-                echo 'XXX<br>';
-                echo gettype($response_body);
-                echo 'barcode = ';
-                echo $response_body->barcode;*/
-                //die();
 
                 $code = $response['response']['code'];
                 if ($code == 201) {
