@@ -37,6 +37,13 @@ cs:
 		--ignore=lib/,vendor/,coverage/ \
 		.
 
+csfix:
+	phpcbf --encoding=utf-8 \
+		--standard=PSR2 \
+		--colors \
+		--ignore=lib/,vendor/,coverage/ \
+		.
+
 config-base:
 	${TEST_RUN} spec/install_woocommerce.rb
 
