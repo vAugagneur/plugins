@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe "Adds test products (250/2500 €)" do
   it "loads admin page" do
-		session.visit ENV['LOGIN_PATH']
-	end
+    session.visit ENV['LOGIN_PATH']
+  end
 
   it "authenticates" do
     find('#user_login').set ENV['ADMIN_LASTNAME']

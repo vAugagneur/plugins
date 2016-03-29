@@ -4,7 +4,7 @@ MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 
 describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER'] do
 
-	it "loads admin page" do
+  it "loads admin page" do
     session.visit ENV['LOGIN_PATH']
   end
 
@@ -32,5 +32,5 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
     #find(:xpath, '//input[@value="Continue"]').click
     #find(:xpath, '//input[@value="Continue"]').click
   end
-	
+
 end
