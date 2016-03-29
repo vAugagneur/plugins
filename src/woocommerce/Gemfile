@@ -1,0 +1,8 @@
+source 'https://rubygems.org'
+
+gem 'addressable'
+gem 'mime-types'
+gem 'mini_portile'
+gem 'nokogiri'
+gem 'childprocess'
+gem 'selenium-webdriver'
