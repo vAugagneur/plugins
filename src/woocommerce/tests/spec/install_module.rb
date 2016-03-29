@@ -5,7 +5,7 @@ MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 describe "Install CashWay module on WordPress: " + ENV['TEST_SERVER'] do
 
 	it "loads admin page" do
-		session.visit ENV['ADMIN_PATH']
+		session.visit ENV['LOGIN_PATH']
 	end
 
   it "authenticates" do
@@ -15,7 +15,8 @@ describe "Install CashWay module on WordPress: " + ENV['TEST_SERVER'] do
   end
 
   it 'check if Cashway is already installed' do
-      session.visit '/wp-admin/plugins.php'
+			find('#menu-plugins').click
+	    find(:xpath, "//a[@href='plugins.php']").click
       if page.first('#woocommerce-cashway')
 
         find(:xpath, '//a[@aria-label="Deactivate WooCommerce CashWay"]').click
@@ -25,11 +26,16 @@ describe "Install CashWay module on WordPress: " + ENV['TEST_SERVER'] do
   end
 
 	it 'goes to modules list' do
-    session.visit '/wp-admin/plugin-install.php?tab=upload'
+		find('#menu-plugins').click
+    find(:xpath, "//a[@href='plugin-install.php']").click
+		first(:xpath, "//a[contains(@href, 'plugin-install.php?tab=upload')]").click
 		page.all('input[id="pluginzip"]').first.set File.absolute_path(ENV['MODULE_ARCHIVE'])
     click_button 'install-plugin-submit'
     first(:xpath, '//a[@target="_parent"]').click
-    session.visit '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_cashway'
+		find('#toplevel_page_woocommerce').click
+		find(:xpath, "//a[@href='admin.php?page=wc-settings']").click
+		find(:xpath, "//a[contains(@href, 'admin.php?page=wc-settings&tab=checkout')]").click
+		first(:xpath, "//a[contains(@href, 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_cashway')]").click
 	end
 
 	it 'configures module' do
