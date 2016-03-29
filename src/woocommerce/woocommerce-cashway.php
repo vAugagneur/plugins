@@ -325,6 +325,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
              */
             public function thankyou_page($order_id)
             {
+                $cashway_barcode = get_post_meta($order_id, 'cashway_barcode', true);
+                /* ANCIENNE VERSION AVEC CONFIRMATION AUTOMATIQUE
                 // confirmation de la commande
                 $headers = array(
                    'Authorization' => 'Basic '.base64_encode($this->cashway_login.':'.$this->cashway_password),
@@ -338,7 +340,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     'headers' => $headers,
                     'body' => json_encode($body),
                 );
-                $cashway_barcode = get_post_meta($order_id, 'cashway_barcode', true);
+
                 $response = wp_remote_post('https://api-staging.cashway.fr/1/transactions/'.$cashway_barcode.'/confirmation', $args);
 
                 //print_r($response);
@@ -349,11 +351,28 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $frais_client_cashway = $response_body->customer_fee;
                     $cout_total_client_cashway = $response_body->customer_payment;
                     $barcode_cashway_url = $response_body->barcode_png_url;
-                    echo 'Coût supplémentaire CashWay = '.$frais_client_cashway.' €';
-                    echo "<img src='$barcode_cashway_url' style='height:60px'/>";
+                    $ticket_url = $response_body->ticket_url;
+
+                    $ticket_url_content = wp_remote_get( $ticket_url );
+                    echo wp_remote_retrieve_body( $ticket_url_content );
                 } else {
                     die('Une erreur est survenue durant la confirmation de la commande via CashWay.');
                 }
+                */
+
+                /* VERSION AVEC CODE HTML ISSU DE CASHWAY */
+                $headers = array(
+                   'Authorization' => 'Basic '.base64_encode($this->cashway_login.':'.$this->cashway_password),
+                   'content-type' => 'application/json',
+                );
+                $args = array(
+                    'method' => 'GET',
+                    'headers' => $headers
+                );
+                $response = wp_remote_get('https://api-staging.cashway.fr/1/transactions/'.$cashway_barcode.'/plugin_page', $args);
+
+                echo $response['body'];
+                
                 die();
             }
         }
