@@ -15,14 +15,14 @@ describe "Install CashWay module on WordPress: " + ENV['TEST_SERVER'] do
   end
 
   it 'check if Cashway is already installed' do
-			find('#menu-plugins').click
-	    find(:xpath, "//a[@href='plugins.php']").click
-      if page.first('#woocommerce-cashway')
+    find('#menu-plugins').click
+  	find(:xpath, "//a[@href='plugins.php']").click
+    if page.first('#woocommerce-cashway')
 
-        find(:xpath, '//a[@aria-label="Deactivate WooCommerce CashWay"]').click
-        find(:xpath, '//a[@aria-label="Delete WooCommerce CashWay"]').click
-        first(:xpath, '//input[@id="submit"]').click
-      end
+    find(:xpath, '//a[@aria-label="Deactivate WooCommerce CashWay"]').click
+    find(:xpath, '//a[@aria-label="Delete WooCommerce CashWay"]').click
+    first(:xpath, '//input[@id="submit"]').click
+    end
   end
 
 	it 'goes to modules list' do
