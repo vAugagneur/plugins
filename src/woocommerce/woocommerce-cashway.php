@@ -93,55 +93,47 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $this->cashway_login = $this->settings['cashway_login'];
                 $this->cashway_password = $this->settings['cashway_password'];
 
-                    // Actions
-                  add_action('woocommerce_receipt_cashway', array(&$this, 'receipt_page'));
+                // Actions
+                add_action('woocommerce_receipt_cashway', array(&$this, 'receipt_page'));
 
                 add_action('woocommerce_update_options_payment_gateways_'.$this->id, array(&$this, 'process_admin_options'));
 
                 add_action('woocommerce_thankyou_woocashway', array($this, 'thankyou_page'));
-                if ($this->is_available()) {
-                    // Hook in
-                  add_filter('woocommerce_checkout_fields', array($this, 'custom_override_checkout_fields'));
-                }
 
-                add_action('woocommerce_cart_calculate_fees', 'cashway_surcharge');
-                function cashway_surcharge()
-                {
-                    // Ajout des frais CashWay
-                    global $woocommerce;
+                //add_action('woocommerce_cart_calculate_fees', array($this, 'cashway_surcharge'));
 
-                    if (is_admin() && !defined('DOING_AJAX')) {
-                        return;
-                    }
-                    $current_gateway = WC()->session->chosen_payment_method;
-                    if ($current_gateway != 'woocashway') {
-                        return;
-                    }
-
-                    $total_amount = $woocommerce->cart->cart_contents_total + $woocommerce->cart->shipping_total;
-                    $fee = 0;
-                    if ($total_amount == 0) {
-                        return 0;
-                    } elseif ($total_amount <= 50.00) {
-                        $fee = 1.00;
-                    } elseif ($total_amount <= 150.00) {
-                        $fee = 2.00;
-                    } elseif ($total_amount <= 250.00) {
-                        $fee = 3.00;
-                    } else {
-                        $fee = 4.00;
-                    }
-                    $woocommerce->cart->add_fee('Frais CashWay', $fee, true, '');
-                }
             }
 
-            // Our hooked in function - $fields is passed via the filter!
-          public function custom_override_checkout_fields($fields)
-          {
-              $fields['order']['order_comments']['placeholder'] = 'My new placeholder';
 
-              return $fields;
-          }
+            function cashway_surcharge()
+            {
+
+                // Ajout des frais CashWay
+                global $woocommerce;
+
+                if (is_admin() && !defined('DOING_AJAX')) {
+                    return;
+                }
+                $current_gateway = WC()->session->chosen_payment_method;
+                if ($current_gateway != 'woocashway') {
+                    return;
+                }
+
+                $total_amount = $woocommerce->cart->cart_contents_total + $woocommerce->cart->shipping_total;
+                $fee = 0;
+                if ($total_amount == 0) {
+                    return 0;
+                } elseif ($total_amount <= 50.00) {
+                    $fee = 1.00;
+                } elseif ($total_amount <= 150.00) {
+                    $fee = 2.00;
+                } elseif ($total_amount <= 250.00) {
+                    $fee = 3.00;
+                } else {
+                    $fee = 4.00;
+                }
+                $woocommerce->cart->add_fee('Frais CashWay', $fee, true, '');
+            }
 
             /**
              * Check If The Gateway Is Available For Use.
