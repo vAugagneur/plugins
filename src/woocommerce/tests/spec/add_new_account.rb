@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Adds new customer account" do
   it "loads admin page" do
 		session.visit ENV['LOGIN_PATH']
-	 end
+	end
 
   it "authenticates" do
     find('#user_login').set ENV['ADMIN_LASTNAME']
