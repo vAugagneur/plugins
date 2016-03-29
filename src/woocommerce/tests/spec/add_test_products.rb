@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Adds test products (250/2500 €)" do
   it "loads admin page" do
-		session.visit ENV['ADMIN_PATH']
+		session.visit ENV['LOGIN_PATH']
 	end
 
   it "authenticates" do
@@ -13,7 +13,8 @@ describe "Adds test products (250/2500 €)" do
 
   [50, 250, 2500].each do |price|
     it "adds #{price} € product" do
-      session.visit '/wp-admin/post-new.php?post_type=product'
+      find('#menu-posts-product').click
+      find(:xpath, "//a[@href='post-new.php?post_type=product']").click
       fill_in 'title', :with => 'Test ' + price.to_s
       fill_in '_regular_price', :with => price.to_s
       find(:xpath, '//input[@id="_virtual"]').click
