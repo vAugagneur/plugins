@@ -36,7 +36,7 @@
 - name: Config WordPress DB
   command: >
     chdir=/var/www/html/wordpress
-    wp core config --dbname=prestashop --dbuser=prestashop --dbpass=prestashop
+    wp core config --dbname=wordpress --dbuser=wordpress --dbpass=wordpress
   when: "command_result.rc != 0"
 
 - name: Install WordPress
