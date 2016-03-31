@@ -12,6 +12,9 @@
  * WC requires at least: 2.0
  * WC tested up to: 2.3.7.
  */
+
+require dirname(__FILE__).'/lib/cashway_lib.php';
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
@@ -240,76 +243,75 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function process_payment($order_id)
             {
                 $order = wc_get_order($order_id);
+                $api = new \Cashway\API();
 
                 $customer_id = $order->user_id;
                 $customer_name = $order->billing_first_name.' '.$order->billing_last_name;
                 $customer_email = $order->billing_email;
                 $customer_phone = $order->billing_phone;
-                $customer_country = $order->billing_country;
                 $customer_city = $order->billing_city;
-                $customer_postcode = $order->billing_postcode;
+                $customer_zipcode = $order->billing_postcode;
+                $customer_country = $order->billing_country;
                 $customer_address = $order->billing_address_1;
+                $customer_company = $order->billing_company;
+                $customer = array(
+                    'id' => $customer_id,
+                    'name' => $customer_name,
+                    'email' => $customer_email,
+                    'phone' => $customer_phone,
+                    'city' => $customer_city,
+                    'zipcode' => $customer_zipcode,
+                    'country' => $customer_country,
+                    'address' => $customer_address,
+                    'company' => $customer_company
+                );
 
                 $order_id = $order_id;
                 $order_at = date('Y-m-d#G:i:s#');
-
-                $customer = new WC_Customer();
-                global $woocommerce;
-                $customer = $woocommerce->customer;
-
-                $total_price = $order->get_total();
+                $order_total = $order->get_total();
                 $order_currency = $order->get_order_currency();
+                $order_items_count = $order->get_item_count();
+                $order_details = $order->get_items();
+                $order_language = 'fr';
+                $order = array(
+                    'id' => $order_id,
+                    'at' => $order_at,
+                    'total' => $order_total,
+                    'currency' => $order_currency,
+                    'items_count' => $order_items_count,
+                    'language' => $order_language,
+                    'details' => $order_details
+                );
 
-                $headers = array(
-                   'Authorization' => 'Basic '.base64_encode($this->cashway_login.':'.$this->cashway_password),
-                   'content-type' => 'application/json',
-                );
-                $body = array(
-                    'customer' => array(
-                        'id' => $customer_id,
-                        'name' => $customer_name,
-                        'email' => $customer_email,
-                        'phone' => $customer_phone,
-                        'country' => $customer_country,
-                        'city' => $customer_city,
-                        'zipcode' => $customer_postcode,
-                        'address' => $customer_address,
-                    ),
-                    'order' => array(
-                        'id' => $order_id,
-                        'at' => date('Y-m-dTH:i:sZ'),
-                        'currency' => $order_currency,
-                        'total' => $total_price,
-                    ),
-                );
-                // Setup variable for wp_remote_post
-                $args = array(
-                    'method' => 'POST',
-                    'headers' => $headers,
-                    'body' => json_encode($body),
-                );
-                $response = wp_remote_post('https://api-staging.cashway.fr/1/transactions', $args);
-
-                $code = $response['response']['code'];
-                if ($code == 201) {
-                    $response_body = json_decode($response['body']);
-                    $barcode = $response_body->barcode;
-                    update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
+                $api->setOrder_woocommerce($order, $customer);
+                $response = $api->openTransaction();
+                if ($response['shop_order_id'] === $order_id) {
+                    $order_id = sanitize_text_field($response['barcode']);
                     $order = wc_get_order($order_id);
-                    // Mark as on-hold (we're awaiting the cheque)
-                    $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
-                    // Reduce stock levels
                     $order->reduce_order_stock();
-                    // Remove cart
                     WC()->cart->empty_cart();
-                    // Return thankyou redirect
                     return array(
                         'result' => 'success',
                         'redirect' => $this->get_return_url($order),
                     );
                 } else {
-                    die('Une erreur est survenue durant la commande via CashWay.');
+                    die('Un problème est survenu avec le traitement de la transaction CashWay.');
                 }
+                /*$response_body = json_decode($response['body']);
+                $barcode = $response_body->barcode;
+                update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
+                $order = wc_get_order($order_id);
+                // Mark as on-hold (we're awaiting the cheque)
+                $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
+                // Reduce stock levels
+                $order->reduce_order_stock();
+                // Remove cart
+                WC()->cart->empty_cart();
+                // Return thankyou redirect
+                return array(
+                    'result' => 'success',
+                    'redirect' => $this->get_return_url($order),
+                );*/
             }
 
             /**
@@ -361,6 +363,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 */
 
                 /* VERSION AVEC CODE HTML ISSU DE CASHWAY */
+                #TODO Redirection with POST data to CashWay front app
                 $headers = array(
                    'Authorization' => 'Basic '.base64_encode($this->cashway_login.':'.$this->cashway_password),
                    'content-type' => 'application/json',
