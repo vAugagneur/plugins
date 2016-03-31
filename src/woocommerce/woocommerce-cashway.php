@@ -100,7 +100,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 add_action('woocommerce_thankyou_woocashway', array($this, 'thankyou_page'));
 
-                //add_action('woocommerce_cart_calculate_fees', array($this, 'cashway_surcharge'));
+                add_action('woocommerce_cart_calculate_fees', array($this, 'cashway_surcharge'));
 
             }
 
@@ -132,7 +132,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 } else {
                     $fee = 4.00;
                 }
-                $woocommerce->cart->add_fee('Frais CashWay', $fee, true, '');
+                $woocommerce->cart->add_fee(__('Custom', 'Frais CashWay'), $fee, true);
             }
 
             /**
@@ -372,7 +372,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $response = wp_remote_get('https://api-staging.cashway.fr/1/transactions/'.$cashway_barcode.'/plugin_page', $args);
 
                 echo $response['body'];
-                
+
                 die();
             }
         }
