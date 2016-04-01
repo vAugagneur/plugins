@@ -113,6 +113,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 // Ajout des frais CashWay
                 global $woocommerce;
+                $feeObject = new \CashWay\Fee;
 
                 if (is_admin() && !defined('DOING_AJAX')) {
                     return;
@@ -121,20 +122,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if ($current_gateway != 'woocashway') {
                     return;
                 }
-
                 $total_amount = $woocommerce->cart->cart_contents_total + $woocommerce->cart->shipping_total;
-                $fee = 0;
-                if ($total_amount == 0) {
-                    return 0;
-                } elseif ($total_amount <= 50.00) {
-                    $fee = 1.00;
-                } elseif ($total_amount <= 150.00) {
-                    $fee = 2.00;
-                } elseif ($total_amount <= 250.00) {
-                    $fee = 3.00;
-                } else {
-                    $fee = 4.00;
-                }
+                $fee = $feeObject->getCartFee($total_amount);
+                echo 'Fee : '.$fee;
                 $woocommerce->cart->add_fee(__('Custom', 'Frais CashWay'), $fee, true);
             }
 
