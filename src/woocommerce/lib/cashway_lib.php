@@ -688,6 +688,7 @@ class API
     {
       $this->order = $order;
       $this->customer = $customer;
+      $customer['ip'] = self::getIPs();
       $this->more = $more;
     }
 }
