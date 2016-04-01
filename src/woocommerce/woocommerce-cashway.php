@@ -15,7 +15,7 @@
 
 require dirname(__FILE__).'/lib/cashway_lib.php';
 
-define( 'WP_DEBUG', true );
+define('WP_DEBUG', true);
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -278,7 +278,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     'details' => $order_details
                 );
 
-                $api->setOrder_woocommerce($order, $customer);
+                $api->setOrder('woocommerce', $order, $customer);
                 $response = $api->openTransaction();
                 $barcode = $response['barcode'];
                 update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
@@ -288,7 +288,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 WC()->cart->empty_cart();
                 return array(
                     'result' => 'success',
-                    'redirect' => //Future front confirmation page
+                    'redirect' => //Future front app confirmation page URL
                 );
             }
 
