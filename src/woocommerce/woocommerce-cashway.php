@@ -15,6 +15,8 @@
 
 require dirname(__FILE__).'/lib/cashway_lib.php';
 
+define( 'WP_DEBUG', true );
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
@@ -110,7 +112,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
             function cashway_surcharge()
             {
-
                 // Ajout des frais CashWay
                 global $woocommerce;
                 $feeObject = new \CashWay\Fee;
@@ -124,7 +125,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
                 $total_amount = $woocommerce->cart->cart_contents_total + $woocommerce->cart->shipping_total;
                 $fee = $feeObject->getCartFee($total_amount);
-                echo 'Fee : '.$fee;
                 $woocommerce->cart->add_fee(__('Custom', 'Frais CashWay'), $fee, true);
             }
 
@@ -233,7 +233,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function process_payment($order_id)
             {
                 $order = wc_get_order($order_id);
-                $api = new \Cashway\API();
+                $api_conf = array(
+                    'API_KEY' => $this->cashway_login,
+                    'API_SECRET' => $this->cashway_password,
+                    'USER_AGENT' => 'agent/0.1'
+                );
+                $api = new \CashWay\API($api_conf);
 
                 $customer_id = $order->user_id;
                 $customer_name = $order->billing_first_name.' '.$order->billing_last_name;
@@ -275,33 +280,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 $api->setOrder_woocommerce($order, $customer);
                 $response = $api->openTransaction();
-                if ($response['shop_order_id'] === $order_id) {
-                    $order_id = sanitize_text_field($response['barcode']);
-                    $order = wc_get_order($order_id);
-                    $order->reduce_order_stock();
-                    WC()->cart->empty_cart();
-                    return array(
-                        'result' => 'success',
-                        'redirect' => $this->get_return_url($order),
-                    );
-                } else {
-                    die('Un problème est survenu avec le traitement de la transaction CashWay.');
-                }
-                /*$response_body = json_decode($response['body']);
-                $barcode = $response_body->barcode;
+                $barcode = $response['barcode'];
                 update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
                 $order = wc_get_order($order_id);
-                // Mark as on-hold (we're awaiting the cheque)
                 $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
-                // Reduce stock levels
                 $order->reduce_order_stock();
-                // Remove cart
                 WC()->cart->empty_cart();
-                // Return thankyou redirect
                 return array(
                     'result' => 'success',
-                    'redirect' => $this->get_return_url($order),
-                );*/
+                    'redirect' => //Future front confirmation page
+                );
             }
 
             /**
@@ -318,39 +306,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function thankyou_page($order_id)
             {
                 $cashway_barcode = get_post_meta($order_id, 'cashway_barcode', true);
-                /* ANCIENNE VERSION AVEC CONFIRMATION AUTOMATIQUE
-                // confirmation de la commande
-                $headers = array(
-                   'Authorization' => 'Basic '.base64_encode($this->cashway_login.':'.$this->cashway_password),
-                   'content-type' => 'application/json',
-                );
-                $body = array(
-                    'order_id' => $order_id,
-                );
-                $args = array(
-                    'method' => 'POST',
-                    'headers' => $headers,
-                    'body' => json_encode($body),
-                );
-
-                $response = wp_remote_post('https://api-staging.cashway.fr/1/transactions/'.$cashway_barcode.'/confirmation', $args);
-
-                //print_r($response);
-
-                $code = $response['response']['code'];
-                if ($code == 201) {
-                    $response_body = json_decode($response['body']);
-                    $frais_client_cashway = $response_body->customer_fee;
-                    $cout_total_client_cashway = $response_body->customer_payment;
-                    $barcode_cashway_url = $response_body->barcode_png_url;
-                    $ticket_url = $response_body->ticket_url;
-
-                    $ticket_url_content = wp_remote_get( $ticket_url );
-                    echo wp_remote_retrieve_body( $ticket_url_content );
-                } else {
-                    die('Une erreur est survenue durant la confirmation de la commande via CashWay.');
-                }
-                */
 
                 /* VERSION AVEC CODE HTML ISSU DE CASHWAY */
                 #TODO Redirection with POST data to CashWay front app
