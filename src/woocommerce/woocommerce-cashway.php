@@ -76,6 +76,23 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
          */
         class WC_Gateway_Cashway extends WC_Payment_Gateway
         {
+            public static function getURL($key)
+            {
+                $urls = [
+                    'api' => 'https://api.cashway.fr/',
+                    'front' => 'https://app.cashway.fr/'
+                ];
+
+                if (getenv('CASHWAY_TEST_ENVIRONMENT')) {
+                    $urls = [
+                        'api' => getenv('CASHWAY_TEST_API_URL'),
+                        'front' => getenv('CASHWAY_TEST_FRONT_URL')
+                    ];
+                }
+
+                return array_key_exists($key, $urls) ? $urls[$key] : null;
+            }
+
             /**
              * Constructor for the gateway.
              */
@@ -288,7 +305,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 WC()->cart->empty_cart();
                 return array(
                     'result' => 'success',
-                    'redirect' => //Future front app confirmation page URL
+                    'redirect' => $this->getURL('front').'/t/'.$barcode
                 );
             }
 
