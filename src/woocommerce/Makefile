@@ -16,6 +16,8 @@ release:
 	mkdir -p ${BUILD_DIR}
 	mkdir -p ${BUILD_TMP}/cashway/lib/cashway
 	git archive --prefix=cashway/ --format zip --output ${BUILD_TMP}/cashway.zip ${TAG}
+	cd ../php/ && git archive --prefix=cashway/lib/cashway/ --format=zip --output=../woocommerce/${BUILD_TMP}/lib.zip HEAD cashway_lib.php compat.php
+	cd ${BUILD_TMP} && unzip lib.zip && zip -r cashway.zip cashway && rm lib.zip
 	mv ${BUILD_TMP}/cashway.zip ${RELEASE_FILE}
 	rm -fr ${BUILD_TMP}
 	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env

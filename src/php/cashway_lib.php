@@ -359,6 +359,7 @@ class API
         $platform = array_shift($args);
         $known_platforms = array(
             'prestashop',
+            'woocommerce'
             //'magento'
         );
 
@@ -671,8 +672,25 @@ class API
     // @codingStandardsIgnoreLine
     private function setOrder_magento() {}
 
+    /**
+      * WooCommerce-specific setup.
+      *
+      * @uses \Customer, \AddressCore, \Cart, \Shop to retrieve details.
+      *
+      * @param Order     $order     an array containing the infos about the order
+      * @param Customer  $customer  an array containing the infos about the customer
+      * @param string    $more as   an array containing more infos
+      *
+      * @return void
+    */
     // @codingStandardsIgnoreLine
-    private function setOrder_woocommerce() {}
+    private function setOrder_woocommerce($order, $customer, $more = null)
+    {
+      $this->order = $order;
+      $this->customer = $customer;
+      $customer['ip'] = self::getIPs();
+      $this->more = $more;
+    }
 }
 
 /**
