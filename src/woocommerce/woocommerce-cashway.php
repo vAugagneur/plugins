@@ -286,16 +286,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $order_details = $order->get_items();
                 $order_language = 'fr';
                 $order = array(
-                    'id' => $order_id,
                     'at' => $order_at,
                     'total' => $order_total,
-                    'currency' => $order_currency,
                     'items_count' => $order_items_count,
-                    'language' => $order_language,
                     'details' => $order_details
                 );
 
-                $api->setOrder('woocommerce', $order, $customer);
+                $api->setOrder('woocommerce', $order_id, $order, $customer, $order_language, $order_currency);
                 $response = $api->openTransaction();
                 $barcode = $response['barcode'];
                 update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));

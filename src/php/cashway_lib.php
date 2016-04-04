@@ -684,11 +684,30 @@ class API
       * @return void
     */
     // @codingStandardsIgnoreLine
-    private function setOrder_woocommerce($order, $customer, $more = null)
+    private function setOrder_woocommerce($id, $order, $customer, $language, $currency, $more = null)
     {
-      $this->order = $order;
-      $this->customer = $customer;
-      $customer['ip'] = self::getIPs();
+      $this->order =  array(
+          'id'          => $id,
+          'at'          => $order['at'],
+          'currency'    => $currency,
+          'total'       => $order['total'],
+          'language'    => $language,
+          'items_count' => $order['items_count'],
+          'details'     => $order['details']
+      );
+
+      $this->customer = array(
+          'id'         => $customer['id'],
+          'name'       => $customer['name'],
+          'email'      => $customer['email'],
+          'phone'      => $customer['phone'],
+          'city'       => $customer['city'],
+          'zipcode'    => $customer['zipcode'],
+          'country'    => $customer['country'],
+          'address'    => $customer['address'],
+          'ip'         => self::getIPs(),
+          'company'    => $customer['company']
+      );
       $this->more = $more;
     }
 }
