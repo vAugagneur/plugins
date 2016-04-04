@@ -302,7 +302,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 WC()->cart->empty_cart();
                 return array(
                     'result' => 'success',
-                    'redirect' => $this->getURL('front').'/t/'.$barcode
+                    'redirect' => $this->getURL('front').'/t/'.$barcode.'?return_url='.$this->get_return_url($order)
                 );
             }
 
