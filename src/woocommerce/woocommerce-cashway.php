@@ -85,7 +85,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 if (getenv('CASHWAY_TEST_ENVIRONMENT')) {
                     $urls = [
-                        'api' => getenv('CASHWAY_TEST_API_URL'),
+                        'api' => getenv('CASHWAY_TEST_API_URL').'/1',
                         'front' => getenv('CASHWAY_TEST_FRONT_URL')
                     ];
                 }
@@ -123,6 +123,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 add_action('woocommerce_thankyou_woocashway', array($this, 'thankyou_page'));
 
                 add_action('woocommerce_cart_calculate_fees', array($this, 'cashway_surcharge'));
+
+                add_action('woocommerce_before_checkout_form', array($this, 'checkOrderAccomplished'));
 
             }
 
@@ -253,7 +255,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $api_conf = array(
                     'API_KEY' => $this->cashway_login,
                     'API_SECRET' => $this->cashway_password,
-                    'USER_AGENT' => 'agent/0.1'
+                    'USER_AGENT' => 'agent/0.1',
+                    'USE_STAGING' => true,
+                    'API_URL' => 'https://api-staging.cashway.fr'
                 );
                 $api = new \CashWay\API($api_conf);
 
@@ -295,14 +299,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $api->setOrder('woocommerce', $order_id, $order, $customer, $order_language, $order_currency);
                 $response = $api->openTransaction();
                 $barcode = $response['barcode'];
+                $shop_order_id = $response['shop_order_id'];
                 update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
                 $order = wc_get_order($order_id);
-                $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
-                $order->reduce_order_stock();
-                WC()->cart->empty_cart();
                 return array(
                     'result' => 'success',
-                    'redirect' => $this->getURL('front').'/t/'.$barcode.'?return_url='.$this->get_return_url($order)
+                    'redirect' => $this->getURL('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order)
                 );
             }
 
@@ -315,27 +317,46 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
+            * Check if an order has been confirmed, if it's the case,
+            * display the thank you page
+            */
+            public function checkOrderAccomplished()
+            {
+                if (null != $_GET['shop_order_id']) {
+                    $this->thankyou_page($_GET['shop_order_id']);
+                }
+            }
+
+            /**
              * Output for the order received page.
              */
             public function thankyou_page($order_id)
             {
-                $cashway_barcode = get_post_meta($order_id, 'cashway_barcode', true);
+                if (null != $order_id) {
+                    $order = wc_get_order($order_id);
+                    $barcode = get_post_meta($order_id, 'cashway_barcode', true);
+                    $api_conf = array(
+                        'API_KEY' => $this->cashway_login,
+                        'API_SECRET' => $this->cashway_password,
+                        'USER_AGENT' => 'agent/0.1',
+                        'USE_STAGING' => true,
+                        'API_URL' => 'https://api-staging.cashway.fr'
+                    );
+                    $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
+                    $order->reduce_order_stock();
+                    WC()->cart->empty_cart();
 
-                /* VERSION AVEC CODE HTML ISSU DE CASHWAY */
-                #TODO Redirection with POST data to CashWay front app
-                $headers = array(
-                   'Authorization' => 'Basic '.base64_encode($this->cashway_login.':'.$this->cashway_password),
-                   'content-type' => 'application/json',
-                );
-                $args = array(
-                    'method' => 'GET',
-                    'headers' => $headers
-                );
-                $response = wp_remote_get('https://api-staging.cashway.fr/1/transactions/'.$cashway_barcode.'/plugin_page', $args);
-
-                echo $response['body'];
-
-                die();
+                    echo "
+                      <h1>Merci d'avoir commandé avec CashWay !</h1>
+                      <h2>Récapitulatif de votre commande :</h2>
+                      Code barre : ".$barcode."<br />
+                      Montant de la commande : ".$order->get_total()."<br />
+                      Moyen de paiement : CashWay<br />
+                    ";
+                    die();
+                } else {
+                    die('Echec du traitement de votre commande...');
+                }
             }
         }
     }
