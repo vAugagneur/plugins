@@ -93,6 +93,27 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 return array_key_exists($key, $urls) ? $urls[$key] : null;
             }
 
+            public static function getAPIConf($login, $password)
+            {
+                $conf = array(
+                    'API_KEY' => $login,
+                    'API_SECRET' => $password,
+                    'USER_AGENT' => 'agent/0.1'
+                );
+
+                if (getenv('CASHWAY_TEST_ENVIRONMENT')) {
+                    $conf = array(
+                        'API_KEY' => $login,
+                        'API_SECRET' => $password,
+                        'USER_AGENT' => 'agent/0.1',
+                        'USE_STAGING' => true,
+                        'API_URL' => getenv('CASHWAY_TEST_API_URL')
+                    );
+                }
+
+                return $conf;
+            }
+
             /**
              * Constructor for the gateway.
              */
@@ -252,13 +273,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function process_payment($order_id)
             {
                 $order = wc_get_order($order_id);
-                $api_conf = array(
-                    'API_KEY' => $this->cashway_login,
-                    'API_SECRET' => $this->cashway_password,
-                    'USER_AGENT' => 'agent/0.1',
-                    'USE_STAGING' => true,
-                    'API_URL' => 'https://api-staging.cashway.fr'
-                );
+                $api_conf = $this->getAPIConf($this->cashway_login, $this->cashway_password);
                 $api = new \CashWay\API($api_conf);
 
                 $customer_id = $order->user_id;
@@ -335,13 +350,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if (null != $order_id) {
                     $order = wc_get_order($order_id);
                     $barcode = get_post_meta($order_id, 'cashway_barcode', true);
-                    $api_conf = array(
-                        'API_KEY' => $this->cashway_login,
-                        'API_SECRET' => $this->cashway_password,
-                        'USER_AGENT' => 'agent/0.1',
-                        'USE_STAGING' => true,
-                        'API_URL' => 'https://api-staging.cashway.fr'
-                    );
+                    $api_conf = $this->getAPIConf($this->cashway_login, $this->cashway_password);
                     $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
                     $order->reduce_order_stock();
                     WC()->cart->empty_cart();
