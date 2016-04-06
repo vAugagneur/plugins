@@ -211,10 +211,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             //Update the status of the order, reduce the stock and
                             //empty the customer's cart
                             $order = wc_get_order($data->order_id);
-                            $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
+                            $order->update_status('on-hold', __('Awaiting CashWay payment', 'woocommerce'));
                             $order->reduce_order_stock();
                             WC()->cart->empty_cart();
                             return $this->response(200, 'Ok, transaction set to confirmed.');
+                            break;
+                        case 'transaction_expired':
+                            //Set the status of the order to cancelled
+                            $order = wc_get_order($data->order_id);
+                            $order->update_status('cancelled', __('CashWay transaction expired', 'woocommerce'));
+                            return $this->response(200, 'Ok, transaction set to cancelled.');
                             break;
                         default:
                             return $this->response(400, 'Unknown Event.');
