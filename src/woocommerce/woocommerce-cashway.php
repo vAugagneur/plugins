@@ -222,6 +222,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             $order->update_status('cancelled', __('CashWay transaction expired', 'woocommerce'));
                             return $this->response(200, 'Ok, transaction set to cancelled.');
                             break;
+                        case 'transaction_paid':
+                            //Set the status of the order to completed
+                            $order = wc_get_order($data->order_id);
+                            $order->update_status('completed', __('CashWay transaction completed', 'woocommerce'));
+                            return $this->response(200, 'Ok, transaction set to completed.');
+                            break;
                         default:
                             return $this->response(400, 'Unknown Event.');
                             break;
