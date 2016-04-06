@@ -66,6 +66,22 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             return $methods;
         }
 
+        add_action('init', 'check_notification_handler');
+
+        /**
+        * Checks if the url is the route for the
+        * notification handler
+        * TODO Try to have a custom route like /cashway/notification
+        */
+        function check_notification_handler()
+        {
+            $current_url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            if (plugins_url('notification_handler_page.php', __FILE__) === $current_url) {
+                $plugin = new WC_Gateway_Cashway();
+                die($plugin->handleNotifications());
+            }
+        }
+
         /**
          * CashWay Payment Gateway.
          *
@@ -149,6 +165,63 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
             }
 
+            /**
+            * Creates a response to return to the request emitter
+            *
+            * @param status the status to return
+            * @param message the message to return
+            */
+            public function response($status, $message)
+            {
+                http_response_code($status);
+                header('Content-Type: application/json; charset=utf-8');
+                return json_encode(
+                    array(
+                    'status'  => ($status < 400) ? 'ok' : 'error',
+                    'message' => $message
+                    )
+                );
+            }
+
+            /**
+            * Receives the notifications on a specific route and
+            * which trigger treatments and returns a status and
+            * a message
+            *
+            * @return a json containing the status and the message
+            */
+            public function handleNotifications()
+            {
+                $api_conf = $this->getAPIConf();
+                $api = new \CashWay\API($api_conf);
+                $res = $api->receiveNotification(
+                    file_get_contents('php://input'),
+                    getallheaders(),
+                    getenv('NOTIFICATION_HANDLER_SHARED_KEY')
+                );
+
+                if ($res[0] === false) {
+                    return $this->response($res[2], $res[1]);
+                } else {
+                    $event = $res[1];
+                    $data = $res[2];
+
+                    switch ($event) {
+                        case 'transaction_confirmed':
+                            //Update the status of the order, reduce the stock and
+                            //empty the customer's cart
+                            $order = wc_get_order($data->order_id);
+                            $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
+                            $order->reduce_order_stock();
+                            WC()->cart->empty_cart();
+                            return $this->response(200, 'Ok, transaction set to confirmed.');
+                            break;
+                        default:
+                            return $this->response(400, 'Unknown Event.');
+                            break;
+                    }
+                }
+            }
 
             function cashway_surcharge()
             {
@@ -351,9 +424,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $order = wc_get_order($order_id);
                     $barcode = get_post_meta($order_id, 'cashway_barcode', true);
                     $api_conf = $this->getAPIConf($this->cashway_login, $this->cashway_password);
-                    $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
-                    $order->reduce_order_stock();
-                    WC()->cart->empty_cart();
 
                     echo "
                       <h1>Merci d'avoir commandé avec CashWay !</h1>
