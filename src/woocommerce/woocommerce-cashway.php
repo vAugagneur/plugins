@@ -276,10 +276,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 wp_enqueue_style('wooCashWayStylesheet', plugins_url('assets/css/cashway.css', __FILE__));
                 wp_enqueue_script('cashway-script', plugins_url('assets/js/cashway.js', __FILE__));
                 $js_params = array(
-                  'checking' => __('Checking CashWay settings...', 'woocommerce-cashway'),
-                  'error_connecting' => __('An error occurred while connecting to CashWay.', 'woocommerce-cashway'),
-                  'error_login' => __('Please check your CashWay API Key and Secret.', 'woocommerce-cashway'),
-                  'error_unknown' => __('An error occurred, please contact us on https://www.cashway.fr/', 'woocommerce-cashway'),
+                  'checking' => __('Vérification des paramètres de CashWay...', 'woocommerce-cashway'),
+                  'error_connecting' => __('Une erreur s\'est produite lors de la connexion à CashWay...', 'woocommerce-cashway'),
+                  'error_login' => __('Veuillez vérifier votre clé et votre secret d\'API CashWay.', 'woocommerce-cashway'),
+                  'error_unknown' => __('Une erreur s\'est produite, vous pouvez nous contacter sur https://www.cashway.fr/', 'woocommerce-cashway'),
                   'url' => site_url().'/?cashway=check_parameters',
                 );
                 wp_localize_script('cashway-script', 'CashWayJSParams', $js_params);
@@ -305,24 +305,24 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 $this->form_fields = array(
                     'enabled' => array(
-                        'title' => __('Enable/Disable', 'woocommerce-cashway'),
+                        'title' => __('Activer/Désactiver', 'woocommerce-cashway'),
                         'type' => 'checkbox',
                         'label' => __('Activer CashWay', 'woocommerce-cashway'),
                         'description' => __('NB: La devise de votre boutique doit être l\'euro €.', 'woocommerce-cashway'),
                         'default' => 'no',
                     ),
                     'test_mode' => array(
-                        'title' => __('Mode test', 'woocommerce-cashway'),
+                        'title' => __('Mode Test', 'woocommerce-cashway'),
                         'type' => 'checkbox',
-                        'label' => __('Use CashWay in test mode', 'woocommerce-cashway'),
+                        'label' => __('Utiliser CashWay en mode Test', 'woocommerce-cashway'),
                         'default' => 'no',
-                        'description' => __('Use test mode to test transactions with no real payment required', 'woocommerce-cashway'),
+                        'description' => __('Utiliser le mode Test pour tester des transactions sans paiement réel requis', 'woocommerce-cashway'),
                     ),
                     'title' => array(
-                        'title' => __('Title', 'woocommerce-cashway'),
+                        'title' => __('Titre', 'woocommerce-cashway'),
                         'type' => 'text',
                         'description' => __('Le titre de la méthode de paiement que voient vos visiteurs.', 'woocommerce-cashway'),
-                        'default' => __('Payez en liquide avec CashWay', 'woocommerce-cashway'),
+                        'default' => __('Payez en liquide avec CashWay.', 'woocommerce-cashway'),
                     ),
                     'description' => array(
                         'title' => __('Description', 'woocommerce-cashway'),
@@ -331,13 +331,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'default' => __('Payez en liquide avec CashWay.', 'woocommerce-cashway'),
                     ),
                     'cashway_login' => array(
-                        'title' => __('CashWay API Key', 'woocommerce-cashway'),
+                        'title' => __('Clé d\'API CashWay', 'woocommerce-cashway'),
                         'type' => 'text',
                         'description' => __('Votre clé d\'API CashWay.', 'woocommerce-cashway'),
                         'default' => '',
                     ),
                     'cashway_password' => array(
-                        'title' => __('CashWay API Secret', 'woocommerce-cashway'),
+                        'title' => __('Secret d\'API', 'woocommerce-cashway'),
                         'type' => 'password',
                         'description' => __('Votre secret d\'API CashWay', 'woocommerce-cashway'),
                         'default' => '',
