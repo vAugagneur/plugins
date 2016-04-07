@@ -78,7 +78,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             $current_url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
             if (plugins_url('notification_handler_page.php', __FILE__) === $current_url) {
                 $plugin = new WC_Gateway_Cashway();
-                die($plugin->handleNotifications());
+                die($plugin->handle_notifications());
             }
         }
 
@@ -92,7 +92,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
          */
         class WC_Gateway_Cashway extends WC_Payment_Gateway
         {
-            public static function getURL($key)
+            public static function get_url($key)
             {
                 $urls = [
                     'api' => 'https://api.cashway.fr/',
@@ -109,7 +109,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 return array_key_exists($key, $urls) ? $urls[$key] : null;
             }
 
-            public static function getAPIConf($login, $password)
+            public static function get_api_conf($login, $password)
             {
                 $conf = array(
                     'API_KEY' => $login,
@@ -161,7 +161,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 add_action('woocommerce_cart_calculate_fees', array($this, 'cashway_surcharge'));
 
-                add_action('woocommerce_before_checkout_form', array($this, 'checkOrderAccomplished'));
+                add_action('woocommerce_before_checkout_form', array($this, 'check_order_accomplished'));
 
             }
 
@@ -190,9 +190,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             *
             * @return a json containing the status and the message
             */
-            public function handleNotifications()
+            public function handle_notifications()
             {
-                $api_conf = $this->getAPIConf();
+                $api_conf = $this->get_api_conf();
                 $api = new \CashWay\API($api_conf);
                 $res = $api->receiveNotification(
                     file_get_contents('php://input'),
@@ -358,7 +358,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function process_payment($order_id)
             {
                 $order = wc_get_order($order_id);
-                $api_conf = $this->getAPIConf($this->cashway_login, $this->cashway_password);
+                $api_conf = $this->get_api_conf($this->cashway_login, $this->cashway_password);
                 $api = new \CashWay\API($api_conf);
 
                 $customer_id = $order->user_id;
@@ -404,7 +404,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $order = wc_get_order($order_id);
                 return array(
                     'result' => 'success',
-                    'redirect' => $this->getURL('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order)
+                    'redirect' => $this->get_url('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order)
                 );
             }
 
@@ -420,7 +420,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             * Check if an order has been confirmed, if it's the case,
             * display the thank you page
             */
-            public function checkOrderAccomplished()
+            public function check_order_accomplished()
             {
                 if (null != $_GET['shop_order_id']) {
                     $this->thankyou_page($_GET['shop_order_id']);
@@ -435,7 +435,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if (null != $order_id) {
                     $order = wc_get_order($order_id);
                     $barcode = get_post_meta($order_id, 'cashway_barcode', true);
-                    $api_conf = $this->getAPIConf($this->cashway_login, $this->cashway_password);
+                    $api_conf = $this->get_api_conf($this->cashway_login, $this->cashway_password);
 
                     echo "
                       <h1>Merci d'avoir commandé avec CashWay !</h1>
