@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce CashWay
  * Plugin URI:
- * Description: WooCommerce CashWay is a payment gateway for WooCommerce
+ * Description: WooCommerce CashWay est une méthode de paiement pour WooCommerce
  * Author: Boris Colombier
  * Author URI: https://wba.fr
  * Version: 1.0
