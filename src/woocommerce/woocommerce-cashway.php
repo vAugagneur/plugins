@@ -159,12 +159,19 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 add_action('woocommerce_thankyou_woocashway', array($this, 'thankyou_page'));
 
-                add_action('woocommerce_cart_calculate_fees', array($this, 'cashway_surcharge'));
-
                 add_action('woocommerce_before_checkout_form', array($this, 'check_order_accomplished'));
 
+                add_filter('woocommerce_available_payment_gateways', array($this, 'add_fees_gateway_description'), '1');
             }
 
+            function add_fees_gateway_description($gateways)
+            {
+                if($gateways['woocashway']) {
+                    if(strpos($gateways['woocashway']->description, 'Frais')) return $gateways;
+                    $gateways['woocashway']->description .= ' (Frais Supplémentaires : '.$this->cashway_surcharge().'€)';
+                }
+                return $gateways;
+            }
             /**
             * Creates a response to return to the request emitter
             *
@@ -235,22 +242,18 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
             }
 
+            /*
+            * Calculates and returns the CashWay fees
+            *
+            * @return the calculated fees
+            */
             function cashway_surcharge()
             {
                 // Ajout des frais CashWay
                 global $woocommerce;
                 $feeObject = new \CashWay\Fee;
-
-                if (is_admin() && !defined('DOING_AJAX')) {
-                    return;
-                }
-                $current_gateway = WC()->session->chosen_payment_method;
-                if ($current_gateway != 'woocashway') {
-                    return;
-                }
                 $total_amount = $woocommerce->cart->cart_contents_total + $woocommerce->cart->shipping_total;
-                $fee = $feeObject->getCartFee($total_amount);
-                $woocommerce->cart->add_fee(__('Custom', 'Frais CashWay'), $fee, true);
+                return $feeObject->getCartFee($total_amount);
             }
 
             /**
