@@ -66,22 +66,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             return $methods;
         }
 
-        add_action('init', 'check_notification_handler');
-
-        /**
-        * Checks if the url is the route for the
-        * notification handler
-        * TODO Try to have a custom route like /cashway/notification
-        */
-        function check_notification_handler()
-        {
-            $current_url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-            if (plugins_url('notification_handler_page.php', __FILE__) === $current_url) {
-                $plugin = new WC_Gateway_Cashway();
-                die($plugin->handle_notifications());
-            }
-        }
-
         /**
          * CashWay Payment Gateway.
          *
@@ -456,22 +440,33 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     }
     function cashway_parse_request($wp)
     {
-        if (array_key_exists('cashway', $wp->query_vars) && ($wp->query_vars['cashway'] == 'check_parameters')) {
-            $headers = array(
-               'Authorization' => 'Basic '.base64_encode($_POST['login'].':'.$_POST['password']),
-            );
-            // Setup variable for wp_remote_get
-            $args = array(
-               'headers' => $headers,
-            );
-            $response = wp_remote_get('https://api-staging.cashway.fr/1/shops/me/status', $args);
-            $code = $response['response']['code'];
-            if ($code == 200) {
-                echo 'ok';
-            } else {
-                die('errorConnection');
+        if (array_key_exists('cashway', $wp->query_vars)) {
+            switch($wp->query_vars['cashway']) {
+                case 'check_parameters':
+                    $headers = array(
+                       'Authorization' => 'Basic '.base64_encode($_POST['login'].':'.$_POST['password']),
+                    );
+                    // Setup variable for wp_remote_get
+                    $args = array(
+                       'headers' => $headers,
+                    );
+                    $response = wp_remote_get('https://api-staging.cashway.fr/1/shops/me/status', $args);
+                    $code = $response['response']['code'];
+                    if ($code == 200) {
+                        echo 'ok';
+                    } else {
+                        die('errorConnection');
+                    }
+                    die();
+                    break;
+                case 'notification':
+                    $plugin = new WC_Gateway_Cashway();
+                    die($plugin->handle_notifications());
+                    break;
+                default :
+                    die('Unknown route.');
+                    break;
             }
-            die();
         }
     }
     add_action('parse_request', 'cashway_parse_request');
