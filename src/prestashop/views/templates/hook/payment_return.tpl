@@ -85,8 +85,6 @@
       <a href="https://help.cashway.fr/cgu/"
          target="blank"
          rel="nofollow">{l s="CashWay's terms and conditions." mod='cashway'}</a>.</p>
-
-
 {else}
     <p class="warning">
     {if $barcode == '-failed-'}

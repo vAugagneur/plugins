@@ -487,7 +487,6 @@ class CashWay extends PaymentModule
             $params,
             new Address($this->context->cart->id_address_delivery)
         ));
-        // NOTE: do not use addJS, we need careful placement/loading of our lib.
 
         return $this->display(__FILE__, 'payment_return.tpl');
     }
@@ -519,7 +518,6 @@ class CashWay extends PaymentModule
         $payment = array_key_exists('customer_payment', $cw_res) ? $cw_res['customer_payment'] : null;
 
         return array(
-            'env'       => \CashWay\ENV,
             'barcode'   => $barcode,
             'reference' => $reference,
             'id_order'  => $params['objOrder']->id,
@@ -539,10 +537,7 @@ class CashWay extends PaymentModule
             'location'       => $location,
             'cashway_api_base_url' => \CashWay\API_URL,
             'kyc_upload_url'    => \CashWay\API_URL.\CashWay\KYC_PATH,
-            'kyc_upload_mail'   => \CashWay\KYC_MAIL,
-            'this_path'         => $this->getPathUri(),
-            'this_path_cashway' => $this->getPathUri(),
-            'this_path_ssl'     => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
+            'kyc_upload_mail'   => \CashWay\KYC_MAIL
         );
     }
 
