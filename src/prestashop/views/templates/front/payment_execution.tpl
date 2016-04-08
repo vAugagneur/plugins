@@ -39,7 +39,7 @@
 {if isset($nbProducts) && $nbProducts <= 0}
     <p class="warning">{l s='Your shopping cart is empty.' mod='cashway'}</p>
 {else}
-    <h3>{l s='Pay using cash with CashWay ' mod='cashway'}
+    <h3>{l s='Pay with CashWay ' mod='cashway'}
         <img src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}/views/img/cashway-180x40.png"
             alt="{l s='CashWay' mod='cashway'}"
             width="180"
@@ -47,8 +47,7 @@
             style="margin: 0px 10px 5px 0px;" /></h3>
 
     {if $kyc_conditions.may_pay_this eq 'no'}
-        <p>{l s='Unfortunately, you have gone passed the maximum number of orders' mod='cashway'}
-           {l s='via CashWay over the 12 last months' mod='cashway'}
+        <p>{l s='You have gone passed the maximum number of cash payments via CashWay over the last 12 months' mod='cashway'}
            <a href="https://help.cashway.fr/?q=depassement" id="cashway-link-more-info">{l s='more info' mod='cashway'}</a>).</p>
     {else}
         {if $available.0}
@@ -61,57 +60,52 @@
                         {l s='to show to a newsagent' mod='cashway'}
                         {l s='present on the map below&nbsp;;' mod='cashway'}
                         {l s='whom will be able to validate and cash your payment.' mod='cashway'}
-                        {l s='Your order will then be immediately treated by our services.' mod='cashway'}
+                        {l s='Your order will then be immediately processed.' mod='cashway'}
                     </p></li>
-                    <li><p>
-                        {l s='Your order amount to' mod='cashway'} <span id="amount" class="price">{displayPrice price=$total}</span>
-                        {if $use_taxes == 1}{l s='(taxes included)' mod='cashway'}{/if}.
-                    </p></li>
-                    {if $cart_fee > 0}
-                    <li><p>
-                        {l s='Fees destined to your newsagent : %d€.' sprintf={displayPrice price=$cart_fee} mod='cashway'}
-                    </p></li>
-                    {/if}
-                    <li><p>
-                        <strong>{l s='Total amount to give to your newsagent :' mod='cashway'}
-                        <span id="amount" class="price">{displayPrice price=$total + $cart_fee}</span>.</strong>
-                    </p></li>
+                    <li><table border="0">
+                        <tr>
+                            <td>{l s='Order total:' mod='cashway'}</td>
+                            <td style="text-align: right;"><span id="amount" class="price">{displayPrice price=$total}</span></td>
+                            <td>{if $use_taxes == 1}({l s='taxes included' mod='cashway'}){/if}</td>
+                        </tr>
+                        {if $cart_fee > 0}
+                        <tr>
+                            <td>{l s='Service fees:' mod='cashway'}</td>
+                            <td style="text-align: right;"> {displayPrice price=$cart_fee}</td>
+                        </tr>
+                        {/if}
+                        <tr>
+                            <td><strong>{l s='Total amount to pay:' mod='cashway'}</strong></td>
+                            <td style="text-align: right;"><strong><span id="amount" class="price">{displayPrice price=$total + $cart_fee}</span></strong></td>
+                        </tr>
+                    </table>
+                    </li>
                     {if $kyc_conditions.may_pay_this eq 'req_kyc'}
                     <li><p>
                         <strong>{l s='Caution&nbsp;:' mod='cashway'}</strong>
                         {l s='in order to cash this amount,' mod='cashway'}
-                        {l s='french regulations require to control your identity.' mod='cashway'}
+                        {l s='French regulations require us to control your identity.' mod='cashway'}
                         {l s='We will need&nbsp;:' mod='cashway'}
                         {l s='1) a recto/verso duplicate of your ID card,' mod='cashway'}
                         {l s='2) a proof of address of 3 months at most.' mod='cashway'}
                     </p></li>
                     {/if}
                 </ul>
-                <p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b></p>
-                <div class="form-group form-group-sm">
-                    <p>{l s='By confirming your order, you confirm you have read and agreed to' mod='cashway'}
-                        <a href="https://help.cashway.fr/cgu/"
-                               target="blank"
-                               rel="nofollow"
-                               style="color: orange;">
-                        {l s='CashWay\'s terms and conditions' mod='cashway'}</a>.</p>
-                </div>
+                <p><b>{l s='Please confirm your order by clicking \'I confirm my order\'.' mod='cashway'}</b>
+                    {l s='By confirming your order, you confirm you have also read and agreed to' mod='cashway'}
+                    <a href="https://help.cashway.fr/cgu/"
+                       target="blank"
+                       rel="nofollow"
+                       style="color: orange;">
+                    {l s='CashWay\'s terms and conditions' mod='cashway'}</a>.</p>
+
                 <p class="cart_navigation" id="cart_navigation">
-                    {if (rand(1,100) > 50)}
-                    <input type="hidden" name="btn" value="image"/>
-                    <input id="cashway-confirm-btn"
-                        type="image"
-                        src="{$this_path_cashway|escape:'urlpathinfo':'UTF-8'}/views/img/cashway-confirm.png"
-                        alt="{l s='I confirm my order' mod='cashway'}"/>
-                    {else}
                     <input type="hidden" name="btn" value="button"/>
                     <input id="cashway-confirm-btn"
                         type="submit"
                         class="btn btn-primary button button-primary"
                         value="{l s='I confirm my order' mod='cashway'}"/>
-                    {/if}
                 </p>
-                <style>input[disabled] { opacity: 0.5; }</style>
             </form>
             <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?p=ps&amp;v=ok" alt="" />
         {else}

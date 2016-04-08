@@ -1,5 +1,14 @@
 # Changelog for CashWay PrestaShop module
 
+## 2016-04-08 - 1.2.0
+
+ * fix service fees display bug
+ * fix a potential issue on payment reporting (#2, core #94, core #112)
+ * fix localized dates again
+ * update test cases
+ * update translations
+ * better reporting to & from API
+
 ## 2016-03-04 - 1.1.0
 
  * fix localized date display

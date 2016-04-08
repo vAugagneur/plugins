@@ -92,7 +92,6 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
         $location['search'] = implode(' ', $location);
         $this->context->smarty->assign(array(
             'available' => $available,
-            'env' => \CashWay\ENV,
             'cart_fee' => number_format(
                 \CashWay\Fee::getCartFee($cart->getOrderTotal()),
                 0,
@@ -100,24 +99,15 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
                 '&nbsp;'
             ),
             'location' => $location,
-            'phone' => $address->phone_mobile,
-            'email' => $this->context->customer->email,
             'nbProducts' => $this->context->cart->nbProducts(),
-            'cust_currency' => $this->context->cart->id_currency,
-            'currencies' => $this->module->getCurrency((int)$this->context->cart->id_currency),
             'total' => $this->context->cart->getOrderTotal(true, Cart::BOTH),
-            'isoCode' => $this->context->language->iso_code,
-            'this_path' => $this->module->getPathUri(),
             'this_path_cashway' => $this->module->getPathUri(),
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->module->name.'/',
             'cashway_api_base_url' => $cashway->api_base_url,
             'kyc_conditions' => (array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null),
             'kyc_upload_url' => \CashWay\API_URL.\CashWay\KYC_PATH,
             'kyc_upload_mail' => \CashWay\KYC_MAIL
         ));
 
-        // Nice but does not defer/async, so we inject this in the template for now
-        //$this->context->controller->addJS('https://maps.cashway.fr/js/cashway_map.js');
         $this->setTemplate('payment_execution.tpl');
     }
 }

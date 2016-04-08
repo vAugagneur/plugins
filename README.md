@@ -1,5 +1,7 @@
 # CashWay Plugins
 
+[![Circle CI](https://circleci.com/gh/cshw/plugins.svg?style=svg)](https://circleci.com/gh/cshw/plugins)
+
 Stable:
 
  * PrestaShop in `src/prestashop`

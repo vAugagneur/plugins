@@ -32,13 +32,13 @@ require dirname(__FILE__).'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '1.1.0';
+    const VERSION = '1.2.0';
 
     public function __construct()
     {
         $this->name             = 'cashway';
         $this->tab              = 'payments_gateways';
-        $this->version          = '1.1.0';
+        $this->version          = '1.2.0';
 
         $this->author           = 'CashWay';
         $this->need_instance    = 1;
@@ -49,7 +49,7 @@ class CashWay extends PaymentModule
         $this->is_eu_compatible = 1;
         $this->module_key       = 'ca05dafd3cc2f9f98a086d70fe28c098';
 
-        $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.7');
+        $this->ps_versions_compliancy = array('min' => '1.5.4', 'max' => '1.7');
 
         parent::__construct();
 
@@ -104,10 +104,21 @@ class CashWay extends PaymentModule
 
     public function installDefaultValues()
     {
-        Configuration::updateValue('CASHWAY_SHARED_SECRET', bin2hex(openssl_random_pseudo_bytes(24)));
+        Configuration::updateValue('CASHWAY_SHARED_SECRET', $this->getSharedSecret());
         Configuration::updateValue('CASHWAY_OS_PAYMENT', (int)Configuration::get('PS_OS_WS_PAYMENT'));
 
         return true;
+    }
+
+    private function getSharedSecret()
+    {
+        if (isset($_SERVER['CASHWAY_TEST_ENVIRONMENT']) &&
+            isset($_SERVER['TEST_SHARED_SECRET'])) {
+
+            return $_SERVER['TEST_SHARED_SECRET'];
+        } else {
+            return bin2hex(openssl_random_pseudo_bytes(24));
+        }
     }
 
     /**
@@ -476,7 +487,6 @@ class CashWay extends PaymentModule
             $params,
             new Address($this->context->cart->id_address_delivery)
         ));
-        // NOTE: do not use addJS, we need careful placement/loading of our lib.
 
         return $this->display(__FILE__, 'payment_return.tpl');
     }
@@ -505,9 +515,9 @@ class CashWay extends PaymentModule
         $location['search'] = implode(' ', $location);
 
         $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
+        $payment = array_key_exists('customer_payment', $cw_res) ? $cw_res['customer_payment'] : null;
 
         return array(
-            'env'       => \CashWay\ENV,
             'barcode'   => $barcode,
             'reference' => $reference,
             'id_order'  => $params['objOrder']->id,
@@ -519,16 +529,15 @@ class CashWay extends PaymentModule
                 false
             ),
             'cart_fee'       => '+ '.self::formatFee(\CashWay\Fee::getCartFee($params['total_to_pay'])),
+            'payment_raw'    => $payment,
+            'payment'        => Tools::displayPrice($payment, $params['currencyObj'], false),
             'expires'        => $expires,
             'expires_fr'     => \CashWay\getLocalizedDateInfo($expires, 'fr'),
             'kyc_conditions' => array_key_exists('conditions', $cw_res) ? $cw_res['conditions'] : null,
             'location'       => $location,
             'cashway_api_base_url' => \CashWay\API_URL,
             'kyc_upload_url'    => \CashWay\API_URL.\CashWay\KYC_PATH,
-            'kyc_upload_mail'   => \CashWay\KYC_MAIL,
-            'this_path'         => $this->getPathUri(),
-            'this_path_cashway' => $this->getPathUri(),
-            'this_path_ssl'     => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
+            'kyc_upload_mail'   => \CashWay\KYC_MAIL
         );
     }
 
@@ -536,7 +545,7 @@ class CashWay extends PaymentModule
     */
     public static function formatFee($fee_value)
     {
-        return sprintf('%s&nbsp;&euro;', number_format($fee_value, 0, ',', '&nbsp;'));
+        return sprintf('%s €', number_format($fee_value, 0, ',', '&nbsp;'));
     }
 
     /**
@@ -599,8 +608,8 @@ class CashWay extends PaymentModule
         if (isset($_SERVER['CASHWAY_TEST_ENVIRONMENT'])
             && $_SERVER['CASHWAY_TEST_ENVIRONMENT'] == 1) {
             $options['API_URL'] = $_SERVER['TEST_SERVER_SCHEME'].'://'.
-            $_SERVER['TEST_SERVER_HOST'].':'.
-            $_SERVER['TEST_SERVER_PORT'];
+                $_SERVER['TEST_SERVER_HOST'].':'.
+                $_SERVER['TEST_SERVER_PORT'];
         }
 
         return new \Cashway\API($options);
@@ -720,7 +729,7 @@ class CashWay extends PaymentModule
     {
         if ($local['total_paid'] != $remote['order_total']) {
             \CashWay\Log::error(sprintf(
-                'expected payments differ: %.2f vs. %.2f (remote/local)',
+                'expected payments differ for %s: %.2f vs. %.2f (remote/local)',
                 $ref,
                 $remote['order_total'],
                 $local['total_paid']
@@ -739,7 +748,10 @@ class CashWay extends PaymentModule
         }
 
         if ($local['total_paid_real'] >= $remote['order_total']) {
-            \CashWay\Log::warn('I, it has already been updated: skipping.');
+            \CashWay\Log::warn('I, it has already been updated:');
+            \CashWay\Log::warn('I, (local) total_paid_real = '.$local['total_paid_real']);
+            \CashWay\Log::warn('I, (local) current_state = '.$local['current_state']);
+            \CashWay\Log::warn('I, still trying to force order status to paid: ');
 
             // if the total_paid_real is already set,
             // we still force the order status to paid.
@@ -830,7 +842,7 @@ class CashWay extends PaymentModule
             $sql = sprintf('SELECT * FROM %sorders WHERE id_order=%d', _DB_PREFIX_, (int)$id_or_ref);
         } else {
             $id_or_ref = filter_var((string)$id_or_ref, FILTER_SANITIZE_STRING);
-            $sql = sprintf('SELECT * FROM %sorders WHERE reference=%s', _DB_PREFIX_, $id_or_ref);
+            $sql = sprintf('SELECT * FROM %sorders WHERE reference="%s"', _DB_PREFIX_, $id_or_ref);
         }
 
         if ($order = Db::getInstance()->getRow($sql)) {

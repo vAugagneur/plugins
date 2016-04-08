@@ -117,7 +117,7 @@ test-CWD:
 	cp ../php/compat.php lib/cashway/
 	phpunit --color . ; \
 	status=$$? ; \
-	rm -fr lib/cashway/{cashway_lib,compat}.php ; \
+	rm -fr lib/cashway/cashway_lib.php lib/cashway/compat.php ; \
 	exit $$status
 
 # Run tests against current working tree status for src/prestashop only.
@@ -125,11 +125,11 @@ test-CWD:
 # Useful to pre-validate code.
 test-HEAD: test
 test:
-	cd ../php/ && git archive --prefix=cashway/ --format zip --output ../prestashop/lib/cashway.zip HEAD {cashway_lib,compat}.php
+	cd ../php/ && git archive --prefix=cashway/ --format zip --output ../prestashop/lib/cashway.zip HEAD cashway_lib.php compat.php
 	cd lib && unzip cashway.zip
 	phpunit --color . ; \
 	status=$$? ; \
-	rm -fr lib/cashway/{cashway_lib,compat}.php lib/cashway.zip ; \
+	rm -fr lib/cashway/cashway_lib.php lib/cashway/compat.php lib/cashway.zip ; \
 	exit $$status
 
 uxtest: test-install test-user

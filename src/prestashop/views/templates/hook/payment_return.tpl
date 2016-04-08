@@ -24,18 +24,20 @@
 
 {if $status == 'ok'}
     <p>
-    {if !empty($reference)}
-        {l s='Please note and keep your order number #%d.' sprintf=$id_order mod='cashway'}
+    {if empty($reference)}
+        {l s='Please note and keep your order number:' mod='cashway'} <code id="shop-order-id">{$id_order|escape:'htmlall':'UTF-8'}</code>.
     {else}
-        {l s='Please note and keep your order reference %s.' sprintf=$reference mod='cashway'}
+        {l s='Please note and keep your order reference:' mod='cashway'} <code id="shop-order-id">{$reference|escape:'htmlall':'UTF-8'}</code>.
     {/if}
     </p>
     <p>
-      {l s='In order to pay the' mod='cashway'} <span class="price">{$total_to_pay|escape:'htmlall':'UTF-8'}{$cart_fee|escape:'htmlall':'UTF-8'}</span>
+      {l s='In order to pay the' mod='cashway'}
+      <span class="price" id="payment" data-payment="{$payment_raw|escape:'htmlall'}">{$payment|escape:'htmlall':'UTF-8'}</span>
+      (<span class="price">{$total_to_pay|escape:'htmlall':'UTF-8'} {$cart_fee|escape:'htmlall':'UTF-8'}</span>)
       {l s='of your order,' mod='cashway'}
       {l s='you are asked to go to one of the payment places' mod='cashway'}
       {l s='showed on' mod='cashway'}&nbsp;<a href="#cashway-map-l">{l s='our map' mod='cashway'}</a>,&nbsp;
-      {l s='with the following code :' mod='cashway'}
+      {l s='with the following code:' mod='cashway'}
       <code id="cashway-barcode-label">{$barcode|escape:'htmlall':'UTF-8'|substr:7:15|wordwrap:3:' ':true}</code>
       {l s='(this code is only usable until' mod='cashway'} {$expires_fr|escape:'htmlall':'UTF-8'}).
     </p>
@@ -47,7 +49,7 @@
       {l s='1) a duplicate of your ID card' mod='cashway'}
       {l s='and 2) a proof of address of 3 months at most,' mod='cashway'}
       {l s='to cash your payment.' mod='cashway'}
-      <strong>{l s="Without those documents and their validation, your code won't be active." mod='cashway'}</strong>
+      <strong>{l s='Without those documents and their validation, your code will not be active.' mod='cashway'}</strong>
       {l s='You can scan those documents in order to send them to us' mod='cashway'}
       <a href="mailto:{$kyc_upload_mail|escape:'htmlall':'UTF-8'}?subject=Validation {$barcode|escape:'htmlall':'UTF-8'}" class="button button-small" id="cashway-kyc-email">{l s='by email' mod='cashway'}</a>
       {l s='or' mod='cashway'} <a href="{$kyc_upload_url|escape:'htmlall':'UTF-8'}?barcode={$barcode|escape:'htmlall':'UTF-8'}" class="button button-small" id="cashway-kyc-form">{l s='by form' mod='cashway'}</a>
@@ -82,9 +84,7 @@
     <p>{l s='You can read' mod='cashway'}
       <a href="https://help.cashway.fr/cgu/"
          target="blank"
-         rel="nofollow">{l s="CashWay's terms and conditions." mod='cashway'}</a>.</p>
-
-
+         rel="nofollow">{l s='CashWay\'s terms and conditions.' mod='cashway'}</a>.</p>
 {else}
     <p class="warning">
     {if $barcode == '-failed-'}

@@ -5,7 +5,7 @@ MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER'] do
 
 	it "loads admin page" do
-		session.visit ENV['ADMIN_PATH']
+		session.visit ENV['ADMIN_PATH'] + '/index.php?controller=AdminModules'
 	end
 
 	it "authenticates" do
@@ -17,7 +17,7 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 	end
 
 	it 'goes to modules list' do
-		find('li#maintab-AdminParentModules').find('a.title').click
+#		find('li#maintab-AdminParentModules').find('a.title').click
 	end
 
 	it 'checks if module is already there' do
@@ -27,7 +27,7 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 	it 'removes installed module' do
 		skip "CashWay module is not installed." unless page.has_selector? '#anchorCashway'
 
-		find(:xpath, '//a[@data-module-name="cashway"]/../button[@data-toggle="dropdown"]').click
+		find(:xpath, '//div[@id="anchorCashway"]/../../td[@class="actions"]/div/div/button[@data-toggle="dropdown"]').click
 		click_link 'Delete'
 		page.driver.browser.switch_to.alert.accept
 		expect(page).to have_content 'Module deleted successfully.'
@@ -49,6 +49,33 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 		click_link "Install"
 		click_link "Proceed with the installation"
 		expect(page).to have_content 'Module(s) installed successfully.'
+	end
+
+	# Go query PrestaShop configuration value in vagrant test box
+	def get_shared_secret
+		puts Dir.pwd
+		cmd = 'cd ../../tests/box; \
+			vagrant ssh -c \
+				"mysql -uroot -sNe \
+					\"SELECT value FROM ps_configuration WHERE name=\'CASHWAY_SHARED_SECRET\';\" \
+					prestashop"'
+
+		data = []
+		IO.popen(cmd) { |f| data << f.gets }
+
+		data[0].strip
+	end
+
+	# Update shared secret in .env
+	def update_env_shared_secret_with(value)
+		puts Dir.pwd
+		system("sed -i .bak 's|SHARED_SECRET=.*|SHARED_SECRET=#{value}|g' tests/.env")
+	end
+
+	# Only valid/useful if using vagrant here:
+	# This is necessary for client_use.rb payment tests
+	it 'fetches shared secret on test host' do
+		update_env_shared_secret_with get_shared_secret
 	end
 
 	it 'configures module' do

@@ -10,7 +10,7 @@ account = {
   firstname: 'Anne',
   lastname: 'de Bretagne ' + 6.times.map { [*'a'..'z'].sample }.join,
   email: 'test-%s@do.cshw.pl' % [SecureRandom.hex(8)],
-  passwd: SecureRandom.hex(16),
+  passwd: SecureRandom.hex(8),
   url: 'http://localhost:8080/prestashop/'
 }
 
@@ -20,7 +20,7 @@ def register_shop_account(acc)
       {
         email: acc[:email],
         name: acc[:firstname] + ' ' + acc[:lastname],
-        password: SecureRandom.hex(12)
+        password: SecureRandom.hex(10)
       }.to_json,
       accept: :json,
       content_type: :json
@@ -66,6 +66,11 @@ MODULE_PAY_ACTION_TEST=
 
 API_KEY=#{account[:api_key]}
 API_SECRET=#{account[:api_secret]}
+
+SHARED_SECRET=
+VERIFY_CONTENT=
+DEV_EMAIL=
+
 CONF
 
 puts conf
