@@ -122,6 +122,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 return null;
             }
 
+            function is_plugin_authentified()
+            {
+                $api_conf = $this->get_api_conf($this->cashway_login, $this->cashway_password);
+                $api = new \CashWay\API($api_conf);
+                $response = $api->checkAccount();
+                if ($response['status']) {
+                    return true;
+                }
+                return null;
+            }
+
             /**
              * Constructor for the gateway.
              */
@@ -368,6 +379,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
              */
             public function process_payment($order_id)
             {
+                if (!$this->is_plugin_authentified()) {
+                    wc_add_notice('Service CashWay indisponible pour cette commande.', 'error');
+                    return array(
+                        'result' => 'failure'
+                    );
+                }
                 $order = wc_get_order($order_id);
                 $api_conf = $this->get_api_conf($this->cashway_login, $this->cashway_password);
                 $api = new \CashWay\API($api_conf);

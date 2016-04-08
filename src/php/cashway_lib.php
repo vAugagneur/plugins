@@ -505,6 +505,13 @@ class API
         return $this->httpPost('/shops/me', json_encode($params));
     }
 
+    /**
+    * Checks if the account is existent in the API
+    */
+    public function checkAccount() {
+        return $this->httpGet('/shops/me/status');
+    }
+
     public function checkTransactionsForOrders($order_ids)
     {
         return $this->httpGet(sprintf('/shops/me/transactions'));
