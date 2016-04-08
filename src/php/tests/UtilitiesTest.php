@@ -4,7 +4,7 @@ class UtilitiesTest extends PHPUnit_Framework_TestCase
 {
     public function testCheckDependencies()
     {
-        $this->assertArraySubset(\CashWay\checkDependencies(), []);
+        $this->assertSame(\CashWay\checkDependencies(), []);
     }
 
     public function testVersions()

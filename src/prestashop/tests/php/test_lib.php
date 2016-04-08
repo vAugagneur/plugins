@@ -184,6 +184,10 @@ class Validate
     }
 }
 
-
 define('_PS_VERSION_', '1.1.1');
 define('_PS_ROOT_DIR_', sys_get_temp_dir());
+
+$dest_dir = implode(DIRECTORY_SEPARATOR, array(_PS_ROOT_DIR_, 'img', 'os'));
+if (!is_dir($dest_dir)) {
+    mkdir($dest_dir, 0777, true);
+}
