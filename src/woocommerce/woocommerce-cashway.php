@@ -76,6 +76,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
          */
         class WC_Gateway_Cashway extends WC_Payment_Gateway
         {
+            /**
+            * Returns the urls for the asked module
+            * depending of the current environment (dev/production)
+            *
+            * @param String the asked module
+            *
+            * @return String the asked module's url
+            */
             public static function get_url($key)
             {
                 $urls = [
@@ -93,6 +101,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 return array_key_exists($key, $urls) ? $urls[$key] : null;
             }
 
+            /**
+            * Returns a configuration for the API instance,
+            * depending of the current environment (dev/production)
+            *
+            * @param String login the login from the plugin's settings
+            * @param String password the password from the plugin's settings
+            *
+            * @return Array the configuration for the API
+            */
             public static function get_api_conf($login, $password)
             {
                 $conf = array(
@@ -114,6 +131,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 return $conf;
             }
 
+            /**
+            * Checks if the plugin has a key and a secret in it's
+            * settings
+            *
+            * @return boolean
+            */
             function is_plugin_ready_for_production()
             {
                 if ('' != $this->cashway_login && '' != $this->cashway_password) {
@@ -122,6 +145,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 return null;
             }
 
+            /**
+            * Checks if the key and the secret in the plugin's settings are
+            * corresponding to an existing account in the API
+            *
+            * @return boolean
+            */
             function is_plugin_authentified()
             {
                 $api_conf = $this->get_api_conf($this->cashway_login, $this->cashway_password);
@@ -164,10 +193,20 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 add_action('woocommerce_before_checkout_form', array($this, 'check_order_accomplished'));
 
+                // Filters
                 add_filter('woocommerce_available_payment_gateways', array($this, 'available_payment_gateways_master'), '1');
 
             }
 
+            /**
+            * Checks if the plugin has a key and a secret in it's settings,
+            * if it's the case, calls the method to calculate and display the fees,
+            * if it's not, deletes the CashWay payment gateway from the list passed by the hook
+            *
+            * @param Array the list of gateways passed by the hook
+            *
+            * @return Array the list of available gateways processed by the method
+            */
             function available_payment_gateways_master($gateways)
             {
                 if ($gateways['woocashway']) {
@@ -180,6 +219,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 return $gateways;
             }
 
+            /**
+            * Adds the CashWay Fees to the payment gateway's description
+            *
+            * @param Array the list of gateways passed by the hook
+            *
+            * @return Array the list of available gateways processed by the method
+            */
             function add_fees_gateway_description($gateways)
             {
                 if ($gateways['woocashway']) {
@@ -190,11 +236,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
                 return $gateways;
             }
+
             /**
             * Creates a response to return to the request emitter
             *
-            * @param status the status to return
-            * @param message the message to return
+            * @param Integer status the status to return
+            * @param String message the message to return
+            *
+            * @return String the json response
             */
             public function response($status, $message)
             {
@@ -222,7 +271,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $res = $api->receiveNotification(
                     file_get_contents('php://input'),
                     getallheaders(),
-                    getenv('NOTIFICATION_HANDLER_SHARED_KEY')
+                    get_option('notification_handler_shared_key')
                 );
 
                 if ($res[0] === false) {
@@ -260,10 +309,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
             }
 
-            /*
+            /**
             * Calculates and returns the CashWay fees
             *
-            * @return the calculated fees
+            * @return Integer the calculated fees
             */
             function cashway_surcharge()
             {
@@ -275,9 +324,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
-             * Check If The Gateway Is Available For Use.
+             * Checks If The Gateway Is Available For Use.
              *
-             * @return bool
+             * @return boolean
              */
             public function is_available()
             {
@@ -287,7 +336,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
-             * Add specific infos on admin page.
+             * Adds specific infos on admin page.
              */
             public function admin_options()
             {
@@ -318,7 +367,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
-             * Start Gateway Settings Form Fields.
+             * Starts Gateway Settings Form Fields.
              */
             public function init_form_fields()
             {
@@ -371,12 +420,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
-             * Process the payment and return the result.
+             * Open a transaction for this order on the remote API and process the WooCommerce order :
+             * - in case of success, keep a copy of the transaction id and redirect the customer to CW front Web app
+             * - in case of failure, redirect the customer to an explanation page, allowing to return to checkout page for another method.
+             * - in case of bad plugin authentication, display a message telling the customer that the service is unavailable
              *
-             * @param int $order_id
+             * @param String order_id the id of the order to process and open a transaction for
              *
-             * @return array
-             */
+             * @return Array the result (success/failure) and the redirection url to the CW front Web app in case of success
+            */
             public function process_payment($order_id)
             {
                 if (!$this->is_plugin_authentified()) {
@@ -438,6 +490,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
             /**
              * Output for the order received page.
+             *
+             * @param Object order the order
              */
             public function receipt_page($order)
             {
@@ -445,7 +499,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
-            * Check if an order has been confirmed, if it's the case,
+            * Check if an order has been processed, if it's the case,
             * display the thank you page
             */
             public function check_order_accomplished()
@@ -457,6 +511,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
             /**
              * Output for the order received page.
+             *
+             * @param String order_id the id of the order to display the Thank
+             * You Page for
              */
             public function thankyou_page($order_id)
             {
@@ -479,6 +536,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
         }
     }
+
+    /**
+    * Parses the request on Cashway routes to determine which code to execute
+    *
+    * @param Object wp a WordPress instance
+    */
     function cashway_parse_request($wp)
     {
         if (array_key_exists('cashway', $wp->query_vars)) {
@@ -526,6 +589,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     }
     add_action('parse_request', 'cashway_parse_request');
 
+    /**
+    * Returns the variables for the queries on cashway routes
+    *
+    * @param Array vars the variables
+    *
+    * @return Array vars the variables + the added ones
+    */
     function cashway_query_vars($vars)
     {
         $vars[] = 'cashway';
