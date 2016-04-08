@@ -114,6 +114,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 return $conf;
             }
 
+            function is_plugin_ready_for_production()
+            {
+                if ('' != $this->cashway_login && '' != $this->cashway_password) {
+                    return true;
+                }
+                return null;
+            }
+
             /**
              * Constructor for the gateway.
              */
@@ -145,13 +153,28 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 add_action('woocommerce_before_checkout_form', array($this, 'check_order_accomplished'));
 
-                add_filter('woocommerce_available_payment_gateways', array($this, 'add_fees_gateway_description'), '1');
+                add_filter('woocommerce_available_payment_gateways', array($this, 'available_payment_gateways_master'), '1');
+
+            }
+
+            function available_payment_gateways_master($gateways)
+            {
+                if ($gateways['woocashway']) {
+                    if (!$this->is_plugin_ready_for_production()) {
+                        unset($gateways['woocashway']);
+                    } else {
+                        $this->add_fees_gateway_description($gateways);
+                    }
+                }
+                return $gateways;
             }
 
             function add_fees_gateway_description($gateways)
             {
-                if($gateways['woocashway']) {
-                    if(strpos($gateways['woocashway']->description, 'Frais')) return $gateways;
+                if ($gateways['woocashway']) {
+                    if (strpos($gateways['woocashway']->description, 'Frais')) {
+                        return $gateways;
+                    }
                     $gateways['woocashway']->description .= ' (Frais Supplémentaires : '.$this->cashway_surcharge().'€)';
                 }
                 return $gateways;
@@ -263,6 +286,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                   'checking' => __('Vérification des paramètres de CashWay...', 'woocommerce-cashway'),
                   'error_connecting' => __('Une erreur s\'est produite lors de la connexion à CashWay...', 'woocommerce-cashway'),
                   'error_login' => __('Veuillez vérifier votre clé et votre secret d\'API CashWay.', 'woocommerce-cashway'),
+                  'error_send_infos' => __('Erreur lors de l\'envoi de l\'url de notification et/ou de la shared key.', 'woocommerce-cashway'),
                   'error_unknown' => __('Une erreur s\'est produite, vous pouvez nous contacter sur https://www.cashway.fr/', 'woocommerce-cashway'),
                   'url' => site_url().'/?cashway=check_parameters',
                 );
@@ -441,19 +465,33 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     function cashway_parse_request($wp)
     {
         if (array_key_exists('cashway', $wp->query_vars)) {
-            switch($wp->query_vars['cashway']) {
+            switch ($wp->query_vars['cashway']) {
                 case 'check_parameters':
                     $headers = array(
-                       'Authorization' => 'Basic '.base64_encode($_POST['login'].':'.$_POST['password']),
+                        'Authorization' => 'Basic '.base64_encode($_POST['login'].':'.$_POST['password']),
                     );
                     // Setup variable for wp_remote_get
                     $args = array(
-                       'headers' => $headers,
+                        'headers' => $headers,
                     );
                     $response = wp_remote_get('https://api-staging.cashway.fr/1/shops/me/status', $args);
                     $code = $response['response']['code'];
                     if ($code == 200) {
-                        echo 'ok';
+                        $plugin = new WC_Gateway_Cashway();
+                        $api_conf = $plugin->get_api_conf($_POST['login'], $_POST['password']);
+                        $api = new \CashWay\API($api_conf);
+                        $shared_secret = bin2hex(openssl_random_pseudo_bytes(24));
+                        $args = array(
+                            'notification_url' => get_site_url().'/?cashway=notification',
+                            'shared_secret' => $shared_secret
+                        );
+                        $response = $api->updateAccount($args);
+                        if ($response['notification_hook_url']) {
+                            update_option('notification_handler_shared_key', $shared_secret);
+                            echo 'ok';
+                        } else {
+                            die('errorUpdateConnection');
+                        }
                     } else {
                         die('errorConnection');
                     }
@@ -463,7 +501,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $plugin = new WC_Gateway_Cashway();
                     die($plugin->handle_notifications());
                     break;
-                default :
+                default:
                     die('Unknown route.');
                     break;
             }
