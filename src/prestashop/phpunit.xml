@@ -30,7 +30,8 @@
     <whitelist processUncoveredFilesFromWhitelist="false">
       <directory suffix=".php">.</directory>
       <exclude>
-        <directory>tests/public</directory>
+        <directory>tests/</directory>
+        <directory>lib/</directory>
       </exclude>
     </whitelist>
   </filter>

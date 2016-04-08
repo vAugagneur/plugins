@@ -12,6 +12,21 @@ class APITest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider signedDataProvider
+    */
+    public function testSignData($data, $algo, $secret, $expected)
+    {
+        $this->assertStringMatchesFormat($expected, \CashWay\API::signData($data, $algo, $secret));
+    }
+
+    public function signedDataProvider()
+    {
+        return [
+            ['Hello', 'sha1', 'secret', '24aa3e668b48b146a5268f16fde8192696757cc4']
+        ];
+    }
+
+    /**
      * @dataProvider signaturesProvider
     */
     public function testNotificationSignature($body, $secret, $expected_signature)
@@ -151,6 +166,22 @@ class APITest extends PHPUnit_Framework_TestCase
         $this->assertJsonStringEqualsJsonString(json_encode($sent_data), $res['body']);
     }
 
+    function testEvaluateTransaction()
+    {
+        $api = new \CashWay\API(get_conf());
+        $sent_data = [
+            'agent'    => $api->user_agent,
+            'order'    => $api->order,
+            'customer' => $api->customer,
+            'more'     => array()
+        ];
+
+        $res = $api->evaluateTransaction(true);
+        $this->assertEquals('POST', $res['method']);
+        $this->assertEquals('/1/transactions/hint', $res['request']);
+        $this->assertJsonStringEqualsJsonString(json_encode($sent_data), $res['body']);
+    }
+
     public function testConfirmTransaction()
     {
         $api = new \CashWay\API(get_conf());
@@ -286,6 +317,23 @@ R;
                 'howdy!',
                 array(true, 'testing_code', json_decode('{"key":"value"}'))
             ),
+            [
+                '{"key":"value"}',
+                [
+                    "X-CashWay-Signature" => "sha256=4777d4fcfb3cf1db660f88162ac35571e60baf1309d70666675604aad4df99c1"
+                ],
+                'howdy!',
+                [false, 'An event header is required.', 400]
+            ],
+            [
+                'not a valid json string',
+                [
+                    "X-CashWay-Event" => "testing_code",
+                    "X-CashWay-Signature" => "sha1=82bd5a787f2e1edfcef08207cccc5687420a1e5f"
+                ],
+                'howdy!',
+                [false, 'Could not parse JSON payload.', 400]
+            ],
             array(
                 '{"key":"value"}',
                 array(),

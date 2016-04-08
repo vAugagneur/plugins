@@ -31,6 +31,12 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testInstall()
+    {
+        $cwmod = new CashWay();
+        $this->assertEquals(true, $cwmod->install());
+    }
+
     public function testHookActionOrderStatusUpdate()
     {
         $cwmod = new CashWay();
@@ -51,6 +57,20 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('test_payment_method', $body->provider);
         $this->assertEquals(1, $body->order->id);
         $this->assertEquals('test.customer@do.cshw.pl', $body->customer->email);
+    }
+
+    public function testFailedHookActionOrderStatusUpdate()
+    {
+        $cwmod = new CashWay();
+        $os = new stdClass();
+        $os->id = Configuration::get('PS_OS_CASHWAY');
+        $params = array(
+            'newOrderStatus' => $os,
+            'id_order' => 1
+        );
+
+        $res = $cwmod->hookActionOrderStatusUpdate($params);
+        $this->assertEquals(null, $res);
     }
 
     public function testUpdateNotificationParameters()

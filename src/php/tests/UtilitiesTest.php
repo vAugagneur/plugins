@@ -2,6 +2,11 @@
 
 class UtilitiesTest extends PHPUnit_Framework_TestCase
 {
+    public function testCheckDependencies()
+    {
+        $this->assertArraySubset(\CashWay\checkDependencies(), []);
+    }
+
     public function testVersions()
     {
         $this->assertTrue(\CashWay\isPHPVersionSupported());
@@ -34,16 +39,23 @@ class UtilitiesTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider datesProvider
     */
-    public function testGetLocalizedDateInfo($date, $expected)
+    public function testGetLocalizedDateInfo($date, $locale, $expected)
     {
-        $this->assertStringMatchesFormat($expected, \CashWay\getLocalizedDateInfo($date, 'fr'));
+        $this->assertSame($expected, \CashWay\getLocalizedDateInfo($date, $locale));
     }
 
     public function datesProvider()
     {
         return [
-            ['2015-01-01T01:01:01Z', 'jeudi 1er janvier à 1 heures'],
-            ['2016-03-01T15:09:01Z', 'mardi 1er mars à 15 heures']
+            ['2015-01-01T01:01:01Z', 'fr', 'jeudi 1er janvier à 1 heures'],
+            ['2016-03-01T15:09:01Z', 'fr', 'mardi 1er mars à 15 heures'],
+            ['2016-03-01T15:09:01Z', 'ru', 'mardi 1er mars à 15 heures'],
+            [null, 'fr', null]
         ];
+    }
+
+    public function testGetRandomString()
+    {
+        $this->assertSame(48, strlen(\CashWay\getRandomString(24)));
     }
 }

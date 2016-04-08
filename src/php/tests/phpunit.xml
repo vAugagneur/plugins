@@ -26,6 +26,7 @@
       <directory suffix=".php">../</directory>
       <exclude>
         <file>public/index.php</file>
+        <directory>.</directory>
       </exclude>
     </whitelist>
   </filter>

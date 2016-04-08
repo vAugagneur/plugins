@@ -11,6 +11,14 @@ class ModuleFrontController
     }
 }
 
+class Country
+{
+    public static function getIsoById($country)
+    {
+        return 'FR';
+    }
+}
+
 class Link
 {
     public function getModuleLink($name, $type)
@@ -30,6 +38,16 @@ class PaymentModule
     public function l($s)
     {
         return $s;
+    }
+
+    public function registerHook($hook)
+    {
+        return true;
+    }
+
+    public function install()
+    {
+        return true;
     }
 }
 
@@ -58,6 +76,11 @@ class Configuration
 
         return null;
     }
+
+    public static function updateValue($key, $value)
+    {
+
+    }
 }
 
 class Order
@@ -83,6 +106,28 @@ class Order
     public function setInvoice($send)
     {
         echo sprintf("Setting invoice for order %d\n", $this->id);
+    }
+}
+
+class Language
+{
+    public static function getLanguages()
+    {
+        return [['id_lang' => 'FR']];
+    }
+}
+
+class OrderState
+{
+
+    public function __construct()
+    {
+        $this->id = 1;
+    }
+
+    public function add()
+    {
+        return true;
     }
 }
 
@@ -141,3 +186,4 @@ class Validate
 
 
 define('_PS_VERSION_', '1.1.1');
+define('_PS_ROOT_DIR_', sys_get_temp_dir());
