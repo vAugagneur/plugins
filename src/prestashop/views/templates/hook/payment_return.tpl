@@ -62,17 +62,16 @@
         <br /><br /><strong>{l s='Your order will be sent as soon as we receive your payment.' mod='cashway'}</strong>
     </p>
 
-    <h4 id="cashway-map-l">Dealers near you :</h4>
-    <input id="cashway-map-search"
-           type="textbox"
-           class="form-control ac_input"
-           value="{$location.search|escape:'htmlall':'UTF-8'}" />
-    <input id="cashway-map-search-btn"
-           type="button"
-           class="btn btn-info button button-small"
-           value="Trouver les distributeurs CashWay autour de cette adresse" />
-
+    <h4 id="cashway-map-l">{l s='Dealers near you:' mod='cashway'}</h4>
     <div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
+    <input id="cashway-map-search"
+        type="textbox"
+        class="form-control ac_input"
+        value="{$location.search|escape:'htmlall':'UTF-8'}" />
+    <input id="cashway-map-search-btn"
+        type="button"
+        class="btn btn-info"
+        value="Trouver les distributeurs CashWay autour de cette adresse" />
     <script src="https://maps.cashway.fr/js/cwm.min.js" defer async></script>
 
     <p>
@@ -81,7 +80,7 @@
         <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/1/n/pu/returned?p=ps&amp;v=ok" alt="" />
     </p>
 
-    <p>{l s='You can read' mod='cashway'}
+    <p>{l s='You may read' mod='cashway'}
       <a href="https://help.cashway.fr/cgu/"
          target="blank"
          rel="nofollow">{l s='CashWay\'s terms and conditions.' mod='cashway'}</a>.</p>

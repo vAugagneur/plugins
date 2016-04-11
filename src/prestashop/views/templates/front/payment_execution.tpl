@@ -55,11 +55,7 @@
                 method="post">
                 <ul>
                     <li><p>
-                        {l s='After your order\'s confirmation,' mod='cashway'}
-                        {l s='you will receive a SMS with your code' mod='cashway'}
-                        {l s='to show to a newsagent' mod='cashway'}
-                        {l s='present on the map below&nbsp;;' mod='cashway'}
-                        {l s='whom will be able to validate and cash your payment.' mod='cashway'}
+                        {l s='After your confirmation, you will receive a barcode to present to a newsagent present near you (see map below), who will validate and register your payment.' mod='cashway'}
                         {l s='Your order will then be immediately processed.' mod='cashway'}
                     </p></li>
                     <li><table border="0">
@@ -82,11 +78,9 @@
                     </li>
                     {if $kyc_conditions.may_pay_this eq 'req_kyc'}
                     <li><p>
-                        <strong>{l s='Caution&nbsp;:' mod='cashway'}</strong>
-                        {l s='in order to cash this amount,' mod='cashway'}
-                        {l s='French regulations require us to control your identity.' mod='cashway'}
-                        {l s='We will need&nbsp;:' mod='cashway'}
-                        {l s='1) a recto/verso duplicate of your ID card,' mod='cashway'}
+                        <strong>{l s='Caution: to pay this amount in cash, French rules require us to check your id.' mod='cashway'}</strong>
+                        {l s='We need:' mod='cashway'}
+                        {l s='1) a recto/verso copy of your ID card,' mod='cashway'}
                         {l s='2) a proof of address of 3 months at most.' mod='cashway'}
                     </p></li>
                     {/if}
@@ -109,25 +103,25 @@
             </form>
             <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?p=ps&amp;v=ok" alt="" />
         {else}
-            <p><strong>{l s='Unfortunately&nbsp;: this payment method is temporarily unavailable' mod='cashway'}</strong>.
-                {l s='We are doing our best to make it up and running as soon as possible.' mod='cashway'}
+            <p><strong>{l s='We are sorry this payment method is unavailable at the moment.' mod='cashway'}</strong>.
+                {l s='We are doing our best to make it work back.' mod='cashway'}
                 <span>{$available.1|escape:'htmlall':'UTF-8'}</span></p>
-            <p><a class="exclusive_large" href="/index.php?controller=order&step=3">{l s='You can choose another method' mod='cashway'}</a></p>
+            <p><a class="exclusive_large" href="/index.php?controller=order&step=3">{l s='You may choose another method.' mod='cashway'}</a></p>
             <br>
             <img src="{$cashway_api_base_url|escape:'htmlall':'UTF-8'}/n/pu/considered?p=ps&amp;v=failed&amp;r={$available.2|escape:'htmlall':'UTF-8'}" alt="" />
         {/if}
     {/if}
     <br>
-    <h4 id="cashway-map-l">{l s='Dealers near you&nbsp;:' mod='cashway'}</h4>
+    <h4 id="cashway-map-l">{l s='Dealers near you:' mod='cashway'}</h4>
+    <div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
     <input id="cashway-map-search"
         type="textbox"
         class="form-control ac_input"
         value="{$location.search|escape:'htmlall':'UTF-8'}" />
     <input id="cashway-map-search-btn"
         type="button"
-        class="btn btn-info button button-small"
+        class="btn btn-info"
         value="Trouver les distributeurs CashWay autour de cette adresse" />
-    <div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
     <script src="https://maps.cashway.fr/js/cwm.min.js" defer async></script>
 
     <p class="cart_navigation clearfix"
