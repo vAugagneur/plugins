@@ -1,16 +1,23 @@
+/*
+ * blue: #110E20
+ * orange: #EB682F
+*/
 p.payment_module a.cashway {
     background-color: #fbfbfb;
     background-image: url(/modules/cashway/views/img/cashway-payment.png);
+    background-size: 68px auto;
     background-repeat: no-repeat;
-    background-position: 15px 15px;
+    background-position: 15px 22px;
     background-attachment: scroll;
     padding: 33px 40px 34px 99px;
+    transition-property: background-color, color, border-color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in;
 }
 
-p.payment_module a.cashway-hl {
-    background-image: url(/modules/cashway/views/img/cashway-payment-orange.png);
+p.payment_module a.cashway {
     background-color: white;
-    border: 2px solid orange;
+    border: 2px solid #110E20;
 }
 
 p.payment_module a.cashway:after {
@@ -28,9 +35,11 @@ p.payment_module a.cashway:after {
 }
 
 p.payment_module a.cashway:hover {
-    background-image: url(/modules/cashway/views/img/cashway-payment-orange.png);
     background-color: #f6f6f6;
+
+    border: 2px solid #EB682F;
+
 }
 p.payment_module a.cashway:hover:after {
-    color: orange;
+    color: #EB682F;
 }

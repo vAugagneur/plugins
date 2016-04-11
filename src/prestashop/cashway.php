@@ -49,7 +49,7 @@ class CashWay extends PaymentModule
         $this->is_eu_compatible = 1;
         $this->module_key       = 'ca05dafd3cc2f9f98a086d70fe28c098';
 
-        $this->ps_versions_compliancy = array('min' => '1.5.4', 'max' => '1.7');
+        $this->ps_versions_compliancy = array('min' => '1.5.6', 'max' => _PS_VERSION_);
 
         parent::__construct();
 
