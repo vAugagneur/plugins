@@ -691,29 +691,28 @@ class API
       * @return void
     */
     // @codingStandardsIgnoreLine
-    private function setOrder_woocommerce($id, $order, $customer, $language, $currency, $more = null)
+    private function setOrder_woocommerce($id, $order, $more = null)
     {
       $this->order =  array(
           'id'          => $id,
-          'at'          => $order['at'],
-          'currency'    => $currency,
-          'total'       => $order['total'],
-          'language'    => $language,
-          'items_count' => $order['items_count'],
-          'details'     => $order['details']
+          'at'          => date('Y-m-dTH:i:sZ'),
+          'currency'    => $order->get_order_currency(),
+          'total'       => $order->get_total(),
+          'language'    => 'fr',
+          'items_count' => $order->get_item_count(),
+          'details'     => $order->get_items()
       );
-
       $this->customer = array(
-          'id'         => $customer['id'],
-          'name'       => $customer['name'],
-          'email'      => $customer['email'],
-          'phone'      => $customer['phone'],
-          'city'       => $customer['city'],
-          'zipcode'    => $customer['zipcode'],
-          'country'    => $customer['country'],
-          'address'    => $customer['address'],
+          'id'         => $order->user_id,
+          'name'       => $order->billing_first_name.' '.$order->billing_last_name,
+          'email'      => $order->billing_email,
+          'phone'      => $order->billing_phone,
+          'city'       => $order->billing_city,
+          'zipcode'    => $order->billing_postcode,
+          'country'    => $order->billing_country,
+          'address'    => $order->billing_address_1,
           'ip'         => self::getIPs(),
-          'company'    => $customer['company']
+          'company'    => $order->billing_company
       );
       $this->more = $more;
     }

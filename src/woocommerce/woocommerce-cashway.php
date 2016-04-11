@@ -441,42 +441,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $api_conf = $this->get_api_conf($this->cashway_login, $this->cashway_password);
                 $api = new \CashWay\API($api_conf);
 
-                $customer_id = $order->user_id;
-                $customer_name = $order->billing_first_name.' '.$order->billing_last_name;
-                $customer_email = $order->billing_email;
-                $customer_phone = $order->billing_phone;
-                $customer_city = $order->billing_city;
-                $customer_zipcode = $order->billing_postcode;
-                $customer_country = $order->billing_country;
-                $customer_address = $order->billing_address_1;
-                $customer_company = $order->billing_company;
-                $customer = array(
-                    'id' => $customer_id,
-                    'name' => $customer_name,
-                    'email' => $customer_email,
-                    'phone' => $customer_phone,
-                    'city' => $customer_city,
-                    'zipcode' => $customer_zipcode,
-                    'country' => $customer_country,
-                    'address' => $customer_address,
-                    'company' => $customer_company
-                );
-
-                $order_id = $order_id;
-                $order_at = date('Y-m-d#G:i:s#');
-                $order_total = $order->get_total();
-                $order_currency = $order->get_order_currency();
-                $order_items_count = $order->get_item_count();
-                $order_details = $order->get_items();
-                $order_language = 'fr';
-                $order = array(
-                    'at' => $order_at,
-                    'total' => $order_total,
-                    'items_count' => $order_items_count,
-                    'details' => $order_details
-                );
-
-                $api->setOrder('woocommerce', $order_id, $order, $customer, $order_language, $order_currency);
+                $api->setOrder('woocommerce', $order_id, $order);
                 $response = $api->openTransaction();
                 $barcode = $response['barcode'];
                 $shop_order_id = $response['shop_order_id'];
