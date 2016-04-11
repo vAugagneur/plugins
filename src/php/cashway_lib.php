@@ -682,13 +682,11 @@ class API
     /**
       * WooCommerce-specific setup.
       *
-      * @uses \Customer, \AddressCore, \Cart, \Shop to retrieve details.
+      * @uses \Order to retrieve details.
       *
-      * @param Order     $order     an array containing the infos about the order
-      * @param Customer  $customer  an array containing the infos about the customer
-      * @param string    $more as   an array containing more infos
-      *
-      * @return void
+      * @param String     $id     the id of the processing order
+      * @param WC_Order   $order  the order object corresponding to the processing order
+      * @param string     $more   more infos if necessary
     */
     // @codingStandardsIgnoreLine
     private function setOrder_woocommerce($id, $order, $more = null)
