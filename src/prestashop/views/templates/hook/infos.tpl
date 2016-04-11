@@ -23,7 +23,7 @@
 *}
 
 <div class="alert alert-info">
-<img src="../modules/cashway/logo-86-49.png" style="float:left; margin-right:15px;" width="86" height="49">
+<img src="../modules/cashway/logo.png" style="float:left; margin-right:15px;" width="86" height="49">
 <p><strong>{l s='This module allows you to accept payments via CashWay.' mod='cashway'}</strong></p>
 <p>{l s='If the client chooses this payment method, the order status will change to \'Waiting for payment via CashWay.\'' mod='cashway'}</p>
 <p>{l s='An asynchronous job will check CashWay API if the order has been paid and confirm the order as soon as it is confirmed.' mod='cashway'}</p>
