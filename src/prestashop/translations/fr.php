@@ -91,9 +91,10 @@ $_MODULE['<{cashway}prestashop>payment_return_ae08afa2b3ea85b775eac710d8c87d89']
 $_MODULE['<{cashway}prestashop>payment_return_b23d383b43ef0cb8b3cf19dc6bcb3d9f'] = 'Imprimer le ticket';
 $_MODULE['<{cashway}prestashop>payment_return_514e512f8b788d07ef969cf957c941fe'] = 'Un email et un SMS vont vous être envoyés avec ces informations.';
 $_MODULE['<{cashway}prestashop>payment_return_ffd2478830ca2f519f7fe7ee259d4b96'] = 'Votre commande sera validée dès validation du paiement par le bureau de paiement.';
+$_MODULE['<{cashway}prestashop>payment_return_d79c1c0883cf5a8e3645af162e1528ee'] = 'Points de paiement proches de vous :';
 $_MODULE['<{cashway}prestashop>payment_return_0db71da7150c27142eef9d22b843b4a9'] = 'Pour toute question ou information, contactez notre';
 $_MODULE['<{cashway}prestashop>payment_return_decce112a9e64363c997b04aa71b7cb8'] = 'support client.';
-$_MODULE['<{cashway}prestashop>payment_return_26c32132d9384ce21599dc1305839721'] = 'Vous pouvez lire';
+$_MODULE['<{cashway}prestashop>payment_return_9edff180219c7ec0361622b4ee8664cb'] = 'Vous pouvez consulter';
 $_MODULE['<{cashway}prestashop>payment_return_de66460df607496888972b56ad0955be'] = 'les conditions d\'utilisation de CashWay';
 $_MODULE['<{cashway}prestashop>payment_return_4d13bfb198f57f98bd82a3716b858829'] = 'CashWay n\'est pas disponible pour cette commande.';
 $_MODULE['<{cashway}prestashop>payment_return_f79c9df7be6c25e430617302fb1655ce'] = 'Votre panier reste inchangé, vous pouvez toujours régler avec un autre moyen de paiement.';

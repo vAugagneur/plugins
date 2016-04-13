@@ -727,6 +727,8 @@ class CashWay extends PaymentModule
     */
     public static function verifyAndSetPaid($ref, $remote, $local)
     {
+        // TODO: if order is already paid, or expired, ignore.
+
         if ($local['total_paid'] != $remote['order_total']) {
             \CashWay\Log::error(sprintf(
                 'expected payments differ for %s: %.2f vs. %.2f (remote/local)',
@@ -739,7 +741,7 @@ class CashWay extends PaymentModule
 
         if ($local['total_paid'] > $remote['paid_amount']) {
             \CashWay\Log::error(sprintf(
-                'payment is less than expected: %.2f instead of %.2f (remote/local)',
+                'payment is less than expected for %s: %.2f instead of %.2f (remote/local)',
                 $ref,
                 $remote['paid_amount'],
                 $local['total_paid']
