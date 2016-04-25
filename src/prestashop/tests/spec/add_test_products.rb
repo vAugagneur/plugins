@@ -19,7 +19,8 @@ describe "Adds test products" do
   [50, 250, 2500].each do |price|
     describe "adds #{price} € product" do
       it "open new product page" do
-        find('li#maintab-AdminCatalog').click
+        find('li#subtab-AdminProducts').click
+        expect(page).to have_selector("#form-product")
         click_link_or_button 'Add new product'
 
         find(:xpath, '//input[@id="virtual_product"]').click
@@ -31,6 +32,7 @@ describe "Adds test products" do
         should have_xpath("//button[@name='submitAddproductAndStay' and not(@disabled='disabled')]")
         find('button[name=submitAddproductAndStay]').click
 
+        expect(page).to have_content("Successful creation")
         find('#link-Quantities').click
         should have_selector('td#qty_0')
         fill_in 'qty_0', with: '10000'
