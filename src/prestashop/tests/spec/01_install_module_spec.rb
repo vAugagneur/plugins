@@ -27,6 +27,8 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 	it 'removes installed module' do
 		skip "CashWay module is not installed." unless page.has_selector? '#anchorCashway'
 
+		page.execute_script("window.scrollTo(0,1000);")
+		expect(page).to have_selector("#anchorCashway")
 		find(:xpath, '//div[@id="anchorCashway"]/../../td[@class="actions"]/div/div/button[@data-toggle="dropdown"]').click
 		click_link 'Delete'
 		page.driver.browser.switch_to.alert.accept
@@ -38,6 +40,7 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 		expect(page).to have_content 'ADD A NEW MODULE'
 		page.execute_script('document.getElementById("file").removeAttribute("class");')
 		page.all('input[id="file"]', visible: false).first.set File.absolute_path(ENV['MODULE_ARCHIVE'])
+		page.execute_script("window.scrollTo(0,800);")
 		click_button 'Upload this module'
 		expect(page).to have_content 'The module was successfully downloaded.'
 	end
@@ -46,8 +49,8 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 		find('#moduleQuicksearch').set ENV['MODULE_NAME']
 		fail "Le module n'est pas là..." unless page.has_selector? '#anchorCashway'
 
-		click_link "Install"
-		click_link "Proceed with the installation"
+		page.execute_script("window.scrollTo(0,1000);")
+		click_link 'Install'
 		expect(page).to have_content 'Module(s) installed successfully.'
 	end
 
