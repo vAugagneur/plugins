@@ -28,10 +28,11 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 		skip "CashWay module is not installed." unless page.has_selector? '#anchorCashway'
 
 		page.execute_script("window.scrollTo(0,1000);")
-		expect(page).to have_selector("#anchorCashway")
+		expect(page).to have_selector "#anchorCashway"
 		find(:xpath, '//div[@id="anchorCashway"]/../../td[@class="actions"]/div/div/button[@data-toggle="dropdown"]').click
 		click_link 'Delete'
 		page.driver.browser.switch_to.alert.accept
+		sleep(5)
 		expect(page).to have_content 'Module deleted successfully.'
 	end
 
@@ -57,7 +58,7 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 	# Go query PrestaShop configuration value in vagrant test box
 	def get_shared_secret
 		puts Dir.pwd
-		cmd = 'cd ../../tests/box; \
+		cmd = 'cd ../../../tests/box; \
 			vagrant ssh -c \
 				"mysql -uroot -sNe \
 					\"SELECT value FROM ps_configuration WHERE name=\'CASHWAY_SHARED_SECRET\';\" \
