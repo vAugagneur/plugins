@@ -35,6 +35,7 @@ end
     end
 
     it "accepts terms & conditions, confirms order" do
+      sleep(1)
       expect(page).to have_selector('#uniform-cgv')
       find('label[for=cgv]').click
       find(:xpath, '//button[@class="button btn btn-default standard-checkout button-medium"]').click
@@ -73,6 +74,7 @@ end
           end
         end
 
+        sleep(1)
         find('#cashway-confirm-btn').click
       end
 
