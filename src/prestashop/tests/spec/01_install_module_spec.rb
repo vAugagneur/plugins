@@ -25,10 +25,10 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 	end
 
 	it 'removes installed module' do
-		skip "CashWay module is not installed." unless page.has_selector? '#anchorCashway'
+		skip "CashWay module is not installed." unless page.has_selector? '#' + MODULE_ANCHOR
 
 		page.execute_script("window.scrollTo(0,1000);")
-		expect(page).to have_selector "#anchorCashway"
+		expect(page).to have_selector '#' + MODULE_ANCHOR
 		find(:xpath, '//div[@id="anchorCashway"]/../../td[@class="actions"]/div/div/button[@data-toggle="dropdown"]').click
 		click_link 'Delete'
 		page.driver.browser.switch_to.alert.accept
@@ -48,7 +48,7 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
 
 	it 'installs module' do
 		find('#moduleQuicksearch').set ENV['MODULE_NAME']
-		fail "Le module n'est pas là..." unless page.has_selector? '#anchorCashway'
+		fail "Le module n'est pas là..." unless page.has_selector? '#' + MODULE_ANCHOR
 
 		page.execute_script("window.scrollTo(0,1000);")
 		click_link 'Install'
