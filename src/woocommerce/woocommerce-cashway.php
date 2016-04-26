@@ -110,8 +110,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             *
             * @return Array the configuration for the API
             */
-            public static function get_api_conf($login, $password)
+            public static function get_api_conf($login = null, $password = null)
             {
+                $login === null ? $this->cashway_login : $login;
+                $password === null ? $this->cashway_password : $password;
                 $conf = array(
                     'API_KEY' => $login,
                     'API_SECRET' => $password,
@@ -153,7 +155,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             */
             function is_plugin_authentified()
             {
-                $api_conf = $this->get_api_conf($this->cashway_login, $this->cashway_password);
+                $api_conf = $this->get_api_conf();
                 $api = new \CashWay\API($api_conf);
                 $response = $api->checkAccount();
                 if ($response['status']) {
@@ -438,7 +440,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     );
                 }
                 $order = wc_get_order($order_id);
-                $api_conf = $this->get_api_conf($this->cashway_login, $this->cashway_password);
+                $api_conf = $this->get_api_conf();
                 $api = new \CashWay\API($api_conf);
 
                 $api->setOrder('woocommerce', $order_id, $order);
@@ -485,7 +487,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if (null != $order_id) {
                     $order = wc_get_order($order_id);
                     $barcode = get_post_meta($order_id, 'cashway_barcode', true);
-                    $api_conf = $this->get_api_conf($this->cashway_login, $this->cashway_password);
+                    $api_conf = $this->get_api_conf();
 
                     echo "
                       <h1>Merci d'avoir commandé avec CashWay !</h1>
