@@ -139,12 +139,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             *
             * @return boolean
             */
-            function is_plugin_ready_for_production()
+            function is_ready_for_production()
             {
-                if ('' != $this->cashway_login && '' != $this->cashway_password) {
-                    return true;
-                }
-                return null;
+                return '' != $this->cashway_login && '' != $this->cashway_password;
             }
 
             /**
@@ -211,7 +208,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             function available_payment_gateways_master($gateways)
             {
                 if ($gateways['woocashway']) {
-                    if (!$this->is_plugin_ready_for_production()) {
+                    if (!$this->is_ready_for_production()) {
                         unset($gateways['woocashway']);
                     } else {
                         $this->add_fees_gateway_description($gateways);
@@ -267,8 +264,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             */
             public function handle_notifications()
             {
-                $api_conf = $this->get_api_conf();
-                $api = new \CashWay\API($api_conf);
+                $api = new \CashWay\API($this->get_api_conf());
                 $res = $api->receiveNotification(
                     file_get_contents('php://input'),
                     getallheaders(),
