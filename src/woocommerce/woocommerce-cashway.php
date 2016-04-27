@@ -519,7 +519,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $shared_secret = bin2hex(openssl_random_pseudo_bytes(24));
                         $args = array(
                             'notification_url' => get_site_url().'/?cashway=notification',
-                            'shared_secret' => $shared_secret
+                            'cashway_shared_secret' => $shared_secret
                         );
                         $response = $api->updateAccount($args);
                         if ($response['notification_hook_url']) {
