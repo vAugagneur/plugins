@@ -90,6 +90,9 @@ test-client-2500:
 test-admin-credentials:
 	${TEST_RUN} spec/add_admin_credentials.rb
 
+test-surcharge:
+	${TEST_RUN} spec/surcharge.rb
+
 test:
 	phpunit .
 
