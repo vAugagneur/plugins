@@ -150,14 +150,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             *
             * @return boolean
             */
-            function is_plugin_authentified()
+            function is_authenticated()
             {
                 $api = new \CashWay\API($this->get_api_conf());
                 $response = $api->checkAccount();
-                if ($response['status']) {
-                    return true;
-                }
-                return null;
+                return $response['status'];
             }
 
             /**
@@ -428,7 +425,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             */
             public function process_payment($order_id)
             {
-                if (!$this->is_plugin_authentified()) {
+                if (!$this->is_authenticated()) {
                     wc_add_notice('Service CashWay indisponible pour cette commande.', 'error');
                     return array(
                         'result' => 'failure'
@@ -530,10 +527,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             update_option('notification_handler_shared_key', $shared_secret);
                             echo 'ok';
                         } else {
-                            die('errorUpdateConnection');
+                            die('ok');
                         }
                     } else {
-                        die('errorConnection');
+                        die('ok');
                     }
                     die();
                     break;
