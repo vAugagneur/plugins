@@ -13,7 +13,7 @@
  * WC tested up to: 2.3.7.
  */
 
-require dirname(__FILE__).'/lib/cashway_lib.php';
+require dirname(__FILE__).'/lib/cashway/cashway_lib.php';
 
 define('WP_DEBUG', true);
 
