@@ -5,11 +5,11 @@ MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER'] do
 
   it "loads admin page" do
-    session.visit ENV['LOGIN_PATH']
+    session.visit ENV['ADMIN_PATH']
   end
 
   it "authenticate and display plugins page" do
-    find('#user_login').set ENV['ADMIN_LASTNAME']
+    find('#user_login').set ENV['ADMIN_EMAIL']
     find('#user_pass').set ENV['ADMIN_PASSWD']
     find('#wp-submit').click
     sleep 1

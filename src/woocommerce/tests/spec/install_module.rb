@@ -5,11 +5,11 @@ MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 describe "Install CashWay module on WordPress: " + ENV['TEST_SERVER'] do
 
   it "loads admin page" do
-    session.visit ENV['LOGIN_PATH']
+    session.visit ENV['ADMIN_PATH']
   end
 
   it "authenticates" do
-    find('#user_login').set ENV['ADMIN_LASTNAME']
+    find('#user_login').set ENV['ADMIN_EMAIL']
     find('#user_pass').set ENV['ADMIN_PASSWD']
     find('#wp-submit').click
   end
