@@ -403,7 +403,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             /**
              * Open a transaction for this order on the remote API and process the WooCommerce order :
              * - in case of success, keep a copy of the transaction id and redirect the customer to CW front Web app
-             * - in case of failure, redirect the customer to an explanation page, allowing to return to checkout page for another method.
+             * - in case of failure, display the error message and stay on the checkout page.
              * - in case of bad plugin authentication, display a message telling the customer that the service is unavailable
              *
              * @param String order_id the id of the order to process and open a transaction for
