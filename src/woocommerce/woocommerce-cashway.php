@@ -416,7 +416,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $api = new \CashWay\API($this->get_api_conf());
 
                 $api->setOrder('woocommerce', $order_id, $order);
-                if ($order->get_total() <= 1000) {
+                $payment_total = $order->get_total() + $this->cashway_surcharge();
+                if ($payment_total <= 1000) {
                     $response = $api->openTransaction();
                     if($response['status']) {
                         $barcode = $response['barcode'];
@@ -438,7 +439,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         }
                     }
                 } else {
-                    wc_add_notice('Votre commande dépasse la limite de montant pour le paiement avec Cashway (1000€)', 'error');
+                    wc_add_notice('Votre commande dépasse la limite de montant pour le paiement avec Cashway  (<a href="https://help.cashway.fr/cgu/">Plus d\'informations</a>)', 'error');
                     return array(
                         'result' => 'failure'
                     );
