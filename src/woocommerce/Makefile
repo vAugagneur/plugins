@@ -87,6 +87,9 @@ add-new-account:
 test-client-2500:
 	${TEST_RUN} spec/client_use_2500e.rb
 
+test-admin-credentials:
+	${TEST_RUN} spec/add_admin_credentials.rb
+
 test:
 	phpunit .
 
