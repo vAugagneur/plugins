@@ -416,25 +416,32 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $api = new \CashWay\API($this->get_api_conf());
 
                 $api->setOrder('woocommerce', $order_id, $order);
-                $response = $api->openTransaction();
-                if($response['status']) {
-                    $barcode = $response['barcode'];
-                    $shop_order_id = $response['shop_order_id'];
-                    update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
-                    $order = wc_get_order($order_id);
-                    return array(
-                        'result' => 'success',
-                        'redirect' => $this->get_url('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order)
-                    );
-                } else {
-                    foreach ($response['errors'] as $value) {
-                        //Simple check to translate the error message on auth error
-                        $error_message = ($value['status'] === '401 Not authorized') ? 'Service CashWay indisponible pour cette commande.' : $value['status'];
-                        wc_add_notice($error_message, 'error');
+                if ($order->get_total() <= 1000) {
+                    $response = $api->openTransaction();
+                    if($response['status']) {
+                        $barcode = $response['barcode'];
+                        $shop_order_id = $response['shop_order_id'];
+                        update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
+                        $order = wc_get_order($order_id);
                         return array(
-                            'result' => 'failure'
+                            'result' => 'success',
+                            'redirect' => $this->get_url('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order)
                         );
+                    } else {
+                        foreach ($response['errors'] as $value) {
+                            //Simple check to translate the error message on auth error
+                            $error_message = ($value['status'] === '401 Not authorized') ? 'Service CashWay indisponible pour cette commande.' : $value['status'];
+                            wc_add_notice($error_message, 'error');
+                            return array(
+                                'result' => 'failure'
+                            );
+                        }
                     }
+                } else {
+                    wc_add_notice('Votre commande dépasse la limite de montant pour le paiement avec Cashway (1000€)', 'error');
+                    return array(
+                        'result' => 'failure'
+                    );
                 }
             }
 
