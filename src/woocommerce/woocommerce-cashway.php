@@ -145,19 +145,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
-            * Checks if the key and the secret in the plugin's settings are
-            * corresponding to an existing account in the API
-            *
-            * @return boolean
-            */
-            function is_authenticated()
-            {
-                $api = new \CashWay\API($this->get_api_conf());
-                $response = $api->checkAccount();
-                return $response['status'];
-            }
-
-            /**
              * Constructor for the gateway.
              */
             public function __construct()
@@ -425,25 +412,30 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             */
             public function process_payment($order_id)
             {
-                if (!$this->is_authenticated()) {
-                    wc_add_notice('Service CashWay indisponible pour cette commande.', 'error');
-                    return array(
-                        'result' => 'failure'
-                    );
-                }
                 $order = wc_get_order($order_id);
                 $api = new \CashWay\API($this->get_api_conf());
 
                 $api->setOrder('woocommerce', $order_id, $order);
                 $response = $api->openTransaction();
-                $barcode = $response['barcode'];
-                $shop_order_id = $response['shop_order_id'];
-                update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
-                $order = wc_get_order($order_id);
-                return array(
-                    'result' => 'success',
-                    'redirect' => $this->get_url('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order)
-                );
+                if($response['status']) {
+                    $barcode = $response['barcode'];
+                    $shop_order_id = $response['shop_order_id'];
+                    update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
+                    $order = wc_get_order($order_id);
+                    return array(
+                        'result' => 'success',
+                        'redirect' => $this->get_url('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order)
+                    );
+                } else {
+                    foreach ($response['errors'] as $value) {
+                        //Simple check to translate the error message on auth error
+                        $error_message = ($value['status'] === '401 Not authorized') ? 'Service CashWay indisponible pour cette commande.' : $value['status'];
+                        wc_add_notice($error_message, 'error');
+                        return array(
+                            'result' => 'failure'
+                        );
+                    }
+                }
             }
 
             /**
@@ -527,10 +519,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             update_option('notification_handler_shared_key', $shared_secret);
                             echo 'ok';
                         } else {
-                            die('ok');
+                            die('errorUpdateConnection');
                         }
                     } else {
-                        die('ok');
+                        die('errorConnection');
                     }
                     die();
                     break;
