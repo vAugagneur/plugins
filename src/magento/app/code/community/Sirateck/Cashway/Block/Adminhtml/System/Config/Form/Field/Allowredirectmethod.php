@@ -54,7 +54,6 @@ class Sirateck_Cashway_Block_Adminhtml_System_Config_Form_Field_Allowredirectmet
     public function toggleDisabled($element)
     {
         if (!$element->getValue() || $element->getValue()!=1) {
-
             $element->getForm()->getElement($this->_getRedirectMethodElementId($element))->setDisabled('disabled');
         }
         return parent::getHtml();

@@ -79,7 +79,6 @@ class Sirateck_Cashway_IpnController extends Mage_Core_Controller_Front_Action
                 $signature = explode("=", $this->getRequest()->getServer('HTTP_X_CASHWAY_SIGNATURE'));
 
                 return hash_hmac($signature[0], $this->getRequest()->getRawBody(), $sharedSecret, false) === $signature[1];
-
             }
         }
 

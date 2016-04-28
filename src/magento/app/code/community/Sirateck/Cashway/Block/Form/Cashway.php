@@ -59,7 +59,6 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
     {
         if (is_null($this->_evaluateTransaction)) {
             $this->_evaluateTransaction = $this->_getMethodinstance()->evaluateTransaction($this->getQuote());
-
         }
 
         return $this->_evaluateTransaction;

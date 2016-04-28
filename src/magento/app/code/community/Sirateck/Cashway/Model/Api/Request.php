@@ -144,7 +144,6 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
                     CURLOPT_SSL_VERIFYHOST => 2,),
             );
             try {
-
                 //innitialize http client and adapter curl
                 $adapter = Mage::getSingleton('cashway/api_http_client_adapter_curl');
 
@@ -163,8 +162,6 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 
                 //Set Curl adapter to http client
                 $this->_client->setAdapter($adapter);
-
-
             } catch (Exception $e) {
                 Mage::throwException($e);
             }

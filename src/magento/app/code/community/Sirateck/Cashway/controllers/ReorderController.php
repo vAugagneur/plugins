@@ -135,21 +135,18 @@ class Sirateck_Cashway_ReorderController extends Mage_Checkout_Controller_Action
             $this->_getCheckout()->unsLastPaymentMethodTitle();
 
             $this->_redirect('checkout/onepage/success');
-
         } catch (Mage_Payment_Model_Info_Exception $e) {
             $message = $e->getMessage();
             if (!empty($message)) {
                 $this->_getCheckout()->addError($message);
             }
             $this->_redirect('*/*/index');
-
         } catch (Mage_Core_Exception $e) {
             Mage::logException($e);
             Mage::helper('checkout')->sendPaymentFailedEmail($this->getQuote(), $e->getMessage());
             $this>_getCheckout()->addError($e->getMessage());
 
             $this->_redirect('checkout/cart');
-
         } catch (Exception $e) {
             Mage::logException($e);
             Mage::helper('checkout')->sendPaymentFailedEmail($this->getQuote(), $e->getMessage());

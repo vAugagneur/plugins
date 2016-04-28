@@ -77,7 +77,6 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
             $comment = Mage::helper('cashway')->__("Transaction is open.");
             //Order is not saved here but after in order payment process
             $order->addStatusToHistory(true, $comment);
-
         }
 
         return $this;

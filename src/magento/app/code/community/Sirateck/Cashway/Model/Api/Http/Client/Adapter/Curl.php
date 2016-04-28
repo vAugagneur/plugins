@@ -128,7 +128,6 @@ class Sirateck_Cashway_Model_Api_Http_Client_Adapter_Curl implements Zend_Http_C
     {
         if ($config instanceof Zend_Config) {
             $config = $config->toArray();
-
         } elseif (! is_array($config)) {
             #require_once 'Zend/Http/Client/Adapter/Exception.php';
             throw new Zend_Http_Client_Adapter_Exception(

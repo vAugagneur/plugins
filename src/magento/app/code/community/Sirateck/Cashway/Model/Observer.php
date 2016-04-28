@@ -184,9 +184,7 @@ class Sirateck_Cashway_Model_Observer
 
                     //Send new datas to cashway
                     $accountResponse = $request->updateOrGetAccountRequest(Sirateck_Cashway_Model_Api_Request::ACTION_UPDATE_ACCOUNT, $params);
-
                 }
-
             } elseif ($configData->getField() == 'api_shared_secret_test') {
                 if ($this->getConfig()->getApiKeyTest() != "" && $this->getConfig()->getApiSecretTest() != "") {
                     $params = array();
@@ -199,9 +197,7 @@ class Sirateck_Cashway_Model_Observer
                     $request->setData('api_secret', $this->getConfig()->getApiSecretTest());
 
                     $accountResponse = $request->updateOrGetAccountRequest(Sirateck_Cashway_Model_Api_Request::ACTION_UPDATE_ACCOUNT, $params);
-
                 }
-
             }
         }
 
