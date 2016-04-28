@@ -19,7 +19,6 @@ describe "Adds new customer account" do
     find(:xpath, '//button[@class="button button-secondary wp-generate-pw hide-if-no-js"]').click
     fill_in 'pass1-text', :with => ENV['CUSTOMER_PASSWD']
     fill_in 'pass1-text', :with => ENV['CUSTOMER_PASSWD']
-    find(:xpath, '//input[@name="pw_weak"]').click
     find(:xpath, '//input[@id="createusersub"]').click
     find(:xpath, '//a[text()="Anne"]').click
     fill_in 'billing_address_1', :with => ENV['CUSTOMER_ADRESS']

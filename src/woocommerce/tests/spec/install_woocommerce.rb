@@ -2,7 +2,7 @@ require 'spec_helper'
 
 MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 
-describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER'] do
+describe "Delete + install of CashWay module on WooCommerce: " + ENV['TEST_SERVER'] do
 
   it "loads admin page" do
     session.visit ENV['ADMIN_PATH']
@@ -25,12 +25,26 @@ describe "Delete + install of CashWay module on PrestaShop: " + ENV['TEST_SERVER
     find('#search-submit').click
     find(:xpath, '//a[@data-slug="woocommerce"]').click
     first(:xpath, '//a[@target="_parent"]').click
-    sleep 5
-    #find(:xpath, '//a[text()="Let\'s Go!"]').click
-    #find(:xpath, '//input[@value="Continue"]').click
-    #find(:xpath, '//input[@value="Continue"]').click
-    #find(:xpath, '//input[@value="Continue"]').click
-    #find(:xpath, '//input[@value="Continue"]').click
+    sleep 1
+  end
+
+  it "configures WooCommerce" do
+    if find('#wc-logo')
+      find(:xpath, '//a[text()="Let\'s Go!"]').click
+      find(:xpath, '//input[@value="Continue"]').click
+      find(:xpath, '//input[@value="Continue"]').click
+      find(:xpath, '//input[@value="Continue"]').click
+      find(:xpath, '//input[@value="Continue"]').click
+      find(:xpath, '//a[text()="Return to the WordPress Dashboard"]').click
+    else
+      session.visit '/wp-admin'
+      find('#toplevel_page_woocommerce').click
+      find(:xpath, '//a[@href="admin.php?page=wc-settings"]').click
+      find(:xpath, '//span[text()="Pounds Sterling (£)"]').click
+      find(:xpath, '//div[text()="Euros (€)"]').click
+      page.execute_script("window.scrollTo(0,250)")
+      find(:xpath, '//input[@class="button-primary"]').click
+    end
   end
 
 end
