@@ -36,7 +36,6 @@ function upgrade_module_0_11_4($module)
     $current_cop = Configuration::get('CASHWAY_OS_PAYMENT');
     if (in_array($current_cop, array('PS_OS_PAYMENT', 'PS_OS_WS_PAYMENT'))) {
         Configuration::updateValue('CASHWAY_OS_PAYMENT', (int)Configuration::get($current_cop));
-
     } elseif ($current_cop == '') {
         Configuration::updateValue('CASHWAY_OS_PAYMENT', (int)Configuration::get('PS_OS_WS_PAYMENT'));
     }
