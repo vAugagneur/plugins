@@ -1,4 +1,4 @@
-# Test scenarios for CashWay PrestaShop payment module
+# Test scenarios for CashWay WooCommerce payment module
 
  * nécessite Ruby, Bundler; run `bundle install`
  * renommer `.env.sample` en `.env` et mettre les bonnes valeurs

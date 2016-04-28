@@ -65,7 +65,7 @@ init-admin:
 	${TEST_RUN} spec/init_admin.rb
 
 reset-db:
-	cd ../../tests/box; vagrant ssh -c "mysql -uroot -e 'DROP DATABASE prestashop; CREATE DATABASE prestashop'"
+	cd ../../tests/box; vagrant ssh -c "mysql -uroot -e 'DROP DATABASE woocommerce; CREATE DATABASE woocommerce'"
 
 add-test-products:
 	${TEST_RUN} spec/add_test_products.rb
