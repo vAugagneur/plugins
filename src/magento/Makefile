@@ -22,9 +22,8 @@ clean:
 	rm -fr build/*
 
 cs:
-	phpcs --config-set show_warnings 0
 	phpcs --encoding=utf-8 \
-		--standard=PSR2 \
+		--standard=./php.standard.xml \
 		--colors \
 		--ignore=lib/,vendor/,coverage/,tools/,build/,archives/ \
 		.
