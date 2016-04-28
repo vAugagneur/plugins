@@ -114,7 +114,6 @@ class CashWay extends PaymentModule
     {
         if (isset($_SERVER['CASHWAY_TEST_ENVIRONMENT']) &&
             isset($_SERVER['TEST_SHARED_SECRET'])) {
-
             return $_SERVER['TEST_SHARED_SECRET'];
         } else {
             return bin2hex(openssl_random_pseudo_bytes(24));
@@ -467,7 +466,6 @@ class CashWay extends PaymentModule
 
         // maybe -failed- or something valid
         if ($barcode != '-failed-') {
-
             $cashway = self::getCashWayAPI();
             $cw_res = $cashway->confirmTransaction($barcode, $reference, null, null);
 

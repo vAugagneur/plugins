@@ -51,6 +51,3 @@ echo 'Code:  ', $res['code'], "\n";
 echo 'Body:  ';
 print_r(json_decode($res['body']));
 echo 'Error: ', $res['error'], "\n";
-
-
-

@@ -6,3 +6,4 @@ build export-ignore
 .gitignore export-ignore
 circle.yml export-ignore
 phpunit.xml export-ignore
+php.standard.xml export-ignore
