@@ -195,6 +195,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
         /* @var $response Zend_Http_Response */
         $response = $this->getClient()->request($method);
 
+        return json_decode($response->getBody(), true);
+
         if ($response->isSuccessful()) {
             return json_decode($response->getBody(), true);
         } else {

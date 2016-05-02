@@ -116,7 +116,7 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
 
     public function getModuleAgent()
     {
-        if (!property_exists($this, $cashway_agent)) {
+        if (!property_exists($this, 'cashway_agent')) {
             $this->cashway_agent = sprintf(
                 'CashWayModule/%s Magento/%s PHP/%s %s',
                 Mage::getConfig()->getModuleConfig("Sirateck_Cashway")->version,
