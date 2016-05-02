@@ -70,7 +70,7 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
      */
     public function canWork()
     {
-        $cw_res = $this->getEvaluateTransaction();
+        $cw_res = $this->getEvaluateTransaction()->_data;
 
         if (array_key_exists('errors', $cw_res)) {
             $errorMsg = "";
@@ -80,6 +80,9 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
                     break;
                 case 'unavailable':
                     $errorMsg = '<!-- CW debug: API unavailable -->';
+                    break;
+                case 'no_auth':
+                    $errorMsg = '<!-- CW debug: not configured -->';
                     break;
                 default:
                     $errorMsg = '<!-- CW debug: unknown -->';
