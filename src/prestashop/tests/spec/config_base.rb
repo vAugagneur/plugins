@@ -9,6 +9,7 @@ describe "PrestaShop basic setup" do
   end
 
   it "validates license" do
+    expect(page).to have_content "License Agreements"
     find('#set_license').click
     find('#btNext').click
   end
@@ -24,16 +25,18 @@ describe "PrestaShop basic setup" do
     fill_in 'infosPassword', with: ENV['ADMIN_PASSWD']
     fill_in 'infosPasswordRepeat', with: ENV['ADMIN_PASSWD']
 
-    sleep(1)
+    sleep(5)
 
     find('#btNext').click
   end
 
   it "configures database" do
+    expect(page).to have_content "Configure your database"
     find('#btNext').click
   end
 
   it "succeeds installation" do
+    print "Veuillez appuyer sur une touche pour continuer le processus d'installation..."
     $stdin.gets
     #sleep 70
     find('#install_process_success', visible: true)

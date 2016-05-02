@@ -2,14 +2,14 @@ require 'spec_helper'
 
 MODULE_ANCHOR='anchor' + ENV['MODULE_NAME'].downcase.capitalize
 
-describe "Mise à jour du module CashWay sur PrestaShop " + ENV['TEST_SERVER'] do
+describe "Update of the Prestashop CASHWAY module " + ENV['TEST_SERVER'] do
 
-	it "charge la page d'admin" do
+	it "loads admin page" do
 		session.visit ENV['ADMIN_PATH']
 		#expect(page).to have_content 'Linux'
 	end
 
-	it "s'identifie" do
+	it "authenticates" do
 		find('#email').set ENV['ADMIN_EMAIL']
 		find('#passwd').set ENV['ADMIN_PASSWD']
 		find('label[for=stay_logged_in]').click
@@ -17,21 +17,22 @@ describe "Mise à jour du module CashWay sur PrestaShop " + ENV['TEST_SERVER'] d
 		expect(page).to have_content ENV['ADMIN_NAME']
 	end
 
-	it 'va dans la liste des modules' do
+	it 'goes to modules list' do
 		find('li#maintab-AdminParentModules').find('a.title').click
 	end
 
-	it 'vérifie si le module est là' do
+	it 'checks if module is already there' do
 		find('#moduleQuicksearch').set ENV['MODULE_NAME']
-		fail "Le module n'est pas installé" unless page.has_selector? '#' + MODULE_ANCHOR
+		fail "The module is not installed" unless page.has_selector? '#' + MODULE_ANCHOR
 	end
 
-	it 'charge une nouvelle archive du module' do
-		click_link 'Ajouter un nouveau module'
-		expect(page).to have_content 'AJOUTER UN NOUVEAU MODULE'
+	it 'loads a new archive of the module' do
+		click_link 'Add a new module'
+		expect(page).to have_content 'ADD A NEW MODULE'
 		page.execute_script('$("#file").removeClass("hide");')
 		page.all('input[id="file"]', visible: false).first.set File.absolute_path(ENV['MODULE_ARCHIVE'])
-		click_button 'Charger le module'
-		expect(page).to have_content 'Le module a bien été téléchargé.'
+		page.execute_script("window.scrollTo(0,800);")
+		click_button 'Upload this module'
+		expect(page).to have_content 'The module was successfully downloaded.'
 	end
 end
