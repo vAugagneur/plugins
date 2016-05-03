@@ -67,6 +67,7 @@ end
 
 if $driver == :poltergeist
   page.driver.add_header('Accept-Language', 'en', permanent: true)
+  page.driver.browser.js_errors = false
 end
 
 # If Selenium
