@@ -1,7 +1,10 @@
 BRANCH=$(shell git symbolic-ref --short HEAD)
-TAG=$(shell git describe --tags)
-RELEASE_FILE=releases/cashway-magento-${BRANCH}-${TAG}.zip
-TS=$(shell date +"%Y-%m-%dT%H:%M:%SZ")
+TAG=$(shell git tag -l ma* |head -1)
+REF=$(shell git rev-parse --short HEAD)
+TS=$(shell date +"%s")
+BUILD=build
+VERSION=$(shell grep -oPm1 "(?<=<version>)[^<]+" app/code/community/Sirateck/Cashway/etc/config.xml)
+RELEASE_FILE=${BUILD}/cashway-magento-${VERSION}-dev.${BRANCH}.${REF}+${TS}.tgz
 TEST_RUN=cd tests; bundle exec rspec
 
 usage:
@@ -14,12 +17,31 @@ install-build-deps:
 update-build-deps:
 	cd tools/mttc && git pull
 
+release: isclean package sign
+
+isclean:
+ifneq (${BRANCH}, 'master')
+	@echo "E: not releasing, because not on master branch."
+	exit 1
+endif
+ifneq ($(shell git diff --shortstat 2> /dev/null | tail -n1), '')
+	@echo "E: not releasing, because of a dirty Git index."
+	exit 2
+endif
+ifneq ($(shell expr `git status --porcelain 2>/dev/null| grep "^??" | wc -l`), 0)
+	@echo "E: not releasing, because there are untracked files."
+	exit 3
+endif
+
 package:
+	mkdir -p ${BUILD}
 	tar cf build/Sirateck_Cashway.tar app
 	tools/mttc/magento-tar-to-connect.phar config.php
+	cp ${BUILD}/CashWay-${VERSION}.tgz ${RELEASE_FILE}
 
-clean:
-	rm -fr build/*
+sign:
+	shasum -a 256 ${RELEASE_FILE} > ${RELEASE_FILE}.sha256
+	gpg --sign --armor ${RELEASE_FILE}.sha256
 
 cs:
 	phpcs --encoding=utf-8 \
