@@ -4,7 +4,11 @@ describe "PrestaShop basic setup" do
 
   it "loads installation page & select English" do
     session.visit '/install'
-    find('#langList').find('option[value="en"]').click
+    if Capybara.current_driver === :poltergeist
+      find('#langList').find('option[value="en"]').trigger('click')
+    else
+      find('#langList').find('option[value="en"]').click
+    end
     find('#btNext').click
   end
 
