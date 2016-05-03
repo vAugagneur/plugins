@@ -52,7 +52,7 @@ Capybara.configure do |config|
   config.run_server = false
   config.always_include_port = true
   config.app_host = ENV['TEST_SERVER']
-  config.default_max_wait_time = 60
+  config.default_max_wait_time = 80
   config.ignore_hidden_elements = true
   # wait_on_first_by_default
 end
