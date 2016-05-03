@@ -49,11 +49,7 @@ release-verify: release-file
 	shasum -c ${RELEASE_FILE}.sha256
 
 cs:
-	phpcs --encoding=utf-8 \
-		--standard=./php.standard.xml \
-		--colors \
-		--ignore=lib/,vendor/,coverage/,tests/ \
-		.
+	phpcs --encoding=utf-8 --colors .
 
 csfix:
 	phpcbf --encoding=utf-8 \
