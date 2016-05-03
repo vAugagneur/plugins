@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<ruleset name="CashwayPrestaShopStandard">
+  <description>Our custom PHP standard for our PrestaShop setup</description>
+
+  <arg value="sp"/>
+  <file>.</file>
+
+  <exclude-pattern>coverage/*</exclude-pattern>
+  <exclude-pattern>lib/*</exclude-pattern>
+  <exclude-pattern>vendor/*</exclude-pattern>
+  <exclude-pattern>tests/*</exclude-pattern>
+
+  <rule ref="PSR2">
+    <exclude name="Generic.Files.LineLength.TooLong" />
+    <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
+    <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
+  </rule>
+</ruleset>
