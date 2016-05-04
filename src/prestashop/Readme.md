@@ -20,6 +20,15 @@ This module depends on APIs provided by [CashWay](https://www.cashway.fr/):
  * Tests in `tests/php` are static tests to be run locally (`make test-CWD` or `make test-HEAD`).
  * Tests in `tests/spec` are to be run against a live PrestaShop test instance.
 
+In order to select a specific driver for the tests, it is necessary to modify the environment variable DRIVER :
+
+```shell
+$ DRIVER=selenium
+or
+$ DRIVER=poltergeist
+or
+$ DRIVER=webkit
+```
 
 ## Building a release
 
