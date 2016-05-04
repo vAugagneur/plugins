@@ -12,7 +12,7 @@ def define_driver (driver_name)
   case driver_name
   when 'selenium'
     puts "The selected driver is Selenium."
-    $driver = :selenium
+    $driver = :selenium_en
   when 'webkit'
     puts "The selected driver is Webkit."
     $driver = :webkit
