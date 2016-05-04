@@ -84,10 +84,10 @@ end
         $barcode = find('#cashway-barcode-label').text.gsub(' ', '')
 
         if 250 == price
-          mail = URI.parse(page.find('a[id = "cashway-kyc-email"]')['href'])
+          mail = URI.parse(URI.encode(page.find('a[id = "cashway-kyc-email"]')['href']))
           expect(mail.to).to eq 'validation@cashway.fr'
 
-          form = URI.parse(page.find('a[id = "cashway-kyc-form"]')['href'])
+          form = URI.parse(URI.encode(page.find('a[id = "cashway-kyc-form"]')['href']))
           expect(form.scheme).to eq 'https'
           expect(form.host.end_with?('.cashway.fr')).to be true
         end

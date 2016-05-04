@@ -6,6 +6,8 @@ describe "PrestaShop basic setup" do
     session.visit '/install'
     if Capybara.current_driver === :poltergeist
       find('#langList').find('option[value="en"]').trigger('click')
+    elsif Capybara.current_driver === :webkit
+      #
     else
       find('#langList').find('option[value="en"]').click
     end
