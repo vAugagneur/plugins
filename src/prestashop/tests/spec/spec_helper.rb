@@ -8,6 +8,22 @@ require 'capybara/poltergeist'
 require 'awesome_print'
 require 'uri'
 
+def define_driver (driver_name)
+  case driver_name
+  when 'selenium'
+    puts "The selected driver is Selenium."
+    $driver = :selenium_en
+  when 'webkit'
+    puts "The selected driver is Webkit."
+    $driver = :webkit
+  else
+    puts "The default driver is Poltergeist"
+    $driver = :poltergeist
+  end
+end
+
+define_driver ENV['DRIVER']
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
@@ -39,9 +55,6 @@ Capybara.register_driver :selenium_en do |app|
   Capybara::Selenium::Driver.new app, browser: :firefox, profile: profile
 end
 
-$driver = :selenium_en
-#$driver = :webkit
-#$driver = :poltergeist
 Capybara::Webkit.configure do |config|
   config.block_unknown_urls
   config.skip_image_loading
@@ -67,6 +80,7 @@ end
 
 if $driver == :poltergeist
   page.driver.add_header('Accept-Language', 'en', permanent: true)
+  page.driver.browser.js_errors = false
 end
 
 # If Selenium

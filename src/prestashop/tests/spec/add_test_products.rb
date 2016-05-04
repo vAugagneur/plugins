@@ -19,6 +19,7 @@ describe "Adds test products" do
   [50, 250, 2500].each do |price|
     describe "adds #{price} € product" do
       it "open new product page" do
+        find('li#maintab-AdminCatalog').hover
         find('li#subtab-AdminProducts').click
         expect(page).to have_selector("#form-product")
         click_link_or_button 'Add new product'

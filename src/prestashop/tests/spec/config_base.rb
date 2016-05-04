@@ -4,7 +4,13 @@ describe "PrestaShop basic setup" do
 
   it "loads installation page & select English" do
     session.visit '/install'
-    find('#langList').find('option[value="en"]').click
+    if Capybara.current_driver === :poltergeist
+      find('#langList').find('option[value="en"]').trigger('click')
+    elsif Capybara.current_driver === :webkit
+      #
+    else
+      find('#langList').find('option[value="en"]').click
+    end
     find('#btNext').click
   end
 
@@ -38,7 +44,6 @@ describe "PrestaShop basic setup" do
   it "succeeds installation" do
     print "Veuillez appuyer sur une touche pour continuer le processus d'installation..."
     $stdin.gets
-    #sleep 70
     find('#install_process_success', visible: true)
   end
 end
