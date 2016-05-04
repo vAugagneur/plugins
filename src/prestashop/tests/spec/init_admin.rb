@@ -15,10 +15,8 @@ describe "Admin post configuration" do
   it "sets filter country" do
     find('li#maintab-AdminParentLocalization').click
     expect(page).to have_content 'Localization pack you want to import'
-    page.save_screenshot('lib/subtab-AdminCountries.png', :full => true);
     find('li#maintab-AdminParentLocalization').hover
     find('li#subtab-AdminCountries').click
-    page.save_screenshot('lib/subtab-AdminCountries-displayed.png')
     fill_in 'countryFilter_b!name', with: ENV['SERVER_COUNTRY']
     find(:xpath, '//button[@id="submitFilterButtoncountry"]').click
 

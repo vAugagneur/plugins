@@ -40,7 +40,8 @@ describe "PrestaShop basic setup" do
   end
 
   it "succeeds installation" do
-    expect(page).to have_content 'finished'
+    print "Veuillez appuyer sur une touche pour continuer le processus d'installation..."
+    $stdin.gets
     find('#install_process_success', visible: true)
   end
 end
