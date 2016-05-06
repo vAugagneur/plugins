@@ -43,7 +43,7 @@ TEST_SERVER=http://localhost:8080/magento/index.php/
 
 CUSTOMER_NAME="${CUSTOMER_FIRSTNAME} ${CUSTOMER_LASTNAME}"
 CUSTOMER_EMAIL=#{account[:email]}
-CUSTOMER_PASSWD=#{account[:paddwd]}
+CUSTOMER_PASSWD=#{account[:passwd]}
 CUSTOMER_FIRSTNAME=#{account[:firstname]}
 CUSTOMER_LASTNAME=#{account[:lastname]}
 CUSTOMER_ADDRESS=Château
