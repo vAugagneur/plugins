@@ -4,7 +4,25 @@ require 'capybara'
 require 'capybara/dsl'
 require 'selenium-webdriver'
 require 'awesome_print'
+require 'capybara/poltergeist'
+require 'capybara/webkit'
 require 'uri'
+
+def define_driver (driver_name)
+  case driver_name
+  when 'selenium'
+    puts "The selected driver is Selenium."
+    $driver = :selenium_en
+  when 'webkit'
+    puts "The selected driver is Webkit."
+    $driver = :webkit
+  else
+    puts "The default driver is Poltergeist"
+    $driver = :poltergeist
+  end
+end
+
+define_driver ENV['DRIVER']
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -34,10 +52,6 @@ Capybara.register_driver :selenium_en do |app|
   args = []
   Capybara::Selenium::Driver.new app, browser: :firefox, profile: profile
 end
-
-$driver = :selenium_en
-#$driver = :webkit
-#$driver = :poltergeist
 
 Capybara.default_driver = $driver
 Capybara.run_server = false
