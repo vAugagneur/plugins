@@ -3,7 +3,7 @@ TAG=$(shell git tag -l ma* |head -1)
 REF=$(shell git rev-parse --short HEAD)
 TS=$(shell date +"%s")
 BUILD=build
-VERSION=$(shell grep -oPm1 "(?<=<version>)[^<]+" app/code/community/Sirateck/Cashway/etc/config.xml)
+VERSION=$(shell grep 'version' app/code/community/Sirateck/Cashway/etc/config.xml | awk -F">" '{print $$2}' | awk -F"<" '{print $$1}' | awk 'NF > 0')
 RELEASE_FILE=${BUILD}/cashway-magento-${VERSION}-dev.${BRANCH}.${REF}+${TS}.tgz
 TEST_RUN=cd tests; bundle exec rspec
 
@@ -38,6 +38,8 @@ package:
 	tar cf build/Sirateck_Cashway.tar app
 	tools/mttc/magento-tar-to-connect.phar config.php
 	cp ${BUILD}/CashWay-${VERSION}.tgz ${RELEASE_FILE}
+	#Update .env
+	sed -i.bak "s|MODULE_VERSION=.*|MODULE_VERSION=${VERSION}|g" tests/.env
 
 sign:
 	shasum -a 256 ${RELEASE_FILE} > ${RELEASE_FILE}.sha256
