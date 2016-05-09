@@ -50,10 +50,26 @@ it "goes back to admin" do
   page.select locale_label, from: 'interface_locale' unless find('#interface_locale').find('option[selected]').value == "en_US"
 end
 
+it "Logs in and out in order to be able to get the Cashway payment configuration" do
+    find(:xpath, '//a[@class="link-logout"]').click
+    find('#username').set ENV['ADMIN_USERNAME']
+    find('#login').set ENV['ADMIN_PASSWD']
+    first('input.form-button').click
+    if page.first('#massage-popup-head')
+      find(:xpath, '//a[@title="close"]').click
+    end
+    expect(page).to have_selector '.head-dashboard'
+end
+
 it "goes to System > Configuration > Sales > CashWay payment" do
   #Go to system=>configuration
-  find(:xpath, '//span[text()="System"]').hover
-  find(:xpath, '//span[text()="Configuration"]').click #Do full screen (or large size) on firefox for it's work :-(
+  if Capybara.current_driver == :poltergeist
+    find(:xpath, '//span[text()="System"]').trigger('click')
+    find(:xpath, '//span[text()="Configuration"]').trigger('click') #Do full screen (or large size) on firefox for it's work :-(
+  else
+    find(:xpath, '//span[text()="System"]').hover
+    find(:xpath, '//span[text()="Configuration"]').click #Do full screen (or large size) on firefox for it's work :-(
+  end
 
   #And select cashway configuration
   find(:xpath, '//span[normalize-space(text())="CashWay payment"]').click

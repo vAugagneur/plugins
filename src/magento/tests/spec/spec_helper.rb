@@ -70,5 +70,6 @@ if $driver == :poltergeist
   page.driver.add_header('Accept-Language', 'en', permanent: true)
 end
 
-# If Selenium
-#page.driver.browser.manage.window.maximize
+if $driver == :selenium
+  page.driver.browser.manage.window.maximize
+end
