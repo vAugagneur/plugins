@@ -22,7 +22,7 @@ describe "Adds test products" do
     find(:xpath, '//ul[@id="nav"]/li[3]/ul/li/a/span[text()="Manage Products"]').click
   end
 
-  [50, 250, 2500].each do |price|
+  [20, 50, 250, 2500].each do |price|
     describe "adds #{price} € product" do
       it "adds product" do
         find(:xpath, '//button[@title="Add Product"]').click

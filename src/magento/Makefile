@@ -85,3 +85,6 @@ config-shipping:
 
 config-magento:
 	${TEST_RUN} spec/install_magento.rb
+
+test-fees:
+	${TEST_RUN} spec/test_fees.rb
