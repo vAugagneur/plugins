@@ -28,6 +28,7 @@ describe "Magento basic setup"do
   end
 
   it "sets admin user account" do
+    expect(page).to have_content 'Create Admin Account'
     fill_in('firstname', with: ENV['ADMIN_FIRSTNAME'])
     fill_in('lastname', with: ENV['ADMIN_LASTNAME'])
     fill_in('username', with: ENV['ADMIN_USERNAME'])

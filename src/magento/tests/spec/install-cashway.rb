@@ -55,7 +55,7 @@ it "Logs in and out in order to be able to get the Cashway payment configuration
     find('#username').set ENV['ADMIN_USERNAME']
     find('#login').set ENV['ADMIN_PASSWD']
     first('input.form-button').click
-    if page.first('#massage-popup-head')
+    if page.first('#message-popup-window-mask')
       find(:xpath, '//a[@title="close"]').click
     end
     expect(page).to have_selector '.head-dashboard'

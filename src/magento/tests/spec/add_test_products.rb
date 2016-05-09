@@ -59,6 +59,7 @@ describe "Adds test products" do
           find(:xpath, '//select[@id="inventory_stock_availability"]/option[@value="1"]').click
           find(:xpath, '//button[@title="Save"]').click
         end
+        expect(page).to have_content 'The product has been saved.'
       end
     end
   end

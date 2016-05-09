@@ -12,14 +12,14 @@ describe "Set shipping price" do
   end
 
   it "set shipping price" do
-    if page.first('#message-popup-window')
-      find(:xpath, '//a[@title = "close"]').click
-    end
+    sleep(1)
+    find(:xpath, '//a[@title="close"]').click unless !page.first('#message-popup-window-mask')
     find(:xpath, '//span[text()="System"]').click
     find(:xpath, '//span[text()="Configuration"]').click
     find(:xpath, '//span[normalize-space(text())="Shipping Methods"]').click
-    find(:xpath, '//a[@id="carriers_flatrate-head"]').click
-    fill_in 'carriers_flatrate_price', :with => '0'
+    expect(page).to have_content("Flat Rate")
+    find('#carriers_flatrate-head').click
+    find(:xpath, '//input[@id="carriers_flatrate_price"]').set '0'
     find(:xpath, '//button[@class="scalable save"]').click
     sleep(3);
     end
