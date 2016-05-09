@@ -39,7 +39,7 @@ end
 account.merge!(register_shop_account(account))
 
 conf = <<CONF
-TEST_SERVER=http://localhost:8080/magento/index.php/
+TEST_SERVER=http://localhost:8080/magento/
 
 CUSTOMER_NAME="${CUSTOMER_FIRSTNAME} ${CUSTOMER_LASTNAME}"
 CUSTOMER_EMAIL=#{account[:email]}
@@ -52,8 +52,8 @@ CUSTOMER_ZIP=44000
 CUSTOMER_PHONE=+33240000000
 CUSTOMER_COUNTRY=FR
 
-ADMIN_PATH=/admin/
-ADMIN_MANAGER_PATH=/downloader/
+ADMIN_PATH=index.php/admin/
+ADMIN_MANAGER_PATH=downloader/
 ADMIN_FIRSTNAME=Admin
 ADMIN_LASTNAME=Magento
 ADMIN_USERNAME=magento
