@@ -51,7 +51,8 @@ $_code=$this->getMethodCode();
 			<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
 		</li>
 		<li>
-			<div><?php echo $this->__("A fee of %d euro(s) will be added to your total when you pay for your order with one of our distributor.",1) ?></div>
+			<div><?php echo $this->__("A fee of %d euro(s) will be added to your total when you pay for your order with one of our distributor.", $this->getOrderFees($this->helper('checkout/cart')
+      ->getQuote()->getGrandTotal())); ?></div>
 		</li>
 	</ul>
 	<script type="text/javascript">
