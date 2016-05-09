@@ -8,8 +8,13 @@ describe "Magento basic setup"do
   end
 
   it "sets default locale values" do
-    find(:xpath, '//select[@id="currency"]/option[@value="EUR"]').click
-    find(:xpath, '//select[@id="timezone"]/option[@value="Europe/London"]').click
+    if Capybara.current_driver === :poltergeist
+      find(:xpath, '//select[@id="currency"]/option[@value="EUR"]').trigger('click')
+      find(:xpath, '//select[@id="timezone"]/option[@value="Europe/London"]').trigger('click')
+    else
+      find(:xpath, '//select[@id="currency"]/option[@value="EUR"]').click
+      find(:xpath, '//select[@id="timezone"]/option[@value="Europe/London"]').click
+    end
     find(:xpath, '//button[@type="submit"]').click
   end
 
@@ -23,6 +28,7 @@ describe "Magento basic setup"do
   end
 
   it "sets admin user account" do
+    expect(page).to have_content 'Create Admin Account'
     fill_in('firstname', with: ENV['ADMIN_FIRSTNAME'])
     fill_in('lastname', with: ENV['ADMIN_LASTNAME'])
     fill_in('username', with: ENV['ADMIN_USERNAME'])

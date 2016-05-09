@@ -25,8 +25,13 @@ describe "Créer un compte client de test" + ENV['TEST_SERVER'] do
     fill_in 'city', with: ENV['CUSTOMER_CITY']
     fill_in 'zip', with: ENV['CUSTOMER_ZIP']
     fill_in 'telephone', with: ENV['CUSTOMER_PHONE']
-    find(:xpath, '//select[@id="country"]/option[@value="FR"]').click
-    find(:xpath, '//select[@id="region_id"]/option[@value="226"]').click
+    if Capybara.current_driver === :poltergeist
+      find('#country').find("option[value='FR']").select_option
+      find('#region_id').find("option[value='226']").select_option
+    else
+      find(:xpath, '//select[@id="country"]/option[@value="FR"]').click
+      find(:xpath, '//select[@id="region_id"]/option[@value="226"]').click
+    end
     find(:xpath, '//button[@title="Save Address"]').click
   end
 end
