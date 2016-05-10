@@ -64,7 +64,7 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
         return $this->_evaluateTransaction;
     }
 
-    public function checkOrderAmount($amount)
+    public function isExcessiveAmount($amount)
     {
         return $amount <= 1000;
     }
