@@ -101,16 +101,16 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
      */
     public function canWork()
     {
-    	try{
-    		$this->getEvaluateTransaction();
-    		return true;
-    	}
-    	catch (Exception $e){
-    		$this->_getMethodinstance()->debugData($e->getMessage());
-    	}
-
-    	return false;
-
+        try{
+            $cw_res = $this->getEvaluateTransaction()->_data;
+            if (!array_key_exists('errors', $cw_res)) {
+                return true;
+            }
+        }
+        catch (Exception $e){
+            $this->_getMethodinstance()->debugData($e->getMessage());
+        }
+        return false;
     }
 
     /**
