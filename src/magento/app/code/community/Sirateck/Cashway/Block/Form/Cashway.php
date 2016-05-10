@@ -64,6 +64,11 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
         return $this->_evaluateTransaction;
     }
 
+    public function isExcessiveAmount($amount)
+    {
+        return $amount > 1000;
+    }
+
     /**
      * Check if cashway service is available with evaluateTransaction api endpoint
      * @return boolean
@@ -77,9 +82,9 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
     	catch (Exception $e){
     		$this->_getMethodinstance()->debugData($e->getMessage());
     	}
-		
+
     	return false;
-       
+
     }
 
     /**

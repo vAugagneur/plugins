@@ -43,3 +43,4 @@
 "Minimum Order Total","Montant minimum par commande"
 "Maximum Order Total","Montant maximum par commande"
 "Sort Order","Ordre d'affichage"
+"Your order's amount exceeds the maximum amount for the CASHWAY payment method. (<a href='https://help.cashway.fr/cgu/'>More informations</a>)","Votre commande dépasse la limite de montant pour le paiement avec Cashway. (<a href='https://help.cashway.fr/cgu/'>Plus d'informations</a>)"

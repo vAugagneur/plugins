@@ -32,8 +32,12 @@ $_code=$this->getMethodCode();
  		$('p_method_cashway').disable();
 //]]>
 </script>
+<?php elseif($this->isExcessiveAmount($this->helper('checkout/cart')->getQuote()->getGrandTotal())):?>
+<p><?php echo $this->__("Your order's amount exceeds the maximum amount for the CASHWAY payment method. (<a href='https://help.cashway.fr/cgu/'>More informations</a>)");?></p>
+<script type="text/javascript">
+  $('p_method_cashway').disable();
+</script>
 <?php else: ?>
-
 <div id="payment_form_<?php echo $_code ?>" style="display:none;">
 	<h4>Les points de paiement présents autour de votre point de livraison&nbsp;:</h4>
 	<ul class="form-list">
