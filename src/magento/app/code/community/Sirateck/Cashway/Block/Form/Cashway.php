@@ -69,6 +69,32 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
         return $amount > 1000;
     }
 
+    public function getOrderFees($amount)
+    {
+        $fees = 0;
+        if ($amount == 0) {
+            return 0;
+        } elseif ($amount <= 50) {
+            $fees = 1;
+        } elseif ($amount <= 150) {
+            $fees = 2;
+        } elseif ($amount <= 250) {
+            $fees = 3;
+        } elseif ($amount <= 400) {
+            $fees = 4;
+        } elseif ($amount <= 700) {
+            $fees = 5;
+        } elseif ($amount <= 800) {
+            $fees = 6;
+        } elseif ($amount <= 900) {
+            $fees = 7;
+        } else {
+            $fees = 8;
+        }
+
+        return $fees;
+    }
+
     /**
      * Check if cashway service is available with evaluateTransaction api endpoint
      * @return boolean
