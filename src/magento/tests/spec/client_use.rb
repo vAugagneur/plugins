@@ -37,21 +37,30 @@ describe "Tests customer ordering products on Magento on " + ENV['TEST_SERVER'] 
       end
 
       it "selects CashWay payment" do
-        choose 'Cashway payment'
-        click_link_or_button 'Continue'
-        sleep 0.5
+        if price === 2500
+          expect(page).to have_content 'amount exceeds the maximum'
+          puts "The plugin blocks the user for an order above 1000 euros as it is supposed to."
+          visit '/index.php/checkout/cart'
+          first(:xpath, '//a[@title="Remove Item"]').click
+        else
+          choose 'Cashway payment'
+          click_link_or_button 'Continue'
+          sleep 0.5
+        end
       end
 
-      it "places order" do
-        click_link_or_button 'Place Order'
-      end
+      if price != 2500
+        it "places order" do
+          click_link_or_button 'Place Order'
+        end
 
-      it "checks confirmation page" do
-        sleep 3
-        expect(page).to have_selector('.checkout-onepage-success')
-        save_screenshot("screenshot_#{price}.png")
-        expect(page).to have_content('YOUR ORDER HAS BEEN RECEIVED.')
-        expect(page).to have_content('You will receive an order confirmation email with details of your order and a link to track its progress.')
+        it "checks confirmation page" do
+          sleep 3
+          expect(page).to have_selector('.checkout-onepage-success')
+          save_screenshot("screenshot_#{price}.png")
+          expect(page).to have_content('YOUR ORDER HAS BEEN RECEIVED.')
+          expect(page).to have_content('You will receive an order confirmation email with details of your order and a link to track its progress.')
+        end
       end
     end
   end
