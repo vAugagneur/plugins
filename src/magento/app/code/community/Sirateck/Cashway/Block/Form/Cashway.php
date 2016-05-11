@@ -64,11 +64,23 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
         return $this->_evaluateTransaction;
     }
 
+    /**
+    * Returns true if the amount of the order exceeds
+    * the 1000 euros limitation
+    * @param amount integer
+    * @return boolean
+    */
     public function isExcessiveAmount($amount)
     {
         return $amount > 1000;
     }
 
+    /**
+    * Returns the fees depending on the amount
+    * of the order
+    * @param amount integer
+    * @return integer
+    */
     public function getOrderFees($amount)
     {
         $fees = 0;
@@ -101,16 +113,16 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
      */
     public function canWork()
     {
-    	try{
-    		$this->getEvaluateTransaction();
-    		return true;
-    	}
-    	catch (Exception $e){
-    		$this->_getMethodinstance()->debugData($e->getMessage());
-    	}
-
-    	return false;
-
+        try{
+            $cw_res = $this->getEvaluateTransaction()->_data;
+            if (!array_key_exists('errors', $cw_res)) {
+                return true;
+            }
+        }
+        catch (Exception $e){
+            $this->_getMethodinstance()->debugData($e->getMessage());
+        }
+        return false;
     }
 
     /**
