@@ -423,10 +423,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $barcode = $response['barcode'];
                         $shop_order_id = $response['shop_order_id'];
                         update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
+                        update_post_meta($order_id, 'cashway_fees', $this->cashway_surcharge());
                         $order = wc_get_order($order_id);
                         return array(
                             'result' => 'success',
-                            'redirect' => $this->get_url('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order)
+                            'redirect' => $this->get_url('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order).'&shop_order_id='.$shop_order_id
                         );
                     } else {
                         foreach ($response['errors'] as $value) {
@@ -477,14 +478,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 if (null != $order_id) {
                     $order = wc_get_order($order_id);
-                    $barcode = get_post_meta($order_id, 'cashway_barcode', true);
+                    $barcode = chunk_split(substr(get_post_meta($order_id, 'cashway_barcode', true), 7), 3, ' ');
+                    $orderTotal = $order->get_total() + get_post_meta($order_id, 'cashway_fees', true);
 
                     echo "
-                      <h1>Merci d'avoir commandé avec CashWay !</h1>
-                      <h2>Récapitulatif de votre commande :</h2>
-                      Code barre : ".$barcode."<br />
-                      Montant de la commande : ".$order->get_total()."<br />
-                      Moyen de paiement : CashWay<br />
+                    <center>
+                      <img src='https://www.cashway.fr/assets/images/picto_cw.png' alt='CASHWAY'>
+                      <h1>Thank you for ordering with CASHWAY !</h1>
+                      <h2>Here are some informations about your order :</h2>
+                      Barcode : <span style='color:orange;'>".$barcode."</span><br />
+                      Order Amount (Including the CASHWAY fees) : ".$orderTotal." &euro;
+                    </center>
                     ";
                     die();
                 } else {
