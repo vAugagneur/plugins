@@ -144,13 +144,13 @@ class Sirateck_Cashway_IpnController extends Mage_Core_Controller_Front_Action
 
         switch ($event) {
         //If event is transaction confirmed
-            case "transaction_confirmed":
+            case "confirmed":
                 //we just add a commentto order
                 $comment = Mage::helper('cashway')->__("Transaction confimed with status %s.", $this->getData()->status);
                 $this->getOrder()->addStatusToHistory(true, $comment);
 
                 break;
-            case "transaction_paid":
+            case "paid":
                     // FIXME: if already paid, should reply with a status code and not update database.
                     //We change state of the order to processing
                     $this->getOrder()->setState(
@@ -173,21 +173,21 @@ class Sirateck_Cashway_IpnController extends Mage_Core_Controller_Front_Action
                     $res->addObject($invoice); //Add invoir to resource objecy
 
                 break;
-            case "transaction_expired": //Transaction expired when wasn't paid in delay
+            case "expired": //Transaction expired when wasn't paid in delay
                 //We cancel the order
                 $this->getOrder()->cancel();
                 //And add a comment
                 $comment = Mage::helper('cashway')->__("Transaction Expired at %s.", $this->getData()->expires_at);
                 $this->getOrder()->addStatusToHistory(true, $comment);
                 break;
-            case "transaction_cancelled": //Transaction was canceled for any reason
+            case "cancelled": //Transaction was canceled for any reason
                 //We cancel the order
                 $this->getOrder()->cancel();
                 //And add a comment
                 $comment = Mage::helper('cashway')->__("Transaction Canceled with status %s.", $this->getData()->status);
                 $this->getOrder()->addStatusToHistory(true, $comment);
                 break;
-            case "transaction_blocked": //Transaction was blocked for any reason
+            case "blocked": //Transaction was blocked for any reason
                 //We hold the order
                 if ($this->getOrder()->canHold()) {
                     $this->getOrder()->hold();
