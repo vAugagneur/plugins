@@ -23,7 +23,7 @@
 <config>
 	<modules>
 		<Sirateck_Cashway>
-			<version>0.3.0</version>
+			<version>0.3.0.1</version>
 		</Sirateck_Cashway>
 	</modules>
 	<global>
