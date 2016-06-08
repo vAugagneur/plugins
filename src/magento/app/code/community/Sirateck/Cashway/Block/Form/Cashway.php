@@ -65,6 +65,19 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
     }
 
     /**
+     * Return result of get customer fees
+     * @return Sirateck_Cashway_Model_Response_Order
+     */
+    public function getCustomerFees()
+    {
+        if (is_null($this->_getCustomerFees)) {
+            $this->_getCustomerFees = $this->_getMethodinstance()->getCustomerFees($this->getQuote());
+        }
+
+        return $this->_getCustomerFees;
+    }
+
+    /**
     * Returns true if the amount of the order exceeds
     * the 1000 euros limitation
     * @param amount integer
@@ -84,27 +97,42 @@ class Sirateck_Cashway_Block_Form_Cashway extends Mage_Payment_Block_Form
     public function getOrderFees($amount)
     {
         $fees = 0;
+
         if ($amount == 0) {
-            return 0;
-        } elseif ($amount <= 50) {
-            $fees = 1;
-        } elseif ($amount <= 150) {
-            $fees = 2;
-        } elseif ($amount <= 250) {
-            $fees = 3;
-        } elseif ($amount <= 400) {
-            $fees = 4;
-        } elseif ($amount <= 700) {
-            $fees = 5;
-        } elseif ($amount <= 800) {
-            $fees = 6;
-        } elseif ($amount <= 900) {
-            $fees = 7;
-        } else {
-            $fees = 8;
+            return (float)0;
         }
 
-        return $fees;
+        try{
+            $cw_res = $this->getCustomerFees()->_data;
+            if ($cw_res['no_customer_fee'] == true) {
+                return 0;
+            }
+            if (!array_key_exists('errors', $cw_res)) {
+                if ($amount <= 50) {
+                    $fees = $cw_res['customer_fees']['0_50'];
+                } elseif ($amount <= 150) {
+                    $fees = $cw_res['customer_fees']['50_150'];
+                } elseif ($amount <= 250) {
+                    $fees = $cw_res['customer_fees']['150_250'];
+                } elseif ($amount <= 400) {
+                    $fees = $cw_res['customer_fees']['250_400'];
+                } elseif ($amount <= 700) {
+                    $fees = $cw_res['customer_fees']['400_700'];
+                } elseif ($amount <= 800) {
+                    $fees = $cw_res['customer_fees']['700_800'];
+                } elseif ($amount <= 900) {
+                    $fees = $cw_res['customer_fees']['800_900'];
+                } else  {
+                    $fees = $cw_res['customer_fees']['900_1000'];
+                }
+                return $fees;
+            }
+        }
+        catch (Exception $e){
+            $this->_getMethodinstance()->debugData($e->getMessage());
+        }
+
+        return 'No fees';
     }
 
     /**

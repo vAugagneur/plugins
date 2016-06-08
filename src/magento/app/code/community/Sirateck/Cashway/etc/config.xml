@@ -159,6 +159,7 @@
 				<confirm_order_api_endpoint>/transactions/$ID/confirm</confirm_order_api_endpoint>
 				<evaluate_transaction_api_endpoint>/transactions/hint</evaluate_transaction_api_endpoint>
 				<events_api_endpoint>/shops/me/events</events_api_endpoint>
+				<get_customer_fees_api_endpoint>/shops/me/customer_fees</get_customer_fees_api_endpoint>
 			</cashway_api>
 		</cashway>
 		<payment>
