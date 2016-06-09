@@ -4,6 +4,7 @@ class FeeTest extends PHPUnit_Framework_TestCase
 {
     public function testFees()
     {
+        $api = new \CashWay\API(get_conf());
         $values = array(
             array(0, 0.0),
             array(9, 1.0),
@@ -16,7 +17,7 @@ class FeeTest extends PHPUnit_Framework_TestCase
             array(250.50, 4.0)
         );
         foreach ($values as $value) {
-            $this->assertEquals($value[1], \CashWay\Fee::getCartFee($value[0]));
+            $this->assertEquals($value[1], $api->getCustomerFees($value[0]));
         }
     }
 }
