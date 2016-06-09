@@ -508,6 +508,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         if (array_key_exists('cashway', $wp->query_vars)) {
             switch ($wp->query_vars['cashway']) {
                 case 'check_parameters':
+                    $api_url = getenv('CASHWAY_TEST_ENVIRONMENT') ? getenv('CASHWAY_TEST_API_URL') : 'https://api.cashway.fr';
                     $headers = array(
                         'Authorization' => 'Basic '.base64_encode($_POST['login'].':'.$_POST['password']),
                     );
@@ -515,7 +516,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $args = array(
                         'headers' => $headers,
                     );
-                    $response = wp_remote_get('https://api-staging.cashway.fr/1/shops/me/status', $args);
+                    $response = wp_remote_get($api_url.'/1/shops/me/status', $args);
                     $code = $response['response']['code'];
                     if ($code == 200) {
                         $plugin = new WC_Gateway_Cashway();
