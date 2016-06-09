@@ -299,9 +299,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 // Ajout des frais CashWay
                 global $woocommerce;
-                $feeObject = new \CashWay\Fee;
+                $api = new \CashWay\API($this->get_api_conf());
                 $total_amount = $woocommerce->cart->cart_contents_total + $woocommerce->cart->shipping_total;
-                return $feeObject->getCartFee($total_amount);
+                return $api->getCustomerFees($total_amount);
             }
 
             /**
