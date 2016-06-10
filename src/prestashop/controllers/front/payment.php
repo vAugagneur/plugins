@@ -93,9 +93,9 @@ class CashwayPaymentModuleFrontController extends ModuleFrontController
         $this->context->smarty->assign(array(
             'available' => $available,
             'cart_fee' => number_format(
-                \CashWay\Fee::getCartFee($cart->getOrderTotal()),
-                0,
-                ',',
+                $cashway->getCustomerFees($cart->getOrderTotal()),
+                2,
+                '.',
                 '&nbsp;'
             ),
             'location' => $location,
