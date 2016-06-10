@@ -1,9 +1,9 @@
-jQuery('input[type="submit"]').click(function(e){
+jQuery('input[type="submit"]').click(function (e) {
     e.preventDefault();
     // Check gateway is enable
-    if( ! jQuery('#woocommerce_woocashway_enabled').is(':checked') ) {
-      jQuery("#mainform").submit();
-      return;
+    if ( ! jQuery('#woocommerce_woocashway_enabled').is(':checked') ) {
+        jQuery("#mainform").submit();
+        return;
     }
     jQuery(window).block({
         message: CashWayJSParams.checking,
@@ -27,16 +27,27 @@ jQuery('input[type="submit"]').click(function(e){
         }
     });
 
-    jQuery.post( CashWayJSParams.url, { login: jQuery("input[name='woocommerce_woocashway_cashway_login']").val(), password: jQuery("input[name='woocommerce_woocashway_cashway_password']").val()})
-    .done(function(data) {
-        if( data == 'ok' ) {
-            jQuery("#mainform").submit();
-        }else{
-            jQuery(window).unblock();
-            alert(CashWayJSParams.error_login);
+    jQuery.post(CashWayJSParams.url, { login: jQuery("input[name='woocommerce_woocashway_cashway_login']").val(), password: jQuery("input[name='woocommerce_woocashway_cashway_password']").val()})
+    .done(function (data) {
+        switch (data) {
+            case 'ok':
+                jQuery("#mainform").submit();
+                break;
+            case 'errorConnection':
+                jQuery(window).unblock();
+                alert(CashWayJSParams.error_login);
+                break;
+            case 'errorUpdateConnection':
+                jQuery(window).unblock();
+                alert(CashWayJSParams.error_send_infos);
+                break;
+            default:
+                jQuery(window).unblock();
+                alert(data);
+                break;
         }
     })
-    .fail(function() {
+    .fail(function () {
         jQuery(window).unblock();
         alert(CashWayJSParams.error_unknown);
     });

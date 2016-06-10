@@ -16,6 +16,8 @@ release:
 	mkdir -p ${BUILD_DIR}
 	mkdir -p ${BUILD_TMP}/cashway/lib/cashway
 	git archive --prefix=cashway/ --format zip --output ${BUILD_TMP}/cashway.zip ${TAG}
+	cd ../php/ && git archive --prefix=cashway/lib/cashway/ --format=zip --output=../woocommerce/${BUILD_TMP}/lib.zip HEAD cashway_lib.php compat.php
+	cd ${BUILD_TMP} && unzip lib.zip && zip -r cashway.zip cashway && rm lib.zip
 	mv ${BUILD_TMP}/cashway.zip ${RELEASE_FILE}
 	rm -fr ${BUILD_TMP}
 	gsed -i.bak "s|MODULE_ARCHIVE=.*|MODULE_ARCHIVE=../${RELEASE_FILE}|g" tests/.env
@@ -63,7 +65,7 @@ init-admin:
 	${TEST_RUN} spec/init_admin.rb
 
 reset-db:
-	cd ../../tests/box; vagrant ssh -c "mysql -uroot -e 'DROP DATABASE prestashop; CREATE DATABASE prestashop'"
+	cd ../../tests/box; vagrant ssh -c "mysql -uroot -e 'DROP DATABASE woocommerce; CREATE DATABASE woocommerce'"
 
 add-test-products:
 	${TEST_RUN} spec/add_test_products.rb
@@ -84,6 +86,12 @@ add-new-account:
 
 test-client-2500:
 	${TEST_RUN} spec/client_use_2500e.rb
+
+test-admin-credentials:
+	${TEST_RUN} spec/add_admin_credentials.rb
+
+test-surcharge:
+	${TEST_RUN} spec/surcharge.rb
 
 test:
 	phpunit .

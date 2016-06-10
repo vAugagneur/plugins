@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce CashWay
  * Plugin URI:
- * Description: WooCommerce CashWay is a payment gateway for WooCommerce
+ * Description: WooCommerce CashWay est une méthode de paiement pour WooCommerce
  * Author: Boris Colombier
  * Author URI: https://wba.fr
  * Version: 1.0
@@ -12,6 +12,11 @@
  * WC requires at least: 2.0
  * WC tested up to: 2.3.7.
  */
+
+require dirname(__FILE__).'/lib/cashway/cashway_lib.php';
+
+define('WP_DEBUG', true);
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
@@ -72,6 +77,74 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         class WC_Gateway_Cashway extends WC_Payment_Gateway
         {
             /**
+            * Returns the urls for the asked module
+            * depending of the current environment (dev/production)
+            *
+            * @param String the asked module
+            *
+            * @return String the asked module's url
+            */
+            public static function get_url($key)
+            {
+                $urls = [
+                    'api' => 'https://api.cashway.fr/',
+                    'front' => 'https://app.cashway.fr/'
+                ];
+
+                if (getenv('CASHWAY_TEST_ENVIRONMENT')) {
+                    $urls = [
+                        'api' => getenv('CASHWAY_TEST_API_URL').'/1',
+                        'front' => getenv('CASHWAY_TEST_FRONT_URL')
+                    ];
+                }
+
+                return array_key_exists($key, $urls) ? $urls[$key] : null;
+            }
+
+            /**
+            * Returns a configuration for the API instance,
+            * depending of the current environment (dev/production)
+            *
+            * @param String login the login from the plugin's settings
+            * @param String password the password from the plugin's settings
+            *
+            * @return Array the configuration for the API
+            */
+            function get_api_conf($login = null, $password = null)
+            {
+                $login = ($login === null) ? $this->cashway_login : $login;
+                $password = ($password === null) ? $this->cashway_password : $password;
+                $conf = array(
+                    'API_KEY' => $login,
+                    'API_SECRET' => $password,
+                    'USER_AGENT' => 'agent/0.1'
+                );
+
+                if (getenv('CASHWAY_TEST_ENVIRONMENT')) {
+                    $conf = array(
+                        'API_KEY' => $login,
+                        'API_SECRET' => $password,
+                        'USER_AGENT' => 'agent/0.1',
+                        'USE_STAGING' => true,
+                        'API_URL' => getenv('CASHWAY_TEST_API_URL')
+                    );
+                }
+
+                return $conf;
+            }
+
+            /**
+            * Checks if the plugin has a key and a secret in it's
+            * settings
+            *
+            * @return boolean
+            */
+            function is_ready_for_production()
+            {
+                return '' != $this->cashway_login && '' != $this->cashway_password;
+            }
+
+            /**
              * Constructor for the gateway.
              */
             public function __construct()
@@ -93,60 +166,148 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $this->cashway_login = $this->settings['cashway_login'];
                 $this->cashway_password = $this->settings['cashway_password'];
 
-                    // Actions
-                  add_action('woocommerce_receipt_cashway', array(&$this, 'receipt_page'));
+                // Actions
+                add_action('woocommerce_receipt_cashway', array(&$this, 'receipt_page'));
 
                 add_action('woocommerce_update_options_payment_gateways_'.$this->id, array(&$this, 'process_admin_options'));
 
                 add_action('woocommerce_thankyou_woocashway', array($this, 'thankyou_page'));
-                if ($this->is_available()) {
-                    // Hook in
-                  add_filter('woocommerce_checkout_fields', array($this, 'custom_override_checkout_fields'));
-                }
 
-                add_action('woocommerce_cart_calculate_fees', 'cashway_surcharge');
-                function cashway_surcharge()
-                {
-                    // Ajout des frais CashWay
-                    global $woocommerce;
+                add_action('woocommerce_before_checkout_form', array($this, 'check_order_accomplished'));
 
-                    if (is_admin() && !defined('DOING_AJAX')) {
-                        return;
-                    }
-                    $current_gateway = WC()->session->chosen_payment_method;
-                    if ($current_gateway != 'woocashway') {
-                        return;
-                    }
+                // Filters
+                add_filter('woocommerce_available_payment_gateways', array($this, 'available_payment_gateways_master'), '1');
 
-                    $total_amount = $woocommerce->cart->cart_contents_total + $woocommerce->cart->shipping_total;
-                    $fee = 0;
-                    if ($total_amount == 0) {
-                        return 0;
-                    } elseif ($total_amount <= 50.00) {
-                        $fee = 1.00;
-                    } elseif ($total_amount <= 150.00) {
-                        $fee = 2.00;
-                    } elseif ($total_amount <= 250.00) {
-                        $fee = 3.00;
+            }
+
+            /**
+            * Checks if the plugin has a key and a secret in it's settings,
+            * if it's the case, calls the method to calculate and display the fees,
+            * if it's not, deletes the CashWay payment gateway from the list passed by the hook
+            *
+            * @param Array the list of gateways passed by the hook
+            *
+            * @return Array the list of available gateways processed by the method
+            */
+            function available_payment_gateways_master($gateways)
+            {
+                if ($gateways['woocashway']) {
+                    if (!$this->is_ready_for_production()) {
+                        unset($gateways['woocashway']);
                     } else {
-                        $fee = 4.00;
+                        $this->add_fees_gateway_description($gateways);
                     }
-                    $woocommerce->cart->add_fee('Frais CashWay', $fee, true, '');
+                }
+                return $gateways;
+            }
+
+            /**
+            * Adds the CashWay Fees to the payment gateway's description
+            *
+            * @param Array the list of gateways passed by the hook
+            *
+            * @return Array the list of available gateways processed by the method
+            */
+            function add_fees_gateway_description($gateways)
+            {
+                if ($gateways['woocashway']) {
+                    if (strpos($gateways['woocashway']->description, 'Frais')) {
+                        return $gateways;
+                    }
+                    $gateways['woocashway']->description .= ' (Frais Supplémentaires : '.$this->cashway_surcharge().'€)';
+                }
+                return $gateways;
+            }
+
+            /**
+            * Creates a response to return to the request emitter
+            *
+            * @param Integer status the status to return
+            * @param String message the message to return
+            *
+            * @return String the json response
+            */
+            public function response($status, $message)
+            {
+                http_response_code($status);
+                header('Content-Type: application/json; charset=utf-8');
+                return json_encode(
+                    array(
+                    'status'  => ($status < 400) ? 'ok' : 'error',
+                    'message' => $message
+                    )
+                );
+            }
+
+            /**
+            * Receives the notifications on a specific route and
+            * which trigger treatments and returns a status and
+            * a message
+            *
+            * @return a json containing the status and the message
+            */
+            public function handle_notifications()
+            {
+                $api = new \CashWay\API($this->get_api_conf());
+                $res = $api->receiveNotification(
+                    file_get_contents('php://input'),
+                    getallheaders(),
+                    get_option('notification_handler_shared_key')
+                );
+
+                if ($res[0] === false) {
+                    return $this->response($res[2], $res[1]);
+                } else {
+                    $event = $res[1];
+                    $data = $res[2];
+
+                    switch ($event) {
+                        case 'confirmed':
+                            //Update the status of the order, reduce the stock and
+                            //empty the customer's cart
+                            $order = wc_get_order($data->order_id);
+                            $order->update_status('on-hold', __('Awaiting CashWay payment', 'woocommerce'));
+                            $order->reduce_order_stock();
+                            WC()->cart->empty_cart();
+                            return $this->response(200, 'Ok, transaction set to confirmed.');
+                            break;
+                        case 'expired':
+                            //Set the status of the order to cancelled
+                            $order = wc_get_order($data->order_id);
+                            $order->update_status('cancelled', __('CashWay transaction expired', 'woocommerce'));
+                            return $this->response(200, 'Ok, transaction set to cancelled.');
+                            break;
+                        case 'paid':
+                            //Set the status of the order to completed
+                            $order = wc_get_order($data->order_id);
+                            $order->update_status('completed', __('CashWay transaction completed', 'woocommerce'));
+                            return $this->response(200, 'Ok, transaction set to completed.');
+                            break;
+                        default:
+                            return $this->response(400, 'Unknown Event.');
+                            break;
+                    }
                 }
             }
 
-            // Our hooked in function - $fields is passed via the filter!
-          public function custom_override_checkout_fields($fields)
-          {
-              $fields['order']['order_comments']['placeholder'] = 'My new placeholder';
-
-              return $fields;
-          }
+            /**
+            * Calculates and returns the CashWay fees
+            *
+            * @return Integer the calculated fees
+            */
+            function cashway_surcharge()
+            {
+                // Ajout des frais CashWay
+                global $woocommerce;
+                $api = new \CashWay\API($this->get_api_conf());
+                $total_amount = $woocommerce->cart->cart_contents_total + $woocommerce->cart->shipping_total;
+                return $api->getCustomerFees($total_amount);
+            }
 
             /**
-             * Check If The Gateway Is Available For Use.
+             * Checks If The Gateway Is Available For Use.
              *
-             * @return bool
+             * @return boolean
              */
             public function is_available()
             {
@@ -156,17 +317,18 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
-             * Add specific infos on admin page.
+             * Adds specific infos on admin page.
              */
             public function admin_options()
             {
                 wp_enqueue_style('wooCashWayStylesheet', plugins_url('assets/css/cashway.css', __FILE__));
                 wp_enqueue_script('cashway-script', plugins_url('assets/js/cashway.js', __FILE__));
                 $js_params = array(
-                  'checking' => __('Checking CashWay settings...', 'woocommerce-cashway'),
-                  'error_connecting' => __('An error occurred while connecting to CashWay.', 'woocommerce-cashway'),
-                  'error_login' => __('Please check your CashWay API Key and Secret.', 'woocommerce-cashway'),
-                  'error_unknown' => __('An error occurred, please contact us on https://www.cashway.fr/', 'woocommerce-cashway'),
+                  'checking' => __('Vérification des paramètres de CashWay...', 'woocommerce-cashway'),
+                  'error_connecting' => __('Une erreur s\'est produite lors de la connexion à CashWay...', 'woocommerce-cashway'),
+                  'error_login' => __('Veuillez vérifier votre clé et votre secret d\'API CashWay.', 'woocommerce-cashway'),
+                  'error_send_infos' => __('Erreur lors de l\'envoi de l\'url de notification et/ou de la shared key.', 'woocommerce-cashway'),
+                  'error_unknown' => __('Une erreur s\'est produite, vous pouvez nous contacter sur https://www.cashway.fr/', 'woocommerce-cashway'),
                   'url' => site_url().'/?cashway=check_parameters',
                 );
                 wp_localize_script('cashway-script', 'CashWayJSParams', $js_params);
@@ -186,30 +348,30 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
-             * Start Gateway Settings Form Fields.
+             * Starts Gateway Settings Form Fields.
              */
             public function init_form_fields()
             {
                 $this->form_fields = array(
                     'enabled' => array(
-                        'title' => __('Enable/Disable', 'woocommerce-cashway'),
+                        'title' => __('Activer/Désactiver', 'woocommerce-cashway'),
                         'type' => 'checkbox',
                         'label' => __('Activer CashWay', 'woocommerce-cashway'),
                         'description' => __('NB: La devise de votre boutique doit être l\'euro €.', 'woocommerce-cashway'),
                         'default' => 'no',
                     ),
                     'test_mode' => array(
-                        'title' => __('Mode test', 'woocommerce-cashway'),
+                        'title' => __('Mode Test', 'woocommerce-cashway'),
                         'type' => 'checkbox',
-                        'label' => __('Use CashWay in test mode', 'woocommerce-cashway'),
+                        'label' => __('Utiliser CashWay en mode Test', 'woocommerce-cashway'),
                         'default' => 'no',
-                        'description' => __('Use test mode to test transactions with no real payment required', 'woocommerce-cashway'),
+                        'description' => __('Utiliser le mode Test pour tester des transactions sans paiement réel requis', 'woocommerce-cashway'),
                     ),
                     'title' => array(
-                        'title' => __('Title', 'woocommerce-cashway'),
+                        'title' => __('Titre', 'woocommerce-cashway'),
                         'type' => 'text',
                         'description' => __('Le titre de la méthode de paiement que voient vos visiteurs.', 'woocommerce-cashway'),
-                        'default' => __('Payez en liquide avec CashWay', 'woocommerce-cashway'),
+                        'default' => __('Payez en liquide avec CashWay.', 'woocommerce-cashway'),
                     ),
                     'description' => array(
                         'title' => __('Description', 'woocommerce-cashway'),
@@ -218,13 +380,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'default' => __('Payez en liquide avec CashWay.', 'woocommerce-cashway'),
                     ),
                     'cashway_login' => array(
-                        'title' => __('CashWay API Key', 'woocommerce-cashway'),
+                        'title' => __('Clé d\'API CashWay', 'woocommerce-cashway'),
                         'type' => 'text',
                         'description' => __('Votre clé d\'API CashWay.', 'woocommerce-cashway'),
                         'default' => '',
                     ),
                     'cashway_password' => array(
-                        'title' => __('CashWay API Secret', 'woocommerce-cashway'),
+                        'title' => __('Secret d\'API', 'woocommerce-cashway'),
                         'type' => 'password',
                         'description' => __('Votre secret d\'API CashWay', 'woocommerce-cashway'),
                         'default' => '',
@@ -239,141 +401,56 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
-             * Process the payment and return the result.
+             * Open a transaction for this order on the remote API and process the WooCommerce order :
+             * - in case of success, keep a copy of the transaction id and redirect the customer to CW front Web app
+             * - in case of failure, display the error message and stay on the checkout page.
+             * - in case of bad plugin authentication, display a message telling the customer that the service is unavailable
              *
-             * @param int $order_id
+             * @param String order_id the id of the order to process and open a transaction for
              *
-             * @return array
-             */
+             * @return Array the result (success/failure) and the redirection url to the CW front Web app in case of success
+            */
             public function process_payment($order_id)
             {
                 $order = wc_get_order($order_id);
-                /*if ( get_post_meta( $order->id, '_payment_method', true ) != 'woocashway' ) {
-                  return;
-                }
-                */
-              /*  echo $order->payment_method_title;
-                echo "<br>";
-                echo get_post_meta( $order->id, '_payment_method', true );
-                echo "<br>";
-                //echo "----SUITE----";
-                echo $order->billing_address_1;
-                echo $order->billing_email;
-                echo $order->billing_phone;
-                print_r( $order );
-                global $woocommerce;
-                // echo "<p><b>Juste avant les messages</b></p>";
-                wc_add_notice(__('message 1', 'woocommerce'), 'success');
-                wc_add_notice(__('message 2', 'woocommerce'), 'error');
-                //die('erreur, il manque un truc');
+                $api = new \CashWay\API($this->get_api_conf());
 
-                /*
-                customer id =
-
-
-                */
-                $order = wc_get_order($order_id);
-
-                $customer_id = $order->user_id;
-                $customer_name = $order->billing_first_name.' '.$order->billing_last_name;
-                $customer_email = $order->billing_email;
-                $customer_phone = $order->billing_phone;
-                $customer_country = $order->billing_country;
-                $customer_city = $order->billing_city;
-                $customer_postcode = $order->billing_postcode;
-                $customer_address = $order->billing_address_1;
-
-                $order_id = $order_id;
-                $order_at = date('Y-m-d#G:i:s#');
-                //$order_currency = date('Y-m-d#G:i:s#');
-                //$order_totla = date('Y-m-d#G:i:s#');
-
-                $customer = new WC_Customer();
-                global $woocommerce;
-                $customer = $woocommerce->customer;
-
-                // print_r( $customer );
-                // echo "<br><br><br>";
-                // print_r( $order );
-                // echo "<br><br><br>";
-                // $total_price = $order->get_total();
-                // print_r( $total_price );
-                // echo "<br><br><br>";
-                // echo '$user_id = ' . $customer_id;
-                // echo "<br><br><br>";
-                // $order_currency = $order->get_order_currency();
-                // print_r( $order_currency );
-                // echo "<br><br><br>";
-                // die();
-
-                $total_price = $order->get_total();
-                $order_currency = $order->get_order_currency();
-
-                $headers = array(
-                   'Authorization' => 'Basic '.base64_encode($this->cashway_login.':'.$this->cashway_password),
-                   'content-type' => 'application/json',
-                );
-                $body = array(
-                    'customer' => array(
-                        'id' => $customer_id,
-                        'name' => $customer_name,
-                        'email' => $customer_email,
-                        'phone' => $customer_phone,
-                        'country' => $customer_country,
-                        'city' => $customer_city,
-                        'zipcode' => $customer_postcode,
-                        'address' => $customer_address,
-                    ),
-                    'order' => array(
-                        'id' => $order_id,
-                        'at' => date('Y-m-dTH:i:sZ'),
-                        'currency' => $order_currency,
-                        'total' => $total_price,
-                    ),
-                );
-                // Setup variable for wp_remote_post
-                $args = array(
-                    'method' => 'POST',
-                    'headers' => $headers,
-                    'body' => json_encode($body),
-                );
-                $response = wp_remote_post('https://api-staging.cashway.fr/1/transactions', $args);
-
-                // print_r($response);
-
-                // echo 'XXX<br>';
-                /*
-                print_r($response_body);
-                echo 'XXX<br>';
-                echo gettype($response_body);
-                echo 'barcode = ';
-                echo $response_body->barcode;*/
-                //die();
-
-                $code = $response['response']['code'];
-                if ($code == 201) {
-                    $response_body = json_decode($response['body']);
-                    $barcode = $response_body->barcode;
-                    update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
-                    $order = wc_get_order($order_id);
-                    // Mark as on-hold (we're awaiting the cheque)
-                    $order->update_status('on-hold', __('Awaiting cheque payment', 'woocommerce'));
-                    // Reduce stock levels
-                    $order->reduce_order_stock();
-                    // Remove cart
-                    WC()->cart->empty_cart();
-                    // Return thankyou redirect
-                    return array(
-                        'result' => 'success',
-                        'redirect' => $this->get_return_url($order),
-                    );
+                $api->setOrder('woocommerce', $order_id, $order);
+                $payment_total = $order->get_total() + $this->cashway_surcharge();
+                if ($payment_total <= 1000) {
+                    $response = $api->openTransaction();
+                    if($response['status']) {
+                        $barcode = $response['barcode'];
+                        $shop_order_id = $response['shop_order_id'];
+                        update_post_meta($order_id, 'cashway_barcode', sanitize_text_field($barcode));
+                        update_post_meta($order_id, 'cashway_fees', $this->cashway_surcharge());
+                        $order = wc_get_order($order_id);
+                        return array(
+                            'result' => 'success',
+                            'redirect' => $this->get_url('front').'/t/'.$shop_order_id.'?return_url='.$this->get_return_url($order).'&shop_order_id='.$shop_order_id
+                        );
+                    } else {
+                        foreach ($response['errors'] as $value) {
+                            //Simple check to translate the error message on auth error
+                            $error_message = ($value['status'] === '401 Not authorized') ? 'Service CashWay indisponible pour cette commande.' : $value['status'];
+                            wc_add_notice($error_message, 'error');
+                            return array(
+                                'result' => 'failure'
+                            );
+                        }
+                    }
                 } else {
-                    die('Une erreur est survenue durant la commande via CashWay.');
+                    wc_add_notice('Votre commande dépasse la limite de montant pour le paiement avec Cashway  (<a href="https://help.cashway.fr/cgu/">Plus d\'informations</a>)', 'error');
+                    return array(
+                        'result' => 'failure'
+                    );
                 }
             }
 
             /**
              * Output for the order received page.
+             *
+             * @param Object order the order
              */
             public function receipt_page($order)
             {
@@ -381,65 +458,106 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             /**
+            * Check if an order has been processed, if it's the case,
+            * display the thank you page
+            */
+            public function check_order_accomplished()
+            {
+                if (null != $_GET['shop_order_id']) {
+                    $this->thankyou_page($_GET['shop_order_id']);
+                }
+            }
+
+            /**
              * Output for the order received page.
+             *
+             * @param String order_id the id of the order to display the Thank
+             * You Page for
              */
             public function thankyou_page($order_id)
             {
-                // confirmation de la commande
-                $headers = array(
-                   'Authorization' => 'Basic '.base64_encode($this->cashway_login.':'.$this->cashway_password),
-                   'content-type' => 'application/json',
-                );
-                $body = array(
-                    'order_id' => $order_id,
-                );
-                $args = array(
-                    'method' => 'POST',
-                    'headers' => $headers,
-                    'body' => json_encode($body),
-                );
-                $cashway_barcode = get_post_meta($order_id, 'cashway_barcode', true);
-                $response = wp_remote_post('https://api-staging.cashway.fr/1/transactions/'.$cashway_barcode.'/confirmation', $args);
+                if (null != $order_id) {
+                    $order = wc_get_order($order_id);
+                    $barcode = chunk_split(substr(get_post_meta($order_id, 'cashway_barcode', true), 7), 3, ' ');
+                    $orderTotal = $order->get_total() + get_post_meta($order_id, 'cashway_fees', true);
 
-                //print_r($response);
-
-                $code = $response['response']['code'];
-                if ($code == 201) {
-                    $response_body = json_decode($response['body']);
-                    $frais_client_cashway = $response_body->customer_fee;
-                    $cout_total_client_cashway = $response_body->customer_payment;
-                    $barcode_cashway_url = $response_body->barcode_png_url;
-                    echo 'Coût supplémentaire CashWay = '.$frais_client_cashway.' €';
-                    echo "<img src='$barcode_cashway_url' style='height:60px'/>";
+                    echo "
+                    <center>
+                      <img src='https://www.cashway.fr/assets/images/picto_cw.png' alt='CASHWAY'>
+                      <h1>Thank you for ordering with CASHWAY !</h1>
+                      <h2>Here are some informations about your order :</h2>
+                      Barcode : <span style='color:orange;'>".$barcode."</span><br />
+                      Order Amount (Including the CASHWAY fees) : ".$orderTotal." &euro;
+                    </center>
+                    ";
+                    die();
                 } else {
-                    die('Une erreur est survenue durant la confirmation de la commande via CashWay.');
+                    die('Echec du traitement de votre commande...');
                 }
-                die();
             }
         }
     }
+
+    /**
+    * Parses the request on Cashway routes to determine which code to execute
+    *
+    * @param Object wp a WordPress instance
+    */
     function cashway_parse_request($wp)
     {
-        if (array_key_exists('cashway', $wp->query_vars) && ($wp->query_vars['cashway'] == 'check_parameters')) {
-            $headers = array(
-               'Authorization' => 'Basic '.base64_encode($_POST['login'].':'.$_POST['password']),
-            );
-            // Setup variable for wp_remote_get
-            $args = array(
-               'headers' => $headers,
-            );
-            $response = wp_remote_get('https://api-staging.cashway.fr/1/shops/me/status', $args);
-            $code = $response['response']['code'];
-            if ($code == 200) {
-                echo 'ok';
-            } else {
-                die('errorConnection');
+        if (array_key_exists('cashway', $wp->query_vars)) {
+            switch ($wp->query_vars['cashway']) {
+                case 'check_parameters':
+                    $api_url = getenv('CASHWAY_TEST_ENVIRONMENT') ? getenv('CASHWAY_TEST_API_URL') : 'https://api.cashway.fr';
+                    $headers = array(
+                        'Authorization' => 'Basic '.base64_encode($_POST['login'].':'.$_POST['password']),
+                    );
+                    // Setup variable for wp_remote_get
+                    $args = array(
+                        'headers' => $headers,
+                    );
+                    $response = wp_remote_get($api_url.'/1/shops/me/status', $args);
+                    $code = $response['response']['code'];
+                    if ($code == 200) {
+                        $plugin = new WC_Gateway_Cashway();
+                        $api_conf = $plugin->get_api_conf($_POST['login'], $_POST['password']);
+                        $api = new \CashWay\API($api_conf);
+                        $shared_secret = bin2hex(openssl_random_pseudo_bytes(24));
+                        $args = array(
+                            'notification_url' => get_site_url().'/?cashway=notification',
+                            'shared_secret' => $shared_secret
+                        );
+                        $response = $api->updateAccount($args);
+                        if ($response['notification_hook_url']) {
+                            update_option('notification_handler_shared_key', $shared_secret);
+                            echo 'ok';
+                        } else {
+                            die('errorUpdateConnection');
+                        }
+                    } else {
+                        die('errorConnection');
+                    }
+                    die();
+                    break;
+                case 'notification':
+                    $plugin = new WC_Gateway_Cashway();
+                    die($plugin->handle_notifications());
+                    break;
+                default:
+                    die('Unknown route.');
+                    break;
             }
-            die();
         }
     }
     add_action('parse_request', 'cashway_parse_request');
 
+    /**
+    * Returns the variables for the queries on cashway routes
+    *
+    * @param Array vars the variables
+    *
+    * @return Array vars the variables + the added ones
+    */
     function cashway_query_vars($vars)
     {
         $vars[] = 'cashway';

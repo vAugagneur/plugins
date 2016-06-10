@@ -147,36 +147,6 @@ class Log
 }
 
 /**
- *
-*/
-class Fee
-{
-    /**
-     * @param float $total_amount  full taxes included total amount for order
-     * @param float $customer_part [0..1] how much of this fee the customer pays
-     *
-     * @return float customer fee in EUR.
-    */
-    public static function getCartFee($total_amount = 0.0, $customer_part = 1.0)
-    {
-        $fee = 0;
-        if ($total_amount == 0) {
-            return 0;
-        } elseif ($total_amount <= 50.00) {
-            $fee = 1.00;
-        } elseif ($total_amount <= 150.00) {
-            $fee = 2.00;
-        } elseif ($total_amount <= 250.00) {
-            $fee = 3.00;
-        } else {
-            $fee = 4.00;
-        }
-
-        return round($fee * $customer_part, 2);
-    }
-}
-
-/**
  * Helpers to integrate and use api.cashway.fr with online shop platforms.
 */
 class API
@@ -359,6 +329,7 @@ class API
         $platform = array_shift($args);
         $known_platforms = array(
             'prestashop',
+            'woocommerce'
             //'magento'
         );
 
@@ -502,6 +473,50 @@ class API
     public function updateAccount($params)
     {
         return $this->httpPost('/shops/me', json_encode($params));
+    }
+
+    /**
+    * Checks if the account is existent in the API
+    */
+    public function checkAccount() {
+        return $this->httpGet('/shops/me/status');
+    }
+
+    /**
+    * Retrieves the customer fees for the shop
+    */
+
+    public function getCustomerFees($amount) {
+        $fees = 0.00;
+        if ($amount == 0.00) return 0.00;
+
+        $response = $this->httpGet('/shops/me/customer_fees');
+
+        if ($response) {
+            if ($response['no_customer_fee'] == true) {
+                return 0.00;
+            }
+
+          if ($amount <= 50.00) {
+              $fees = $response['customer_fees']['0_50'];
+          } elseif ($amount <= 150.00) {
+              $fees = $response['customer_fees']['250_400'];
+          } elseif ($amount <= 250.00) {
+              $fees = $response['customer_fees']['150_250'];
+          } elseif ($amount <= 400.00) {
+              $fees = $response['customer_fees']['250_400'];
+          } elseif ($amount <= 700.00) {
+              $fees = $response['customer_fees']['400_700'];
+          } elseif ($amount <= 800.00) {
+              $fees = $response['customer_fees']['700_800'];
+          } elseif ($amount <= 900.00) {
+              $fees = $response['customer_fees']['800_900'];
+          } else {
+              $fees = $response['customer_fees']['900_1000'];
+          }
+        }
+
+        return round($fees, 2);
     }
 
     public function checkTransactionsForOrders($order_ids)
@@ -671,8 +686,41 @@ class API
     // @codingStandardsIgnoreLine
     private function setOrder_magento() {}
 
+    /**
+      * WooCommerce-specific setup.
+      *
+      * @uses \Order to retrieve details.
+      *
+      * @param String     $id     the id of the processing order
+      * @param WC_Order   $order  the order object corresponding to the processing order
+      * @param string     $more   more infos if necessary
+    */
     // @codingStandardsIgnoreLine
-    private function setOrder_woocommerce() {}
+    private function setOrder_woocommerce($id, $order, $more = null)
+    {
+      $this->order =  array(
+          'id'          => $id,
+          'at'          => date('Y-m-dTH:i:sZ'),
+          'currency'    => $order->get_order_currency(),
+          'total'       => $order->get_total(),
+          'language'    => 'fr',
+          'items_count' => $order->get_item_count(),
+          'details'     => $order->get_items()
+      );
+      $this->customer = array(
+          'id'         => $order->user_id,
+          'name'       => $order->billing_first_name.' '.$order->billing_last_name,
+          'email'      => $order->billing_email,
+          'phone'      => $order->billing_phone,
+          'city'       => $order->billing_city,
+          'zipcode'    => $order->billing_postcode,
+          'country'    => $order->billing_country,
+          'address'    => $order->billing_address_1,
+          'ip'         => self::getIPs(),
+          'company'    => $order->billing_company
+      );
+      $this->more = $more;
+    }
 }
 
 /**
