@@ -262,7 +262,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $data = $res[2];
 
                     switch ($event) {
-                        case 'transaction_confirmed':
+                        case 'confirmed':
                             //Update the status of the order, reduce the stock and
                             //empty the customer's cart
                             $order = wc_get_order($data->order_id);
@@ -271,13 +271,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             WC()->cart->empty_cart();
                             return $this->response(200, 'Ok, transaction set to confirmed.');
                             break;
-                        case 'transaction_expired':
+                        case 'expired':
                             //Set the status of the order to cancelled
                             $order = wc_get_order($data->order_id);
                             $order->update_status('cancelled', __('CashWay transaction expired', 'woocommerce'));
                             return $this->response(200, 'Ok, transaction set to cancelled.');
                             break;
-                        case 'transaction_paid':
+                        case 'paid':
                             //Set the status of the order to completed
                             $order = wc_get_order($data->order_id);
                             $order->update_status('completed', __('CashWay transaction completed', 'woocommerce'));
@@ -525,7 +525,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $shared_secret = bin2hex(openssl_random_pseudo_bytes(24));
                         $args = array(
                             'notification_url' => get_site_url().'/?cashway=notification',
-                            'cashway_shared_secret' => $shared_secret
+                            'shared_secret' => $shared_secret
                         );
                         $response = $api->updateAccount($args);
                         if ($response['notification_hook_url']) {
