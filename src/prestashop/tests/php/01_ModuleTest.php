@@ -22,10 +22,10 @@ class CashWayModuleTest extends PHPUnit_Framework_TestCase
     public function feesProvider()
     {
         return [
-            [10.00, '10 €'],
+            [10.00, '10,00 €'],
             [10.40, '10,40 €'],
-            [10, '10 €'],
-            ['10', '10 €'],
+            [10, '10,00 €'],
+            ['10', '10,00 €'],
             ['10.60', '10,60 €'],
             [10.99, '10,99 €'],
         ];
