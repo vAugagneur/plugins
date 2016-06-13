@@ -58,6 +58,8 @@ class Sirateck_Cashway_Model_Config extends Varien_Object
 
     const API_EVALUATE_TRANSACTION_ENDPOINT = 'evaluate_transaction_api_endpoint';
 
+    const API_GET_CUSTOMER_FEES_ENDPOINT = 'get_customer_fees_api_endpoint';
+
     const API_EVENTS_ENDPOINT = 'events_api_endpoint';
 
     /**
@@ -172,6 +174,12 @@ class Sirateck_Cashway_Model_Config extends Varien_Object
     public function getEvaluateTransactionApiEndpoint($storeId = null)
     {
         $uri = $this->getApiBaseUri().$this->getConfigData(self::API_EVALUATE_TRANSACTION_ENDPOINT, $storeId);
+        return $uri;
+    }
+
+    public function getGetCustomerFeesApiEndpoint($storeId = null)
+    {
+        $uri = $this->getApiBaseUri().$this->getConfigData(self::API_GET_CUSTOMER_FEES_ENDPOINT, $storeId);
         return $uri;
     }
 }

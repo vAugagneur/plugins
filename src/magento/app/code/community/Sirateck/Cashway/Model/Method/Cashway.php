@@ -81,6 +81,7 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
 
         return $this;
     }
+
     /**
      * Send request to evaluate Transaction method
      * This method can evalute availabilty of cashway api
@@ -93,6 +94,19 @@ class Sirateck_Cashway_Model_Method_Cashway extends Mage_Payment_Model_Method_Ab
         $request = Mage::getModel('cashway/api_request', array($this));
         /* @var $request Sirateck_Cashway_Model_Api_Request */
         $response = $request->evaluateTransaction(Sirateck_Cashway_Model_Api_Request::ACTION_EVALUATE_TRANSACTION, $params, $quote->getStoreId());
+        $this->_debug($response->debug());
+
+        return $response;
+    }
+
+    /**
+     * Send request to get customer fees for the shop
+     */
+    public function getCustomerFees($quote)
+    {
+        $request = Mage::getModel('cashway/api_request', array($this));
+        /* @var $request Sirateck_Cashway_Model_Api_Request */
+        $response = $request->getCustomerFees(Sirateck_Cashway_Model_Api_Request::ACTION_GET_CUSTOMER_FEES, $quote->getStoreId());
         $this->_debug($response->debug());
 
         return $response;

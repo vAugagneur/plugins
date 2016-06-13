@@ -51,8 +51,12 @@ $_code=$this->getMethodCode();
 			<div id="cashway-map-canvas" style="width: 100%; height: 400px;"></div>
 		</li>
 		<li>
-			<div><?php echo $this->__("A fee of %d euro(s) will be added to your total when you pay for your order with one of our distributor.", $this->getOrderFees($this->helper('checkout/cart')
+      <?php if ($this->getOrderFees($this->helper('checkout/cart')->getQuote()->getGrandTotal()) > 0) : ?>
+			<div><?php echo $this->__("A fee of %01.2f euro(s) will be added to your total when you pay for your order with one of our distributor.", $this->getOrderFees($this->helper('checkout/cart')
       ->getQuote()->getGrandTotal())); ?></div>
+    <?php else : ?>
+      <div><?php echo $this->__("No fees will be added to your total."); ?></div>
+    <?php endif; ?>
 		</li>
 	</ul>
 	<script type="text/javascript">

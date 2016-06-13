@@ -52,6 +52,8 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
 
     const ACTION_SEND_EVENTS = 'send_events';
 
+    const ACTION_GET_CUSTOMER_FEES = 'get_customer_fees';
+
     public function __construct($methodInstance = array())
     {
         if (count($methodInstance) > 0) {
@@ -282,6 +284,15 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
     }
 
     /**
+     * @param mixed storeId
+     * @return string $getCustomerFeesApiEndpoint
+     */
+    protected function getGetCustomerFeesApiEndpoint($storeId = null)
+    {
+        return $this->getConfig()->getGetCustomerFeesApiEndpoint($storeId);
+    }
+
+    /**
      * Construct and send confirmOrder request to cashway API
      *
      * @param string $action
@@ -354,6 +365,23 @@ class Sirateck_Cashway_Model_Api_Request extends Varien_Object
         /* @var $response Sirateck_Cashway_Model_Response_Order */
         $response = Mage::getSingleton('cashway/api_response_order', $this->_request($uri, $params, $this->getMethodHttp($action), $storeId));
 
+        return $response;
+    }
+
+    /**
+     * Get the customer fees from the order's total amount
+     *
+     * @param string $action
+     * @param int $storeId
+     * @return Sirateck_Cashway_Model_Response_Order
+     */
+    public function getCustomerFees($action, $storeId) {
+        $this->setStoreId($storeId);
+        $uri = $this->getGetCustomerFeesApiEndpoint($storeId);
+
+        /* @var $response Sirateck_Cashway_Model_Response_Fees */
+        $response = Mage::getSingleton('cashway/api_response_fees', $this->_request($uri, array(), $this->getMethodHttp($action), $storeId));
+        
         return $response;
     }
 
