@@ -100,3 +100,5 @@ $_MODULE['<{cashway}prestashop>payment_return_4d13bfb198f57f98bd82a3716b858829']
 $_MODULE['<{cashway}prestashop>payment_return_f79c9df7be6c25e430617302fb1655ce'] = 'Votre panier reste inchangé, vous pouvez toujours régler avec un autre moyen de paiement.';
 $_MODULE['<{cashway}prestashop>payment_return_ceae801606cc77dec25a30376b2e069a'] = 'Choisir un autre moyen de paiement.';
 $_MODULE['<{cashway}prestashop>payment_return_9bdf695c5a30784327137011da6ef568'] = 'Il y a un petit souci avec votre commande... Si vous pensez que c\'est une erreur, n\'hésitez pas à contacter notre';
+$_MODULE['<{cashway}prestashop>payment_return_7b7813f00f42b7e5366e7065aaa798c6'] = 'comprenant';
+$_MODULE['<{cashway}prestashop>payment_return_bf824d0700c0bc50e479b20fa683ae78'] = 'de frais CASHWAY';

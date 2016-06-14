@@ -33,7 +33,7 @@
     <p>
       {l s='In order to pay the' mod='cashway'}
       <span class="price" id="payment" data-payment="{$payment_raw|escape:'htmlall'}">{$payment|escape:'htmlall':'UTF-8'}</span>
-      (<span class="price">{$total_to_pay|escape:'htmlall':'UTF-8'} {$cart_fee|escape:'htmlall':'UTF-8'}</span>)
+      ({l s='including' mod='cashway'} <span class="price">{$cart_fee|escape:'htmlall':'UTF-8'}</span> {l s='of CASHWAY fees' mod='cashway'})
       {l s='of your order,' mod='cashway'}
       {l s='you are asked to go to one of the payment places' mod='cashway'}
       {l s='showed on' mod='cashway'}&nbsp;<a href="#cashway-map-l">{l s='our map' mod='cashway'}</a>,&nbsp;

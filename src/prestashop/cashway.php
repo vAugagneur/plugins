@@ -97,6 +97,7 @@ class CashWay extends PaymentModule
         return (parent::install() &&
                 $this->registerHook('displayPayment') &&
                 $this->registerHook('displayPaymentReturn') &&
+                $this->registerHook('ActionValidateOrder') &&
                 $this->registerHook('actionOrderStatusUpdate') &&
                 $this->installDefaultValues() &&
                 $this->installOrderState());
@@ -489,6 +490,13 @@ class CashWay extends PaymentModule
         return $this->display(__FILE__, 'payment_return.tpl');
     }
 
+    public function hookActionValidateOrder($params) {
+        $params['order']->total_paid += self::getCashwayAPI()->getCustomerFees($params['order']->total_paid);
+        $params['order']->total_paid_tax_incl += self::getCashwayAPI()->getCustomerFees($params['order']->total_paid_tax_incl);
+        $params['order']->save();
+        return null;
+    }
+
     /**
      * @param  string   $barcode
      * @param  string   $reference
@@ -514,6 +522,7 @@ class CashWay extends PaymentModule
 
         $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
         $payment = array_key_exists('customer_payment', $cw_res) ? $cw_res['customer_payment'] : null;
+        $order_total = array_key_exists('order_total', $cw_res) ? $cw_res['order_total'] : null;
 
         return array(
             'barcode'   => $barcode,
@@ -526,7 +535,7 @@ class CashWay extends PaymentModule
                 $params['currencyObj'],
                 false
             ),
-            'cart_fee'       => '+ '.self::formatFee(self::getCashwayAPI()->getCustomerFees($params['total_to_pay'])),
+            'cart_fee'       => self::formatFee(self::getCashwayAPI()->getCustomerFees($order_total)),
             'payment_raw'    => $payment,
             'payment'        => Tools::displayPrice($payment, $params['currencyObj'], false),
             'expires'        => $expires,
