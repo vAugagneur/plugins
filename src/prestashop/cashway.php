@@ -735,12 +735,12 @@ class CashWay extends PaymentModule
     public static function verifyAndSetPaid($ref, $remote, $local)
     {
         // TODO: if order is already paid, or expired, ignore.
-
-        if ($local['total_paid'] != $remote['order_total']) {
+        $remote_total_price = $remote['order_total'] + self::getCashWayAPI()->getCustomerFees($remote['order_total']);
+        if ($local['total_paid'] != $remote_total_price) {
             \CashWay\Log::error(sprintf(
                 'expected payments differ for %s: %.2f vs. %.2f (remote/local)',
                 $ref,
-                $remote['order_total'],
+                $remote_total_price,
                 $local['total_paid']
             ));
             return false;
@@ -756,7 +756,7 @@ class CashWay extends PaymentModule
             return false;
         }
 
-        if ($local['total_paid_real'] >= $remote['order_total']) {
+        if ($local['total_paid_real'] >= $remote_total_price) {
             \CashWay\Log::warn('I, it has already been updated:');
             \CashWay\Log::warn('I, (local) total_paid_real = '.$local['total_paid_real']);
             \CashWay\Log::warn('I, (local) current_state = '.$local['current_state']);
@@ -776,6 +776,23 @@ class CashWay extends PaymentModule
                 $remote['barcode']
             );
         }
+    }
+
+    public static function verifyAndSetExpired($ref, $local) {
+        $history = new OrderHistory();
+        $order_state = $history->getLastOrderState($local['id_order']);
+
+        if ($order_state != false && $order_state->name != 'CASHWAY_OS_PAYMENT') {
+            return self::setOrderAs(
+              (int)Configuration::get('PS_OS_CANCELED'),
+              $local['id_order']
+            );
+        } else {
+            \Cashway\Log::error('Le status de la commande est "payé", impossible de le mettre à jour.');
+            return false;
+        }
+
+        return false;
     }
 
     /**
