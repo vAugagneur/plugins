@@ -94,7 +94,7 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
         $this->terminateReply(201, 'Call back email sent.');
     }
 
-    private function onTransactionPaid()
+    private function onPaid()
     {
         ob_start();
         $ref    = $this->data->order_id;
@@ -105,12 +105,17 @@ class CashwayNotificationModuleFrontController extends ModuleFrontController
         $this->terminateReply(($res ? 200 : 412), ob_get_clean());
     }
 
-    private function onTransactionExpired()
+    private function onExpired()
     {
-        $this->onGenericCheck();
+        ob_start();
+        $ref    = $this->data->order_id;
+        $local  = CashWay::getLocalOrderByReference($ref);
+        $res    = CashWay::verifyAndSetExpired($ref, $local);
+
+        $this->terminateReply(($res ? 200 : 412), ob_get_clean());
     }
 
-    private function onTransactionConfirmed()
+    private function onConfirmed()
     {
         $this->onGenericCheck();
     }

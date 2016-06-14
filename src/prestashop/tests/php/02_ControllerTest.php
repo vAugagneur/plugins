@@ -98,7 +98,7 @@ class CashWayControllerTest extends PHPUnit_Framework_TestCase
             array_merge(
                 [$url],
                 self::buildNotification([
-                    'event' => 'transaction_expired',
+                    'event' => 'expired',
                     'order_id' => 'TEST-ORDER-ID',
                     'barcode' => 'TEST-BARCODE',
                     'status' => 'expired',
