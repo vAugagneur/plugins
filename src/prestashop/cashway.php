@@ -32,13 +32,13 @@ require dirname(__FILE__).'/lib/cashway/compat.php';
 
 class CashWay extends PaymentModule
 {
-    const VERSION = '1.2.1';
+    const VERSION = '1.2.2';
 
     public function __construct()
     {
         $this->name             = 'cashway';
         $this->tab              = 'payments_gateways';
-        $this->version          = '1.2.1';
+        $this->version          = '1.2.2';
 
         $this->author           = 'CashWay';
         $this->need_instance    = 1;
