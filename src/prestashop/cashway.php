@@ -522,6 +522,7 @@ class CashWay extends PaymentModule
 
         $expires = array_key_exists('expires_at', $cw_res) ? $cw_res['expires_at'] : null;
         $payment = array_key_exists('customer_payment', $cw_res) ? $cw_res['customer_payment'] : null;
+        $order_total = array_key_exists('order_total', $cw_res) ? $cw_res['order_total'] : null;
 
         return array(
             'barcode'   => $barcode,
