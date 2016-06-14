@@ -778,6 +778,12 @@ class CashWay extends PaymentModule
         }
     }
 
+    /**
+     * @param string $ref
+     * @param Array  $local
+     *
+     * @return boolean
+    */
     public static function verifyAndSetExpired($ref, $local) {
         $history = new OrderHistory();
         $order_state = $history->getLastOrderState($local['id_order']);
