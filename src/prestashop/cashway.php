@@ -361,6 +361,7 @@ class CashWay extends PaymentModule
 
         $helper->module = $this;
         $helper->name_controller = $this->name;
+        $helper->identifier = $helper->table = 'cashway_form';
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
 
